@@ -9,6 +9,7 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
+
         <div class="modal-body">
           <form @submit.prevent="addUser">
             <div class="form-group">
