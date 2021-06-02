@@ -15,6 +15,13 @@ jobs:
     - uses: shivammathur/setup-php@15c43e89cdef867065b0213be354c2841860869e
       with:
         php-version: '8.0'
+        server: 82.148.19.239
+        username: ${{ secrets.ftp_username }}
+        password: ${{ secrets.ftp_password }}
+        ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+        # sftp args
+        args: '-o ConnectTimeout=5'
+
     - uses: actions/checkout@v2
     - name: Copy .env
       run: php -r "file_exists('.env') || copy('.env.example', '.env');"
@@ -33,12 +40,4 @@ jobs:
         DB_CONNECTION: sqlite
         DB_DATABASE: database/database.sqlite
       run: vendor/bin/phpunit
-    - name: SFTP Deploy
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.1
-        with:
-          server: 82.148.19.239
-          username: ${{ secrets.ftp_username }}
-          password: ${{ secrets.ftp_password }}
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          # sftp args
-          args: '-o ConnectTimeout=5'
+
