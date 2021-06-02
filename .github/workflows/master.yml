@@ -20,4 +20,4 @@ jobs:
           server: 82.148.19.239
           username: ${{ secrets.ftp_username }}
           password: ${{ secrets.ftp_password }}
-          server-dir: /prog
+          server-dir: /
