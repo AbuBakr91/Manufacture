@@ -13,7 +13,7 @@
                         </div>
                         <div class="col-12 text-center">
                             <h5>Должность:</h5>
-                            <h6>Оператор станка</h6>
+                            <h6>{{printRole(user.slug)}}</h6>
                         </div>
                     </div>
                 </div>
@@ -27,7 +27,7 @@
                                 <option>Product 1</option>
                                 <option>Product 2</option>
                             </select>
-                            <small class="float-right"><button class="btn_add">+добавить</button></small>
+<!--                            <small class="float-right"><button class="btn_add">+добавить</button></small>-->
                         </div>
                         <div class="col-2" v-if="!start">
                             <button class="btn primary" @click="start = !start" type="submit">START</button>
@@ -67,6 +67,14 @@ export default {
         stopFuture() {
             this.start = !this.start
             this.modal = !this.modal
+        },
+        printRole(slug) {
+          if (slug === 'collector') {
+            return 'Сборщик'
+          } else if(slug === 'machine-operator') {
+            return 'Оператор станка'
+          }
+            return 'Пайщик'
         }
     },
     mounted() {

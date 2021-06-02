@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -41,7 +43,25 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $user = new User();
+            $user->firstname = $request->firstname;
+            $user->lastname = $request->lastname;
+            $user->email = $request->email;
+            $user->password = bcrypt($request->password);
+            $user->save();
+            $role = Role::where('slug', $request->slug)->first();
+            $user->roles()->attach($role);
+
+            return response()->json([
+                "status" => true,
+                "user" => $user
+            ]);
+        } catch (\Exception $exception) {
+            return response()->json([
+                "status" => false
+            ]);
+        }
     }
 
     /**
@@ -86,6 +106,7 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $user = User::find($id);
+        $user->delete();
     }
 }

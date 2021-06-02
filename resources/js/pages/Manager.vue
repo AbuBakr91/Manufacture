@@ -15,8 +15,19 @@
 import DashboardHeader from "../components/DashboardHeader"
 import DashboardFooter from "../components/DashboardFooter";
 import DashboardSidebar from "../components/DashboardSidebar";
+import store from "../store";
 export default {
-    components: {DashboardHeader, DashboardFooter, DashboardSidebar}
+  data() {
+    return {
+      role: store.state.auth.role
+    }
+  },
+  mounted() {
+    if(!(this.role === 'manager')) {
+      this.$router.push('/')
+    }
+  },
+  components: {DashboardHeader, DashboardFooter, DashboardSidebar}
 }
 </script>
 

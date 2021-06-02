@@ -1,7 +1,7 @@
 <template>
     <nav id="sidebar" class="sidebar js-sidebar">
         <div class="sidebar-content js-simplebar">
-            <router-link :to="{ path: `/manager/`}" class="sidebar-brand">
+            <router-link :to="{ path: `/manager/`}" active-class="active" class="sidebar-brand">
                 <span class="align-middle">HiTE-PRO</span>
             </router-link>
 
@@ -17,7 +17,7 @@
                 </li>
 
                 <li class="sidebar-item">
-                    <router-link :to="'profile'" class="sidebar-link">
+                    <router-link :to="{ path: `/manager/`}" class="sidebar-link">
                         <i class="align-middle" data-feather="user"></i> <span class="align-middle">Профиль</span>
                     </router-link>
                 </li>
@@ -29,7 +29,7 @@
                 </li>
 
                 <li class="sidebar-item">
-                    <router-link :to="'listmap'" class="sidebar-link">
+                    <router-link :to="{ path: `/manager/listmap`}" class="sidebar-link">
                         <i class="align-middle" data-feather="list"></i> <span class="align-middle">Тех. карты</span>
                     </router-link>
                 </li>

@@ -13,7 +13,7 @@
                     <div class="dropdown-menu dropdown-menu-end">
                         <a class="dropdown-item" href="pages-profile.html"><i class="align-middle me-1" data-feather="user"></i> Profile</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Log out</a>
+                        <a class="dropdown-item" href="#" @click.prevent="logout">Log out</a>
                     </div>
                 </li>
             </ul>
@@ -23,12 +23,25 @@
 
 <script>
 import store from "../store"
+import {useRouter} from 'vue-router'
+import {useStore} from 'vuex'
 
 export default {
     data() {
         return {
             user: JSON.parse(store.state.auth.user),
         }
+    },
+    setup() {
+      const router = useRouter()
+      const store = useStore()
+
+      return {
+        logout: () => {
+          store.commit('auth/logout')
+          router.push('/login')
+        }
+      }
     }
 }
 </script>
