@@ -29,4 +29,3 @@ jobs:
 
 #          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           # sftp args
-          args: '-o ConnectTimeout=5'
