@@ -12,19 +12,21 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "SFTP"
-  deploy-via-sftp:
+  web-deploy:
+    name: 🎉 Deploy
     runs-on: ubuntu-latest
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-      - name: SFTP Deploy
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.1
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v2
+
+      - name: 📂 Sync files
+        uses: SamKirkland/FTP-Deploy-Action@4.0.0
         with:
           server: 82.148.19.239
           username: ${{ secrets.ftp_username }}
           password: ${{ secrets.ftp_password }}
-          METHOD: sftp
+          protocol: ftps
+
 #          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           # sftp args
           args: '-o ConnectTimeout=5'
