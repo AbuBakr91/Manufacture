@@ -34,7 +34,6 @@
 <script>
 import axios from "axios";
 import UserModal from "../../components/UserModal";
-
 export default {
     data() {
         return {
