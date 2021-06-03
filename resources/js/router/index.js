@@ -1,11 +1,12 @@
 import { createWebHistory, createRouter } from "vue-router";
 import store from '../store'
-import Manager from "../pages/Manager";
+import Manager from "../dashboard/Manager";
 import Auth from "../pages/Auth";
 import Users from "../pages/Users";
 import NotFound from "../pages/404"
-import UsersList from "../pages/dashboard/UsersList"
-import DashboardHome from "../pages/dashboard/DashboardHome";
+import UsersList from "../dashboard/pages/UsersList"
+import DashboardHome from "../dashboard/components/DashboardHome";
+import ManagerProfile from "../dashboard/pages/ManagerProfile";
 
 const routes = [
     {
@@ -35,6 +36,11 @@ const routes = [
                 name: 'users',
                 path: 'users',
                 component: UsersList
+            },
+            {
+                name: 'profile',
+                path: 'profile',
+                component: ManagerProfile
             }
         ]
     },
