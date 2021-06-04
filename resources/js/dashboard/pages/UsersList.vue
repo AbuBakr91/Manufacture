@@ -1,4 +1,5 @@
 <template>
+    <app-alert v-if="alert" :alert="alert" @close="alert = null"></app-alert>
     <div class="container">
       <h4 class="mt-3 text-center">Сотрудники</h4>
         <table class="table table-striped mt-3">
@@ -33,13 +34,15 @@
 
 <script>
 import axios from "axios";
-import UserModal from "../../components/UserModal";
+import UserModal from "../components/UserModal";
+import AppAlert from "../../components/AppAlert";
 
 export default {
     data() {
         return {
             users: [],
-            modal: false
+            modal: false,
+            alert: null,
         }
     },
     mounted() {
@@ -52,16 +55,35 @@ export default {
         },
         addUserList(data) {
             this.users[0].push(data)
-            console.log(this.users)
             this.modal = false
+            this.alert = {
+                type: 'primary',
+                title: 'Успешно!',
+                text: `Пользователь с именем "${data.firstname} ${data.lastname}" успешно удален!`
+            }
         },
        async removeUser(id) {
-        const url = `http://127.0.0.1:8000/api/users/${id}`;
-        await axios.delete(url)
-        this.users[0] = this.users[0].filter(user => user.id !== id)
+           try {
+               const person = this.users[0].find(user => user.id !== id)
+               const url = `http://127.0.0.1:8000/api/users/${id}`;
+               await axios.delete(url)
+               this.users[0] = this.users[0].filter(user => user.id !== id)
+
+               this.alert = {
+                   type: 'primary',
+                   title: 'Успешно!',
+                   text: `Пользователь с именем "${person.firstname} ${person.lastname}" успешно удален!`
+               }
+           } catch (e) {
+               this.alert = {
+                   type: 'danger',
+                   title: 'Ошбика!',
+                   text: e.message
+               }
+           }
        }
     },
-  components: {UserModal}
+  components: {AppAlert, UserModal}
 }
 </script>
 

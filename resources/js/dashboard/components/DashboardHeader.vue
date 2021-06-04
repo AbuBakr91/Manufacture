@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import store from "../store"
+import store from "../../store"
 import {useRouter} from 'vue-router'
 import {useStore} from 'vuex'
 

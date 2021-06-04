@@ -12,10 +12,11 @@
 </template>
 
 <script>
-import DashboardHeader from "../components/DashboardHeader"
-import DashboardFooter from "../components/DashboardFooter";
-import DashboardSidebar from "../components/DashboardSidebar";
+import DashboardHeader from "./components/DashboardHeader"
+import DashboardFooter from "./components/DashboardFooter";
+import DashboardSidebar from "./components/DashboardSidebar";
 import store from "../store";
+
 export default {
   data() {
     return {

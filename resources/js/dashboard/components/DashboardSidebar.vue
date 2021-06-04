@@ -17,7 +17,7 @@
                 </li>
 
                 <li class="sidebar-item">
-                    <router-link :to="{ path: `/manager/`}" class="sidebar-link">
+                    <router-link :to="{ path: `/manager/profile`}" class="sidebar-link">
                         <i class="align-middle" data-feather="user"></i> <span class="align-middle">Профиль</span>
                     </router-link>
                 </li>
