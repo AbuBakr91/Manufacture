@@ -63,6 +63,7 @@ export default {
             }
         },
        async removeUser(id) {
+
            try {
                const person = this.users[0].find(user => user.id === id)
                await axios.delete('/api/users/' + id)
