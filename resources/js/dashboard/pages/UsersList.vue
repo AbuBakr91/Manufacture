@@ -64,9 +64,8 @@ export default {
         },
        async removeUser(id) {
            try {
-               const person = this.users[0].find(user => user.id !== id)
-               const url = `http://127.0.0.1:8000/api/users/${id}`;
-               await axios.delete(url)
+               const person = this.users[0].find(user => user.id === id)
+               await axios.delete('/api/users/' + id)
                this.users[0] = this.users[0].filter(user => user.id !== id)
 
                this.alert = {
