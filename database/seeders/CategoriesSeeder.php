@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Http;
 use App\Models\Categories;
 class CategoriesSeeder extends Seeder
 {
+    /**
+     * @return array
+     */
     protected function getDataApi(): array
     {
         $response = Http::withBasicAuth('multishop@4wimax', '3hQ&ue1x')->get('https://online.moysklad.ru/api/remap/1.2/entity/processingplan');
@@ -20,6 +23,10 @@ class CategoriesSeeder extends Seeder
         return array_unique($categories);
     }
 
+    /**
+     * @param $arr
+     * @return array
+     */
     public function sortKeyArray($arr): array
     {
         $count = count($arr);
@@ -32,7 +39,6 @@ class CategoriesSeeder extends Seeder
     }
 
 
-
     /**
      * Run the database seeds.
      *
@@ -41,13 +47,6 @@ class CategoriesSeeder extends Seeder
     public function run()
     {
 
-//        $response = Http::withBasicAuth('multishop@4wimax', '3hQ&ue1x')->get('https://online.moysklad.ru/api/remap/1.2/entity/processingplan');
-//        $data = $response->json();
-//        $categories = [];
-//
-//        for ($i=0; $i<count($data['rows']); $i++) {
-//            $categories[] = $data['rows'][$i]['pathName'];
-//        }
         $data = $this->getDataApi();
 
         $category = $this->sortKeyArray($data);
@@ -60,7 +59,6 @@ class CategoriesSeeder extends Seeder
                 $model{$i}->save();
             }
         }
-
 
     }
 }
