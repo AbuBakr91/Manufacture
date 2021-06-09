@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\GetMapController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,6 +17,7 @@ Route::get('{any}', function () {
     return view('layouts.app');
 })->where('any', '.*');
 
+//Route::get('/maps', [App\Http\Controllers\GetMapController::class,'index']);
 
 //Auth::routes();
 

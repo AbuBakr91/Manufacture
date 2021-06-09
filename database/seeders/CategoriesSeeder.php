@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Http;
 use App\Models\Categories;
+
 class CategoriesSeeder extends Seeder
 {
     /**
