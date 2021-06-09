@@ -21,8 +21,8 @@ class UserController extends Controller
             ->join('users_roles', 'users.id', '=', 'users_roles.user_id')
             ->join('roles', 'roles.id', '=', 'users_roles.role_id')
             ->select('users.id', 'users.firstname', 'users.lastname', 'users.email', 'roles.slug')
+            ->where('roles.slug', '!=', 'manager')
             ->get();
-
     }
 
     /**
@@ -95,7 +95,34 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $user = User::find($id);
+
+        if ($request->firstname){
+            $user->firstname = $request->firstname;
+        }
+
+        if ($request->lastname){
+            $user->firstname = $request->lastname;
+        }
+
+        if ($request->email){
+            $user->email = $request->email;
+        }
+
+        if ($request->password){
+            $user->password = bcrypt($request->password);
+        }
+
+        if ($request->slug){
+            $role = Role::where('slug', $request->slug)->first();
+            $user->roles()->attach($role);
+        }
+
+        $user->save();
+
+        return response()->json([
+            "status" => true,
+        ]);
     }
 
     /**
