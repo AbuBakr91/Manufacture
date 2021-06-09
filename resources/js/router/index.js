@@ -7,6 +7,7 @@ import NotFound from "../pages/404"
 import UsersList from "../dashboard/pages/UsersList"
 import DashboardHome from "../dashboard/components/DashboardHome";
 import ManagerProfile from "../dashboard/pages/ManagerProfile";
+import TechnicalCard from "../dashboard/pages/TechnicalCard"
 
 const routes = [
     {
@@ -41,6 +42,11 @@ const routes = [
                 name: 'profile',
                 path: 'profile',
                 component: ManagerProfile
+            },
+            {
+                name: 'listmap',
+                path: 'listmap',
+                component: TechnicalCard
             }
         ]
     },
