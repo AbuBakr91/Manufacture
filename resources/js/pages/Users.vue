@@ -18,23 +18,33 @@
                     </div>
                 </div>
                 <div class="col-9">
-                    <div class="row mt-5">
-                        <div class="col-2 text-center">
-                            <h1>{{dataTime}}</h1>
-                        </div>
+                    <div class="row mt-5 content_start" v-if="!start">
                         <div class="col-8">
+                            <h4 class="text-center">Задание от руководителя:</h4>
                             <select class="form-control form-control-lg">
-                                <option>Product 1</option>
-                                <option>Product 2</option>
+                                <option v-for="task in taskManager">{{task.name}} - {{task.count}} шт.</option>
                             </select>
-<!--                            <small class="float-right"><button class="btn_add">+добавить</button></small>-->
                         </div>
-                        <div class="col-2" v-if="!start">
-                            <button class="btn primary" @click="start = !start" type="submit">START</button>
+                        <div class="col-8 mt-3">
+                            <h4 class="text-center">Выбрать произвольно:</h4>
+                            <select :disabled="taskManager.length !== 0" class="form-control form-control-lg">
+                                <option>Выберите тех.карту</option>
+                                <option>LV-1-hand</option>
+                                <option>Relay-4S-Case</option>
+                            </select>
                         </div>
-                        <div class="col-2 d-flex" v-if="start">
-                            <button class="btn btn_stop" @click="stopFuture" type="submit">STOP</button>
+                        <div class="col-8 mt-5 d-flex justify-content-center">
+                            <button class="btn primary btn_start" @click="start = !start" type="submit">START</button>
+                        </div>
+                    </div>
+                    <div class="row mt-5" v-if="start">
+                        <h2 class="text-center mb-5">Название тех.карты: <b>Smart-Air-hand</b></h2>
+                        <div class="col-8 m-auto content_stop mt-5">
                             <button class="btn btn_pause" @click="pause = !pause" v-html="pause ? pauseIcon : 'PAUSE'" type="submit"></button>
+                            <button class="btn btn_pause" @click="pause = !pause" type="submit">Ожидание</button>
+                        </div>
+                        <div class="col-12 d-flex justify-content-center mt-5">
+                            <button class="btn btn_stop float-center" @click="stopFuture" type="submit">STOP</button>
                         </div>
                     </div>
                 </div>
@@ -55,6 +65,11 @@ export default {
             start: false,
             pause: false,
             dataTime: '',
+            taskManager: [
+                {name:'LV-1-hand', count: 100},
+                {name:'Smart-Air-hand', count: 130},
+                {name:'Relay-4S-Case', count: 220}
+            ],
             user: JSON.parse(store.state.auth.user),
             role: store.state.auth.role,
             pauseIcon: "<svg fill='#fff' height='20px' id='Layer_1' style='enable-background:new 0 0 512 512;' version='1.1' viewBox='0 0 512 512' width='20px' xml:space='preserve' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'><g><path d='M224,435.8V76.1c0-6.7-5.4-12.1-12.2-12.1h-71.6c-6.8,0-12.2,5.4-12.2,12.1v359.7c0,6.7,5.4,12.2,12.2,12.2h71.6   C218.6,448,224,442.6,224,435.8z'/><path d='M371.8,64h-71.6c-6.7,0-12.2,5.4-12.2,12.1v359.7c0,6.7,5.4,12.2,12.2,12.2h71.6c6.7,0,12.2-5.4,12.2-12.2V76.1   C384,69.4,378.6,64,371.8,64z'/></g></svg>"
@@ -94,6 +109,16 @@ export default {
     height: 200px;
 }
 
+.content_start {
+    display: flex;
+    justify-content: center;
+}
+
+.content_stop {
+    display: flex;
+    justify-content: space-between;
+}
+
 .left_block {
     height: 86vh;
     border-right: 1px solid #0a427d;
@@ -113,10 +138,10 @@ export default {
     border-radius: 5px;
 }
 
-.btn_stop, .btn_pause {
+.btn_stop, .btn_pause, .btn_start {
     padding: 4px;
-    width: 60px;
-    height: 38px;
+    width: 140px;
+    height: 70px;
 }
 
 .btn_stop:focus, .btn_pause:focus {
