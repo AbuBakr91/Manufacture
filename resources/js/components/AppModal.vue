@@ -5,15 +5,19 @@
             <div class="modal-body">
                 <div class="title-product text-center">
                     <h5><b>Наименование:</b></h5>
-                    <p>Relay-LED-auto после автоматического монтажа</p>
+                    <p>Relay-LED-auto</p>
                 </div>
                 <div class="count-product text-center">
-                    <h5><b>Введите количество:</b></h5>
-                    <input type="number" value="1" class="form-control input_count">
+                    <h5><b>Готово:</b></h5>
+                    <input type="number" value="10" class="form-control input_count">
+                </div>
+                <div class="count-product mt-3 text-center">
+                    <h5><b>Брак:</b></h5>
+                    <input type="number" value="10" class="form-control input_count">
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" @click="$emit('close')" class="btn">Закрыть смену</button>
+                <button type="button" @click="$emit('close')" class="btn">Внести</button>
             </div>
         </div>
     </div>
@@ -42,10 +46,15 @@ emits:['close']
     background: #376DA6;
     width: 100%;
     border: 0;
+    height: 70px;
     padding: 8px;
     color: #FFFFFF;
     font-size: 14px;
     cursor: pointer;
     border-radius: 5px;
+}
+
+input {
+    height: 50px;
 }
 </style>

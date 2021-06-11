@@ -1,7 +1,7 @@
 <template>
     <app-alert v-if="alert" :alert="alert" @close="alert = null"></app-alert>
     <div class="container">
-      <h4 class="mt-3 text-center">Сотрудники</h4>
+      <h4 class="mt-3 text-center">СОТРУДНИКИ</h4>
         <table class="table table-striped mt-3">
             <thead>
             <tr>
@@ -33,6 +33,10 @@
             <user-modal v-if="modal" @user="addUserList" @close="modal=false"></user-modal>
         </teleport>
     </div>
+    <div class="container">
+        <h4 class="mt-3 text-center">ТЕХ ЗАДАНИЕ</h4>
+        <add-task :categories="category" :cards="technical_card" v-for="user in users[0]" :users="user"></add-task>
+    </div>
 </template>
 
 <script>
@@ -40,6 +44,7 @@ import axios from "axios";
 import UserModal from "../components/UserModal";
 import AppAlert from "../../components/AppAlert";
 import UserEdit from "../components/UserEdit";
+import AddTask from "../components/AddTask";
 
 export default {
     data() {
@@ -48,6 +53,15 @@ export default {
             modal: false,
             edit: false,
             alert: null,
+            isSelect: false,
+            category: [
+                {id: 1, name: 'Ручной монтаж'},
+                {id: 2, name: 'Автоматический монтаж'}
+            ],
+            technical_card: [
+                {id: 1, name: 'LV-1-hand'},
+                {id: 2, name: 'Smart-Air-hand'}
+            ],
         }
     },
     mounted() {
@@ -64,7 +78,7 @@ export default {
             this.alert = {
                 type: 'primary',
                 title: 'Успешно!',
-                text: `Пользователь с именем "${data.firstname} ${data.lastname}" успешно удален!`
+                text: `Пользователь с именем "${data.firstname} ${data.lastname}" успешно добавлен!`
             }
         },
        async removeUser(id) {
@@ -87,7 +101,7 @@ export default {
            }
        }
     },
-  components: {AppAlert, UserModal, UserEdit}
+  components: {AppAlert, UserModal, UserEdit, AddTask}
 }
 </script>
 
