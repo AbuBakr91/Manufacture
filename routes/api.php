@@ -6,6 +6,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TechnicalCardController;
 use App\Http\Controllers\CardController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ManagerTaskController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,4 +27,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::get("product", [TechnicalCardController::class, 'index']);
 Route::post("login", [AuthController::class, 'login']);
 Route::get("cards", [CardController::class, 'index']);
+Route::get("cards/{id}", [CardController::class, 'getCardByCategory']);
+Route::get("categories", [CategoryController::class, 'index']);
+
 Route::resource('users', UserController::class);
+Route::resource('manager-task', ManagerTaskController::class);
