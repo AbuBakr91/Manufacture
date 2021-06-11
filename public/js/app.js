@@ -16925,12 +16925,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ['users', 'categories', 'cards'],
+  props: ['users', 'categories'],
   data: function data() {
     return {
       isSelect: false,
       category: '0',
+      cards: [],
       card_id: '0',
       count: '',
       arrayTask: []
@@ -16938,16 +16947,86 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     addTask: function addTask() {
-      this.arrayTask.push({
-        name: this.card_id,
-        counts: this.count
-      });
-      this.isSelect = !this.isSelect;
+      var _this = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return axios.post('api/manager-task', {
+                  user_id: _this.card_id,
+                  counts: _this.count
+                });
+
+              case 2:
+                _this.arrayTask.push({
+                  name: _this.card_id,
+                  counts: _this.count
+                });
+
+                _this.isSelect = !_this.isSelect;
+
+              case 4:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }))();
     },
     removeTask: function removeTask(name) {
       this.arrayTask = this.arrayTask.filter(function (task) {
         return task.name !== name;
       });
+    },
+    getCards: function getCards(id) {
+      var _this2 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
+        var card, _card;
+
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                if (!(_this2.cards.length === 0)) {
+                  _context2.next = 7;
+                  break;
+                }
+
+                _context2.next = 3;
+                return axios.get('/api/cards/' + id);
+
+              case 3:
+                card = _context2.sent;
+
+                _this2.cards.push(card.data);
+
+                _context2.next = 12;
+                break;
+
+              case 7:
+                _this2.cards.length = 0;
+                _context2.next = 10;
+                return axios.get('/api/cards/' + id);
+
+              case 10:
+                _card = _context2.sent;
+
+                _this2.cards.push(_card.data);
+
+              case 12:
+                console.log(_this2.cards);
+
+              case 13:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }))();
     }
   }
 });
@@ -17306,13 +17385,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       edit: false,
       alert: null,
       isSelect: false,
-      category: [{
-        id: 1,
-        name: 'Ручной монтаж'
-      }, {
-        id: 2,
-        name: 'Автоматический монтаж'
-      }],
+      category: [],
       technical_card: [{
         id: 1,
         name: 'LV-1-hand'
@@ -17324,6 +17397,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   },
   mounted: function mounted() {
     this.getUsers();
+    this.getCategory();
   },
   methods: {
     getUsers: function getUsers() {
@@ -17350,15 +17424,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           }
         }, _callee);
       }))();
-    },
-    addUserList: function addUserList(data) {
-      this.users[0].push(data);
-      this.modal = false;
-      this.alert = {
-        type: 'primary',
-        title: 'Успешно!',
-        text: "\u041F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C \u0441 \u0438\u043C\u0435\u043D\u0435\u043C \"".concat(data.firstname, " ").concat(data.lastname, "\" \u0443\u0441\u043F\u0435\u0448\u043D\u043E \u0434\u043E\u0431\u0430\u0432\u043B\u0435\u043D!")
-      };
     },
     removeUser: function removeUser(id) {
       var _this2 = this;
@@ -17403,6 +17468,40 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             }
           }
         }, _callee2, null, [[0, 8]]);
+      }))();
+    },
+    addUserList: function addUserList(data) {
+      this.users[0].push(data);
+      this.modal = false;
+      this.alert = {
+        type: 'primary',
+        title: 'Успешно!',
+        text: "\u041F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C \u0441 \u0438\u043C\u0435\u043D\u0435\u043C \"".concat(data.firstname, " ").concat(data.lastname, "\" \u0443\u0441\u043F\u0435\u0448\u043D\u043E \u0434\u043E\u0431\u0430\u0432\u043B\u0435\u043D!")
+      };
+    },
+    getCategory: function getCategory() {
+      var _this3 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
+        var cat;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.next = 2;
+                return axios__WEBPACK_IMPORTED_MODULE_1___default().get('/api/categories');
+
+              case 2:
+                cat = _context3.sent;
+
+                _this3.category.push(cat.data);
+
+              case 4:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3);
       }))();
     }
   },
@@ -17817,18 +17916,27 @@ var _hoisted_3 = {
 var _hoisted_4 = {
   "class": "list-group-item"
 };
-var _hoisted_5 = {
+
+var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", null, "Тех. карта:", -1
+/* HOISTED */
+);
+
+var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", null, "Количество:", -1
+/* HOISTED */
+);
+
+var _hoisted_7 = {
   key: 1,
   "class": "selects"
 };
 
-var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("option", {
+var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("option", {
   value: "0"
 }, "Выберите категорию", -1
 /* HOISTED */
 );
 
-var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("option", {
+var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("option", {
   value: "0"
 }, "Выберите техкарту", -1
 /* HOISTED */
@@ -17846,9 +17954,9 @@ var render = /*#__PURE__*/_withId(function (_ctx, _cache, $props, $setup, $data,
   }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.users.firstname) + " " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.users.lastname), 1
   /* TEXT */
   ), $data.arrayTask.length !== 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("ul", _hoisted_3, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.arrayTask, function (task) {
-    return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("li", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Тех. карта: " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(task.name) + " количество: ", 1
+    return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("li", _hoisted_4, [_hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(task.name) + " - ", 1
     /* TEXT */
-    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("b", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(task.counts), 1
+    ), _hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("b", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(task.counts), 1
     /* TEXT */
     ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("i", {
       onClick: function onClick($event) {
@@ -17860,14 +17968,17 @@ var render = /*#__PURE__*/_withId(function (_ctx, _cache, $props, $setup, $data,
     , ["onClick"])]);
   }), 256
   /* UNKEYED_FRAGMENT */
-  ))])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), $data.isSelect ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("select", {
+  ))])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), $data.isSelect ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("select", {
     "class": "form-control category",
-    "onUpdate:modelValue": _cache[2] || (_cache[2] = function ($event) {
+    onChange: _cache[2] || (_cache[2] = function ($event) {
+      return $options.getCards($data.category);
+    }),
+    "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
       return $data.category = $event;
     }),
     name: "category",
     id: "category"
-  }, [_hoisted_6, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($props.categories, function (cat) {
+  }, [_hoisted_8, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($props.categories, function (cat) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("option", {
       value: cat.id
     }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(cat.name), 9
@@ -17875,16 +17986,16 @@ var render = /*#__PURE__*/_withId(function (_ctx, _cache, $props, $setup, $data,
     , ["value"]);
   }), 256
   /* UNKEYED_FRAGMENT */
-  ))], 512
-  /* NEED_PATCH */
+  ))], 544
+  /* HYDRATE_EVENTS, NEED_PATCH */
   ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $data.category]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("select", {
     "class": "form-control category",
-    "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
+    "onUpdate:modelValue": _cache[4] || (_cache[4] = function ($event) {
       return $data.card_id = $event;
     }),
     name: "category",
     id: "technical_card"
-  }, [_hoisted_7, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($props.cards, function (card) {
+  }, [_hoisted_9, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.cards[0], function (card) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("option", {
       value: card.id
     }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(card.name), 9
@@ -17897,7 +18008,7 @@ var render = /*#__PURE__*/_withId(function (_ctx, _cache, $props, $setup, $data,
   ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $data.card_id]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("input", {
     type: "number",
     "class": "form-control category",
-    "onUpdate:modelValue": _cache[4] || (_cache[4] = function ($event) {
+    "onUpdate:modelValue": _cache[5] || (_cache[5] = function ($event) {
       return $data.count = $event;
     }),
     placeholder: "Введите количество"
@@ -17905,7 +18016,7 @@ var render = /*#__PURE__*/_withId(function (_ctx, _cache, $props, $setup, $data,
   /* NEED_PATCH */
   ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $data.count]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
     "class": "btn",
-    onClick: _cache[5] || (_cache[5] = function () {
+    onClick: _cache[6] || (_cache[6] = function () {
       return $options.addTask && $options.addTask.apply($options, arguments);
     })
   }, "Выставить")])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
@@ -17932,7 +18043,7 @@ var _withId = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.withScopeId)("dat
 (0,vue__WEBPACK_IMPORTED_MODULE_0__.pushScopeId)("data-v-1c4f4ce2");
 
 var _hoisted_1 = {
-  "class": "footer"
+  "class": "footer mt-5"
 };
 
 var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<div class=\"container-fluid\" data-v-1c4f4ce2><div class=\"row text-muted\" data-v-1c4f4ce2><div class=\"col-6 text-start\" data-v-1c4f4ce2><p class=\"mb-0\" data-v-1c4f4ce2><a class=\"text-muted\" href=\"https://adminkit.io/\" target=\"_blank\" data-v-1c4f4ce2><strong data-v-1c4f4ce2>HiTE-PRO</strong></a> © </p></div><div class=\"col-6 text-end\" data-v-1c4f4ce2><ul class=\"list-inline\" data-v-1c4f4ce2><li class=\"list-inline-item\" data-v-1c4f4ce2><a class=\"text-muted\" href=\"https://adminkit.io/\" target=\"_blank\" data-v-1c4f4ce2>Support</a></li></ul></div></div></div>", 1);
@@ -19002,12 +19113,11 @@ var render = /*#__PURE__*/_withId(function (_ctx, _cache, $props, $setup, $data,
   /* PROPS */
   , ["onUser"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_10, [_hoisted_11, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.users[0], function (user) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_add_task, {
-      categories: $data.category,
-      cards: $data.technical_card,
+      categories: $data.category[0],
       users: user
     }, null, 8
     /* PROPS */
-    , ["categories", "cards", "users"]);
+    , ["categories", "users"]);
   }), 256
   /* UNKEYED_FRAGMENT */
   ))])], 64
@@ -24387,7 +24497,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.bi[data-v-014f8a86] {\n    padding: 8px;\n    cursor: pointer;\n    color: red;\n}\n.bi[data-v-014f8a86]::before {\n    font-size: 20px;\n}\n.task_style[data-v-014f8a86] {\n    font-size: 18px;\n    padding: 8px;\n}\n.category[data-v-014f8a86] {\n    width: 250px;\n    margin-right: 16px;\n}\n.user__click[data-v-014f8a86] {\n    color: #000;\n    font-size: 20px;\n    cursor: pointer;\n    font-weight: bold;\n}\n.user__click[data-v-014f8a86]:hover {\n    color: #cd2a01;\n    text-decoration: none;\n}\n.btn[data-v-014f8a86] {\n    padding: 8px;\n    background: #376DA6;\n    color: #fff;\n    height: 37px;\n}\n.selects[data-v-014f8a86] {\n    display: flex;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nspan[data-v-014f8a86] {\n    font-weight: bold;\n    font-size: 16px;\n}\n.bi[data-v-014f8a86] {\n    padding: 8px;\n    cursor: pointer;\n    color: red;\n}\n.bi[data-v-014f8a86]::before {\n    font-size: 20px;\n}\n.task_style[data-v-014f8a86] {\n    font-size: 18px;\n    padding: 8px;\n}\n.category[data-v-014f8a86] {\n    width: 250px;\n    margin-right: 16px;\n}\n.user__click[data-v-014f8a86] {\n    color: #000;\n    font-size: 20px;\n    cursor: pointer;\n    font-weight: bold;\n}\n.user__click[data-v-014f8a86]:hover {\n    color: #cd2a01;\n    text-decoration: none;\n}\n.btn[data-v-014f8a86] {\n    padding: 8px;\n    background: #376DA6;\n    color: #fff;\n    height: 37px;\n}\n.selects[data-v-014f8a86] {\n    display: flex;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

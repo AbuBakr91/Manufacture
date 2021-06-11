@@ -35,7 +35,7 @@
     </div>
     <div class="container">
         <h4 class="mt-3 text-center">ТЕХ ЗАДАНИЕ</h4>
-        <add-task :categories="category" :cards="technical_card" v-for="user in users[0]" :users="user"></add-task>
+        <add-task :categories="category[0]" v-for="user in users[0]" :users="user"></add-task>
     </div>
 </template>
 
@@ -54,10 +54,7 @@ export default {
             edit: false,
             alert: null,
             isSelect: false,
-            category: [
-                {id: 1, name: 'Ручной монтаж'},
-                {id: 2, name: 'Автоматический монтаж'}
-            ],
+            category: [],
             technical_card: [
                 {id: 1, name: 'LV-1-hand'},
                 {id: 2, name: 'Smart-Air-hand'}
@@ -66,20 +63,12 @@ export default {
     },
     mounted() {
         this.getUsers()
+        this.getCategory()
     },
     methods: {
       async  getUsers() {
           const data =  await axios.get('/api/users')
           this.users.push(data.data)
-        },
-        addUserList(data) {
-            this.users[0].push(data)
-            this.modal = false
-            this.alert = {
-                type: 'primary',
-                title: 'Успешно!',
-                text: `Пользователь с именем "${data.firstname} ${data.lastname}" успешно добавлен!`
-            }
         },
        async removeUser(id) {
            try {
@@ -99,7 +88,20 @@ export default {
                    text: e.message
                }
            }
-       }
+       },
+        addUserList(data) {
+            this.users[0].push(data)
+            this.modal = false
+            this.alert = {
+                type: 'primary',
+                title: 'Успешно!',
+                text: `Пользователь с именем "${data.firstname} ${data.lastname}" успешно добавлен!`
+            }
+        },
+      async  getCategory() {
+          const cat = await axios.get('/api/categories');
+          this.category.push(cat.data)
+        }
     },
   components: {AppAlert, UserModal, UserEdit, AddTask}
 }
