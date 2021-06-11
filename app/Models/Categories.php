@@ -12,4 +12,7 @@ class Categories extends Model
     protected $casts = [
         'created_at' => 'datetime'   // date | datetime | timestamp
     ];
+
+    protected $hidden = ['created_at', 'updated_at'];
+    public $timestamps = false;
 }
