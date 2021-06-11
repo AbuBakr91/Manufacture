@@ -36,7 +36,6 @@ class TechnicalCardSeeder extends Seeder
     {
         $technicalCard = $this->getDataApi();
 
-
         for ($i=0; $i<count($technicalCard); $i++) {
             if (!$technicalCard[$i]['archived']) {
                 $model{$i} = new TechnicalCards();
