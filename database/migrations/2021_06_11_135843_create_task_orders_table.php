@@ -15,8 +15,8 @@ class CreateTaskOrdersTable extends Migration
     {
         Schema::create('task_orders', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('dep_id')->default(null);
-            $table->unsignedBigInteger('user_id')->default(null);
+            $table->unsignedBigInteger('dep_id')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->bigInteger('count');
             $table->bigInteger('user_count');
             $table->foreign('dep_id')->references('id')->on('departments');

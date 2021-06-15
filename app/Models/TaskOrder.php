@@ -8,7 +8,4 @@ use Illuminate\Database\Eloquent\Model;
 class TaskOrder extends Model
 {
     use HasFactory;
-
-    protected $hidden = ['created_at', 'updated_at'];
-    public $timestamps = false;
 }

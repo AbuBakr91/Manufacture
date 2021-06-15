@@ -36,10 +36,10 @@ class ManagerTaskController extends Controller
     public function store(Request $request)
     {
         $model = new TaskOrder;
-        $request->dep_id ? $model->dep_id = $request->dep_id : $model->dep_id = $request->user_id;
+        $request->dep_id ? $model->dep_id = $request->dep_id : null;
         $request->user_id ? $model->user_id = $request->user_id : null;
-        $model->count = $request->count;
-        $model->user_count = $request->count;
+        $model->count = $request->counts;
+        $model->user_count = $request->counts;
         $model->save();
     }
 
