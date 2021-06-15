@@ -39,7 +39,7 @@ export default {
     },
     methods: {
       async addTask() {
-            await axios.post('api/manager-task', {
+            await axios.post('/api/manager-task', {
                 user_id: this.card_id,
                 counts: this.count,
             })
