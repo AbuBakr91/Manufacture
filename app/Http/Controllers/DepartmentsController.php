@@ -11,4 +11,9 @@ class DepartmentsController extends Controller
     {
         return Department::all();
     }
+
+    public function getUserNotDepartment()
+    {
+
+    }
 }

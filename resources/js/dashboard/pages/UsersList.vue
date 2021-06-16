@@ -13,7 +13,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-for="user in users[0]" :key="user.id">
+            <tr v-for="user in users" :key="user.id">
                 <td>{{user.firstname}}</td>
                 <td>{{user.lastname}}</td>
                 <td>{{user.slug}}</td>
@@ -35,7 +35,7 @@
     </div>
     <div class="container">
         <h4 class="mt-3 text-center">ТЕХ ЗАДАНИЕ</h4>
-        <add-task :categories="category[0]" v-for="department in departments[0]" :departments="department"></add-task>
+        <add-task :categories="category" v-for="department in departments" :departments="department"></add-task>
     </div>
 </template>
 
@@ -70,17 +70,17 @@ export default {
     methods: {
       async  getUsers() {
           const data =  await axios.get('/api/users')
-          this.users.push(data.data)
+          this.users.push(...data.data)
         },
         async  getDepartments() {
             const data =  await axios.get('/api/departments')
-            this.departments.push(data.data)
+            this.departments.push(...data.data)
         },
        async removeUser(id) {
            try {
-               const person = this.users[0].find(user => user.id === id)
+               const person = this.users.find(user => user.id === id)
                await axios.delete('/api/users/' + id)
-               this.users[0] = this.users[0].filter(user => user.id !== id)
+               this.users = this.users.filter(user => user.id !== id)
 
                this.alert = {
                    type: 'primary',
@@ -96,7 +96,7 @@ export default {
            }
        },
         addUserList(data) {
-            this.users[0].push(data)
+            this.users.push(data)
             this.modal = false
             this.alert = {
                 type: 'primary',
@@ -106,7 +106,7 @@ export default {
         },
       async  getCategory() {
           const cat = await axios.get('/api/categories');
-          this.category.push(cat.data)
+          this.category.push(...cat.data)
         }
     },
   components: {AppAlert, UserModal, UserEdit, AddTask}

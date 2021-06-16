@@ -4,7 +4,7 @@
         <div class="technical_task d-flex" v-if="arrayTask.length !== 0">
             <ul class="list-group list-group-numbered mb-2">
                 <li class="list-group-item" v-for="task in arrayTask">
-                    <span>Тех. карта:</span> {{task.name }} - <span>Количество:</span><b>{{ task.counts }}</b>
+                    <span>Тех. карта:</span> {{task.name }} - <span>Количество:</span><b>{{ task.count }}</b>
                     <i @click="removeTask(task.name)" class="bi bi-x-square-fill"></i>
                 </li>
             </ul>
@@ -16,7 +16,7 @@
             </select>
             <select class="form-control category" v-model="card_id" name="category" id="technical_card">
                 <option value="0">Выберите техкарту</option>
-                <option v-for="card in cards[0]" :value="card.id">{{card.name}}</option>
+                <option v-for="card in cards" :value="card.id">{{card.name}}</option>
             </select>
             <input type="number" class="form-control category" v-model="count" placeholder="Введите количество">
             <button class="btn" @click="addTask">Выставить</button>
@@ -33,14 +33,24 @@ export default {
             category: '0',
             cards: [],
             card_id: '0',
+            dep_id: this.departments.id,
             count: '',
             arrayTask: []
         }
     },
+    mounted() {
+        this.getTask()
+    },
     methods: {
-      async addTask() {
+        async getTask() {
+          const tasks = await axios.get('/api/manager-task')
+            this.arrayTask.push(...tasks.data)
+            console.log(this.arrayTask)
+        },
+        async addTask() {
             await axios.post('/api/manager-task', {
-                dep_id: this.card_id,
+                dep_id: this.dep_id,
+                card_id: this.card_id,
                 counts: this.count,
             })
             this.arrayTask.push({
@@ -55,11 +65,11 @@ export default {
         {
             if (this.cards.length === 0) {
                 const card = await axios.get('/api/cards/' + id)
-                this.cards.push(card.data)
+                this.cards.push(...card.data)
             } else {
                 this.cards.length = 0
                 const card = await axios.get('/api/cards/' + id)
-                this.cards.push(card.data)
+                this.cards.push(...card.data)
             }
         }
     }
