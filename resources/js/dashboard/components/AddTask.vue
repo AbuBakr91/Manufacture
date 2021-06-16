@@ -1,6 +1,6 @@
 <template>
     <div class="user__info mt-3 ml-3">
-        <a href="#" @click.prevent="isSelect = !isSelect" class="user__click">{{users.firstname}} {{users.lastname}}</a>
+        <a href="#" @click.prevent="isSelect = !isSelect" class="user__click">{{departments.name}}</a>
         <div class="technical_task d-flex" v-if="arrayTask.length !== 0">
             <ul class="list-group list-group-numbered mb-2">
                 <li class="list-group-item" v-for="task in arrayTask">
@@ -26,7 +26,7 @@
 
 <script>
 export default {
-    props: ['users', 'categories'],
+    props: ['departments', 'categories'],
     data() {
         return {
             isSelect: false,
@@ -40,7 +40,7 @@ export default {
     methods: {
       async addTask() {
             await axios.post('/api/manager-task', {
-                user_id: this.card_id,
+                dep_id: this.card_id,
                 counts: this.count,
             })
             this.arrayTask.push({
@@ -61,9 +61,6 @@ export default {
                 const card = await axios.get('/api/cards/' + id)
                 this.cards.push(card.data)
             }
-
-
-            console.log(this.cards)
         }
     }
 }

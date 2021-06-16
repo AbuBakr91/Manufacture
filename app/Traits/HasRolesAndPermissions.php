@@ -5,6 +5,7 @@ namespace App\Traits;
 
 use App\Models\Permission;
 use App\Models\Role;
+use App\Models\Department;
 
 trait HasRolesAndPermissions
 {
@@ -14,6 +15,12 @@ trait HasRolesAndPermissions
     public function roles()
     {
         return $this->belongsToMany(Role::class,'users_roles');
+    }
+
+
+    public function department()
+    {
+        return $this->belongsToMany(Department::class,'users_departments');
     }
 
     /**
@@ -28,9 +35,23 @@ trait HasRolesAndPermissions
      * @param mixed ...$roles
      * @return bool
      */
-    public function hasRole(... $roles ) {
+    public function hasRole(... $roles ): bool
+    {
         foreach ($roles as $role) {
             if ($this->roles->contains('slug', $role)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param ...$departments
+     * @return bool
+     */
+    public function hasDepartment(... $departments ) {
+        foreach ($departments as $department) {
+            if ($this->department->contains('id', $department)) {
                 return true;
             }
         }

@@ -16934,7 +16934,7 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ['users', 'categories'],
+  props: ['departments', 'categories'],
   data: function data() {
     return {
       isSelect: false,
@@ -16956,7 +16956,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               case 0:
                 _context.next = 2;
                 return axios.post('/api/manager-task', {
-                  user_id: _this.card_id,
+                  dep_id: _this.card_id,
                   counts: _this.count
                 });
 
@@ -17018,9 +17018,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 _this2.cards.push(_card.data);
 
               case 12:
-                console.log(_this2.cards);
-
-              case 13:
               case "end":
                 return _context2.stop();
             }
@@ -17381,6 +17378,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   data: function data() {
     return {
       users: [],
+      departments: [],
       modal: false,
       edit: false,
       alert: null,
@@ -17398,6 +17396,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   mounted: function mounted() {
     this.getUsers();
     this.getCategory();
+    this.getDepartments();
   },
   methods: {
     getUsers: function getUsers() {
@@ -17425,49 +17424,74 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee);
       }))();
     },
-    removeUser: function removeUser(id) {
+    getDepartments: function getDepartments() {
       var _this2 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
-        var person;
+        var data;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                _context2.prev = 0;
-                person = _this2.users[0].find(function (user) {
-                  return user.id === id;
-                });
-                _context2.next = 4;
-                return axios__WEBPACK_IMPORTED_MODULE_1___default().delete('/api/users/' + id);
+                _context2.next = 2;
+                return axios__WEBPACK_IMPORTED_MODULE_1___default().get('/api/departments');
+
+              case 2:
+                data = _context2.sent;
+
+                _this2.departments.push(data.data);
 
               case 4:
-                _this2.users[0] = _this2.users[0].filter(function (user) {
-                  return user.id !== id;
-                });
-                _this2.alert = {
-                  type: 'primary',
-                  title: 'Успешно!',
-                  text: "\u041F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C \u0441 \u0438\u043C\u0435\u043D\u0435\u043C \"".concat(person.firstname, " ").concat(person.lastname, "\" \u0443\u0441\u043F\u0435\u0448\u043D\u043E \u0443\u0434\u0430\u043B\u0435\u043D!")
-                };
-                _context2.next = 11;
-                break;
-
-              case 8:
-                _context2.prev = 8;
-                _context2.t0 = _context2["catch"](0);
-                _this2.alert = {
-                  type: 'danger',
-                  title: 'Ошбика!',
-                  text: _context2.t0.message
-                };
-
-              case 11:
               case "end":
                 return _context2.stop();
             }
           }
-        }, _callee2, null, [[0, 8]]);
+        }, _callee2);
+      }))();
+    },
+    removeUser: function removeUser(id) {
+      var _this3 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
+        var person;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.prev = 0;
+                person = _this3.users[0].find(function (user) {
+                  return user.id === id;
+                });
+                _context3.next = 4;
+                return axios__WEBPACK_IMPORTED_MODULE_1___default().delete('/api/users/' + id);
+
+              case 4:
+                _this3.users[0] = _this3.users[0].filter(function (user) {
+                  return user.id !== id;
+                });
+                _this3.alert = {
+                  type: 'primary',
+                  title: 'Успешно!',
+                  text: "\u041F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C \u0441 \u0438\u043C\u0435\u043D\u0435\u043C \"".concat(person.firstname, " ").concat(person.lastname, "\" \u0443\u0441\u043F\u0435\u0448\u043D\u043E \u0443\u0434\u0430\u043B\u0435\u043D!")
+                };
+                _context3.next = 11;
+                break;
+
+              case 8:
+                _context3.prev = 8;
+                _context3.t0 = _context3["catch"](0);
+                _this3.alert = {
+                  type: 'danger',
+                  title: 'Ошбика!',
+                  text: _context3.t0.message
+                };
+
+              case 11:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, null, [[0, 8]]);
       }))();
     },
     addUserList: function addUserList(data) {
@@ -17480,28 +17504,28 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       };
     },
     getCategory: function getCategory() {
-      var _this3 = this;
+      var _this4 = this;
 
-      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4() {
         var cat;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context4.prev = _context4.next) {
               case 0:
-                _context3.next = 2;
+                _context4.next = 2;
                 return axios__WEBPACK_IMPORTED_MODULE_1___default().get('/api/categories');
 
               case 2:
-                cat = _context3.sent;
+                cat = _context4.sent;
 
-                _this3.category.push(cat.data);
+                _this4.category.push(cat.data);
 
               case 4:
               case "end":
-                return _context3.stop();
+                return _context4.stop();
             }
           }
-        }, _callee3);
+        }, _callee4);
       }))();
     }
   },
@@ -17951,7 +17975,7 @@ var render = /*#__PURE__*/_withId(function (_ctx, _cache, $props, $setup, $data,
       return $data.isSelect = !$data.isSelect;
     }, ["prevent"])),
     "class": "user__click"
-  }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.users.firstname) + " " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.users.lastname), 1
+  }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.departments.name), 1
   /* TEXT */
   ), $data.arrayTask.length !== 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("ul", _hoisted_3, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.arrayTask, function (task) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("li", _hoisted_4, [_hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(task.name) + " - ", 1
@@ -19111,13 +19135,13 @@ var render = /*#__PURE__*/_withId(function (_ctx, _cache, $props, $setup, $data,
     })
   }, null, 8
   /* PROPS */
-  , ["onUser"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_10, [_hoisted_11, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.users[0], function (user) {
+  , ["onUser"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_10, [_hoisted_11, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.departments[0], function (department) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_add_task, {
       categories: $data.category[0],
-      users: user
+      departments: department
     }, null, 8
     /* PROPS */
-    , ["categories", "users"]);
+    , ["categories", "departments"]);
   }), 256
   /* UNKEYED_FRAGMENT */
   ))])], 64

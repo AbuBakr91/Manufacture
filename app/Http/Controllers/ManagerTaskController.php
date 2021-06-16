@@ -85,6 +85,6 @@ class ManagerTaskController extends Controller
      */
     public function destroy($id)
     {
-        //
+
     }
 }

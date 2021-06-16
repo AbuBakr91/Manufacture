@@ -35,7 +35,7 @@
     </div>
     <div class="container">
         <h4 class="mt-3 text-center">ТЕХ ЗАДАНИЕ</h4>
-        <add-task :categories="category[0]" v-for="user in users[0]" :users="user"></add-task>
+        <add-task :categories="category[0]" v-for="department in departments[0]" :departments="department"></add-task>
     </div>
 </template>
 
@@ -50,6 +50,7 @@ export default {
     data() {
         return {
             users: [],
+            departments: [],
             modal: false,
             edit: false,
             alert: null,
@@ -64,11 +65,16 @@ export default {
     mounted() {
         this.getUsers()
         this.getCategory()
+        this.getDepartments()
     },
     methods: {
       async  getUsers() {
           const data =  await axios.get('/api/users')
           this.users.push(data.data)
+        },
+        async  getDepartments() {
+            const data =  await axios.get('/api/departments')
+            this.departments.push(data.data)
         },
        async removeUser(id) {
            try {

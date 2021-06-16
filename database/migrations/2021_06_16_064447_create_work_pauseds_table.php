@@ -13,7 +13,7 @@ class CreateWorkPausedsTable extends Migration
      */
     public function up()
     {
-        Schema::create('work_pauseds', function (Blueprint $table) {
+        Schema::create('work_paused', function (Blueprint $table) {
             $table->id();
             $table->dateTime('pause_begin');
             $table->dateTime('pause_finish');
