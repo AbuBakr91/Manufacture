@@ -21,8 +21,8 @@
                     <div class="row mt-5 content_start" v-if="!start">
                         <div class="col-8">
                             <h4 class="text-center">Задание от руководителя:</h4>
-                            <select class="form-control form-control-lg">
-                                <option v-for="task in taskManager" :value="task.id">{{task.name}} - {{task.user_count}} шт.</option>
+                            <select class="form-control form-control-lg" v-model="card">
+                                <option v-for="task in taskManager" :value="task.name">{{task.name}} - {{task.user_count}} шт.</option>
                             </select>
                         </div>
                         <div class="col-8 mt-3">
@@ -34,11 +34,11 @@
                             </select>
                         </div>
                         <div class="col-8 mt-5 d-flex justify-content-center">
-                            <button class="btn primary btn_start" @click="start = !start" type="submit">START</button>
+                            <button class="btn primary btn_start" @click="startWork" type="submit">START</button>
                         </div>
                     </div>
                     <div class="row mt-5" v-if="start">
-                        <h2 class="text-center mb-5">Название тех.карты: <b>Smart-Air-hand</b></h2>
+                        <h2 class="text-center mb-5">Название тех.карты: <b>{{card}}</b></h2>
                         <div class="col-8 m-auto content_stop mt-5">
                             <button class="btn btn_pause" @click="pause = !pause" v-html="pause ? pauseIcon : 'PAUSE'" type="submit"></button>
                             <button class="btn btn_pause" @click="waiting = !waiting" v-html="waiting ? pauseIcon : 'Ожидание'" type="submit"></button>
@@ -61,6 +61,7 @@ import AppModal from "../components/AppModal";
 export default {
     data() {
         return {
+            card: '',
             modal:false,
             start: false,
             pause: false,
@@ -76,10 +77,6 @@ export default {
         getNow() {
             this.dataTime = new Date().toLocaleTimeString()
         },
-        stopFuture() {
-            this.start = !this.start
-            this.modal = !this.modal
-        },
         printRole(slug) {
           if (slug === 'collector') {
             return 'Сборщик'
@@ -92,13 +89,21 @@ export default {
             const tasks = await axios.get('api/user_task/' + this.user.department_id)
             this.taskManager.push(...tasks.data)
             console.log(this.taskManager)
+        },
+        stopFuture() {
+            this.start = !this.start
+            this.modal = !this.modal
+            console.log(localStorage.start)
+            console.log('start', this.start)
+        },
+        startWork() {
+            this.start = !this.start
         }
     },
     mounted() {
         if(this.role === 'manager') {
             this.$router.push('/manager')
         }
-
         this.getTask()
     },
     created() {

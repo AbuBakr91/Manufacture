@@ -17,8 +17,10 @@ class CreateWorkTimesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('card_id');
+            $table->bigInteger('count')->nullable();
+            $table->bigInteger('defect')->default();
             $table->dateTime('begin');
-            $table->dateTime('finish');
+            $table->dateTime('finish')->nullable();
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('card_id')->references('id')->on('technical_cards');
             $table->timestamps();

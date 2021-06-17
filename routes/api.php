@@ -35,3 +35,4 @@ Route::get("categories", [CategoryController::class, 'index']);
 Route::get("departments", [DepartmentsController::class, 'index']);
 Route::resource('users', UserController::class);
 Route::resource('manager-task', ManagerTaskController::class);
+Route::resource('work-time', WorkTimeController::class);

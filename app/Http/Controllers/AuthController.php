@@ -35,9 +35,9 @@ class AuthController extends Controller
     protected function getUserAndRole($email)
     {
         return DB::table('users')
-            ->join('users_roles', 'users.id', '=', 'users_roles.user_id')
-            ->join('roles', 'roles.id', '=', 'users_roles.role_id')
-            ->join('users_departments', 'users_departments.user_id', '=', 'users.id')
+            ->leftJoin('users_roles', 'users.id', '=', 'users_roles.user_id')
+            ->leftJoin('roles', 'roles.id', '=', 'users_roles.role_id')
+            ->leftJoin('users_departments', 'users_departments.user_id', '=', 'users.id')
             ->select('users_departments.department_id', 'users.id', 'users.firstname', 'users.lastname', 'roles.slug')
             ->where('users.email', $email)
             ->get();
