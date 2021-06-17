@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\TaskOrder;
 use Illuminate\Support\Facades\DB;
 
-class ManagerTaskController extends Controller
+class DepartmentTaskController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,7 +15,7 @@ class ManagerTaskController extends Controller
      */
     public function index()
     {
-        return TaskOrder::all();
+        //
     }
 
     /**
@@ -36,13 +36,7 @@ class ManagerTaskController extends Controller
      */
     public function store(Request $request)
     {
-        $model = new TaskOrder;
-        $request->dep_id ? $model->dep_id = $request->dep_id : null;
-        $request->user_id ? $model->user_id = $request->user_id : null;
-        $model->count = $request->counts;
-        $model->user_count = $request->counts;
-        $model->card_id = $request->card_id;
-        $model->save();
+        //
     }
 
     /**
@@ -55,7 +49,7 @@ class ManagerTaskController extends Controller
     {
         return DB::table('task_orders')
             ->join('technical_cards', 'task_orders.card_id', '=', 'technical_cards.id')
-            ->select('task_orders.id', 'task_orders.dep_id', 'task_orders.count', 'task_orders.card_id', 'technical_cards.name')
+            ->select('task_orders.id', 'task_orders.user_count', 'task_orders.card_id', 'technical_cards.name')
             ->where('task_orders.dep_id',  $id)
             ->where('task_orders.user_count', '!=', 0)
             ->get();
@@ -92,7 +86,6 @@ class ManagerTaskController extends Controller
      */
     public function destroy($id)
     {
-        $task = TaskOrder::find($id);
-        $task->delete();
+        //
     }
 }

@@ -35,13 +35,13 @@ export default {
     actions: {
         async login({commit}, payload) {
             const router = useRouter()
-        const {data} = await axios.post('/api/login', {...payload, returnSecureToken: true})
-            if (data.status) {
-                commit('setToken', data.token)
-                commit('setRole', data.user.slug)
-                commit('setUser', JSON.stringify(data.user))
+            const {data} = await axios.post('/api/login', {...payload, returnSecureToken: true})
+                if (data.status) {
+                    commit('setToken', data.token)
+                    commit('setRole', data.user.slug)
+                    commit('setUser', JSON.stringify(data.user))
+                }
             }
-        }
     },
     getters: {
         token(state) {

@@ -4,8 +4,8 @@
         <div class="technical_task d-flex" v-if="arrayTask.length !== 0">
             <ul class="list-group list-group-numbered mb-2">
                 <li class="list-group-item" v-for="task in arrayTask">
-                    <span>Тех. карта:</span> {{task.name }} - <span>Количество:</span><b>{{ task.count }}</b>
-                    <i @click="removeTask(task.name)" class="bi bi-x-square-fill"></i>
+                    <span>Тех. карта:</span> {{ task.name }} - <span>Количество:</span><b>{{ task.count }}</b>
+                    <i @click="removeTask(task.id)" class="bi bi-x-square-fill"></i>
                 </li>
             </ul>
         </div>
@@ -43,9 +43,8 @@ export default {
     },
     methods: {
         async getTask() {
-          const tasks = await axios.get('/api/manager-task')
+          const tasks = await axios.get('/api/manager-task/' + this.dep_id)
             this.arrayTask.push(...tasks.data)
-            console.log(this.arrayTask)
         },
         async addTask() {
             await axios.post('/api/manager-task', {
@@ -58,8 +57,9 @@ export default {
             })
             this.isSelect = !this.isSelect
         },
-        removeTask(name) {
-            this.arrayTask = this.arrayTask.filter(task => task.name !== name)
+        async removeTask(id) {
+            await axios.delete('/api/manager-task/' + id)
+            this.arrayTask = this.arrayTask.filter(task => task.id !== id)
         },
         async getCards(id)
         {
@@ -71,6 +71,11 @@ export default {
                 const card = await axios.get('/api/cards/' + id)
                 this.cards.push(...card.data)
             }
+        },
+        async getCardName(id) {
+            const card = await axios.get('/api/tech_card/' + id)
+            console.log(card.data.name)
+            return "df"
         }
     }
 }

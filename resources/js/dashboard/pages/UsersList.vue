@@ -35,7 +35,7 @@
     </div>
     <div class="container">
         <h4 class="mt-3 text-center">ТЕХ ЗАДАНИЕ</h4>
-        <add-task :categories="category" v-for="department in departments" :departments="department"></add-task>
+        <add-task :categories="category" v-for="department in departments" :tasks="arrayTask" :departments="department"></add-task>
     </div>
 </template>
 
@@ -54,6 +54,7 @@ export default {
             modal: false,
             edit: false,
             alert: null,
+            arrayTask: [],
             isSelect: false,
             category: [],
             technical_card: [
@@ -66,8 +67,13 @@ export default {
         this.getUsers()
         this.getCategory()
         this.getDepartments()
+        this.getTask()
     },
     methods: {
+        async getTask() {
+            const tasks = await axios.get('/api/manager-task')
+            this.arrayTask.push(...tasks.data)
+        },
       async  getUsers() {
           const data =  await axios.get('/api/users')
           this.users.push(...data.data)
