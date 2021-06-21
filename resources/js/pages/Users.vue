@@ -22,7 +22,7 @@
                         <div class="col-8">
                             <h4 class="text-center">Задание от руководителя:</h4>
                             <select class="form-control form-control-lg" v-model="card">
-                                <option v-for="task in taskManager" :value="task.name">{{task.name}} - {{task.user_count}} шт.</option>
+                                <option v-for="task in taskManager" :value="task.id">{{task.name}} - {{task.user_count}} шт.</option>
                             </select>
                         </div>
                         <div class="col-8 mt-3">
@@ -90,13 +90,23 @@ export default {
             this.taskManager.push(...tasks.data)
             console.log(this.taskManager)
         },
-        stopFuture() {
+        async stopFuture() {
+
             this.start = !this.start
             this.modal = !this.modal
             console.log(localStorage.start)
-            console.log('start', this.start)
         },
-        startWork() {
+        async startStatus() {
+            const start = await axios.get('api/task-status/' + this.user.id)
+            this.start = start
+        },
+       async startWork() {
+            const start = await axios.post('api/work-time', {
+                task_id: this.card,
+                begin : true,
+                user_id : this.user.id
+            })
+
             this.start = !this.start
         }
     },
@@ -105,6 +115,7 @@ export default {
             this.$router.push('/manager')
         }
         this.getTask()
+        this.startStatus()
     },
     created() {
         setInterval(this.getNow, 1000);

@@ -10,6 +10,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ManagerTaskController;
 use App\Http\Controllers\DepartmentsController;
 use App\Http\Controllers\DepartmentTaskController;
+use App\Http\Controllers\WorkTimeController;
+use App\Http\Controllers\TaskController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,6 +33,7 @@ Route::resource("user_task", DepartmentTaskController::class);
 Route::post("login", [AuthController::class, 'login']);
 Route::get("cards", [CardController::class, 'index']);
 Route::get("cards/{id}", [CardController::class, 'getCardByCategory']);
+Route::get("task-status/{id}", [TaskController::class, 'taskStatusUser']);
 Route::get("categories", [CategoryController::class, 'index']);
 Route::get("departments", [DepartmentsController::class, 'index']);
 Route::resource('users', UserController::class);

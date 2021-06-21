@@ -20,6 +20,7 @@ class CreateTaskOrdersTable extends Migration
             $table->bigInteger('count');
             $table->bigInteger('user_count');
             $table->unsignedBigInteger('card_id');
+            $table->boolean('in_work');
             $table->foreign('card_id')->references('id')->on('technical_cards');
             $table->foreign('dep_id')->references('id')->on('departments');
             $table->foreign('user_id')->references('id')->on('users');

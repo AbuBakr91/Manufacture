@@ -56,6 +56,7 @@ export default {
                 name: this.card_id, counts: this.count
             })
             this.isSelect = !this.isSelect
+            window.location.reload();
         },
         async removeTask(id) {
             await axios.delete('/api/manager-task/' + id)

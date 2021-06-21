@@ -17,7 +17,10 @@ class CreatePerformingTasksTable extends Migration
             $table->id();
             $table->unsignedBigInteger('task_id');
             $table->unsignedBigInteger('user_id');
-            $table->bigInteger('count');
+            $table->bigInteger('count')->nullable();
+            $table->bigInteger('defects')->nullable();
+            $table->dateTime('begin');
+            $table->dateTime('finish')->nullable();
             $table->foreign('task_id')->references('id')->on('task_orders');
             $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();

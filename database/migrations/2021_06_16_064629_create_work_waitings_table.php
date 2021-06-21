@@ -17,8 +17,8 @@ class CreateWorkWaitingsTable extends Migration
             $table->id();
             $table->dateTime('waiting_begin');
             $table->dateTime('waiting_finish');
-            $table->unsignedBigInteger('work_time_id');
-            $table->foreign('work_time_id')->references('id')->on('work_times');
+            $table->unsignedBigInteger('work_id');
+            $table->foreign('work_id')->references('id')->on('performing_tasks');
             $table->timestamps();
         });
     }

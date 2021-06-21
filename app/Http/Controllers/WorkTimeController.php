@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Models\WorkTime;
+use App\Models\PerformingTasks;
+use App\Models\TaskOrder;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\VarDumper\Cloner\Data;
+use function GuzzleHttp\Promise\task;
 
 class WorkTimeController extends Controller
 {
@@ -37,11 +40,43 @@ class WorkTimeController extends Controller
      */
     public function store(Request $request)
     {
-        $workTime = new WorkTime;
 
-        $workTime->user_id = $request->user_id;
-        $workTime->card_id = $request->card_id;
-        $workTime->begin = Carbon::now();
+        if ($request->begin) {
+            $workTime = new PerformingTasks;
+            $task = TaskOrder::find($request->task_id);
+            $task->update(['in_work' => true]);
+            $workTime->task_id = $request->task_id;
+            $workTime->user_id = $request->user_id;
+            $workTime->begin = Carbon::now();
+            $workTime->save();
+        }
+
+        if ($request->finish) {
+
+             $workTime = PerformingTasks::where('user_id', $request->user_id)
+                ->where('count', null)
+                ->where('finish', null);
+
+            $task_id = DB::table('performing_tasks')
+                ->select('task_id')
+                ->where('user_id', $request->user_id)
+                ->where('count', null)
+                ->where('finish', null)->get();
+
+            $status = $workTime->update([
+                'count' => $request->count,
+                'finish' => Carbon::now()
+            ]);
+
+
+            if ($status) {
+                $task = TaskOrder::find($task_id[0]->task_id);
+                $task->update([
+                    'in_work' => false,
+                    'user_count' => $task->user_count - $request->count
+                ]);
+            }
+        }
 
     }
 

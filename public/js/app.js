@@ -17011,8 +17011,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 });
 
                 _this2.isSelect = !_this2.isSelect;
+                window.location.reload();
 
-              case 4:
+              case 5:
               case "end":
                 return _context2.stop();
             }
@@ -17850,13 +17851,76 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     stopFuture: function stopFuture() {
-      this.start = !this.start;
-      this.modal = !this.modal;
-      console.log(localStorage.start);
-      console.log('start', this.start);
+      var _this2 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _this2.start = !_this2.start;
+                _this2.modal = !_this2.modal;
+                console.log(localStorage.start);
+
+              case 3:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }))();
+    },
+    startStatus: function startStatus() {
+      var _this3 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee3() {
+        var start;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.next = 2;
+                return axios.get('api/task-status/' + _this3.user.id);
+
+              case 2:
+                start = _context3.sent;
+                _this3.start = start;
+
+              case 4:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3);
+      }))();
     },
     startWork: function startWork() {
-      this.start = !this.start;
+      var _this4 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee4() {
+        var start;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                _context4.next = 2;
+                return axios.post('api/work-time', {
+                  task_id: _this4.card,
+                  begin: true,
+                  user_id: _this4.user.id
+                });
+
+              case 2:
+                start = _context4.sent;
+                _this4.start = !_this4.start;
+
+              case 4:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4);
+      }))();
     }
   },
   mounted: function mounted() {
@@ -17865,6 +17929,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     }
 
     this.getTask();
+    this.startStatus();
   },
   created: function created() {
     setInterval(this.getNow, 1000);
@@ -19659,7 +19724,7 @@ var render = /*#__PURE__*/_withId(function (_ctx, _cache, $props, $setup, $data,
     })
   }, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.taskManager, function (task) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("option", {
-      value: task.name
+      value: task.id
     }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(task.name) + " - " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(task.user_count) + " шт.", 9
     /* TEXT, PROPS */
     , ["value"]);

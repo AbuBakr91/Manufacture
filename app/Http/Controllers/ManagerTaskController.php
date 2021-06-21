@@ -42,6 +42,7 @@ class ManagerTaskController extends Controller
         $model->count = $request->counts;
         $model->user_count = $request->counts;
         $model->card_id = $request->card_id;
+        $model->in_work = false;
         $model->save();
     }
 
