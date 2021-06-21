@@ -41,11 +41,11 @@
                     <div class="row mt-5" v-if="start">
                         <h2 class="text-center mb-5">Название тех.карты: <b>{{currentTask[0].name}} Количество: {{currentTask[0].user_count}}</b></h2>
                         <div class="col-8 m-auto content_stop mt-5">
-                            <button class="btn btn_pause" @click="pause = !pause" v-html="pause ? pauseIcon : 'PAUSE'" type="submit"></button>
-                            <button class="btn btn_pause" @click="waiting = !waiting" v-html="waiting ? pauseIcon : 'Ожидание'" type="submit"></button>
+                            <button class="btn btn_pause" :disabled="waiting" @click="addPaused" v-html="pause ? pauseIcon : 'PAUSE'" type="submit"></button>
+                            <button class="btn btn_pause" :disabled="pause" @click="addWaiting" v-html="waiting ? pauseIcon : 'Ожидание'" type="submit"></button>
                         </div>
                         <div class="col-12 d-flex justify-content-center mt-5">
-                            <button class="btn btn_stop float-center" @click="stopFuture" type="submit">STOP</button>
+                            <button class="btn btn_stop float-center" :disabled="waiting || pause" @click="stopFuture" type="submit">STOP</button>
                         </div>
                     </div>
                 </div>
@@ -90,20 +90,65 @@ export default {
         },
         async getTask() {
             const tasks = await axios.get('api/user_task/' + this.user.department_id)
-            this.taskManager.push(tasks.data)
-            console.log(this.taskManager)
+            this.taskManager.push(...tasks.data)
+        },
+        async addPaused() {
+            if (!this.pause) {
+                const paused = await axios.post('api/add-paused/', {
+                    begin: true,
+                    work_id: this.currentTask[0].id
+                })
+
+                this.pause = true
+            } else {
+                const paused = await axios.post('api/add-paused/', {
+                    finish: true,
+                    work_id: this.currentTask[0].id
+                })
+
+                this.pause = false
+            }
+        },
+        async addWaiting() {
+            if (!this.waiting) {
+                const waiting = await axios.post('api/add-waiting/', {
+                    begin: true,
+                    work_id: this.currentTask[0].id
+                })
+
+                this.waiting = true
+            } else {
+                const waiting = await axios.post('api/add-waiting/', {
+                    finish: true,
+                    work_id: this.currentTask[0].id
+                })
+
+                this.waiting = false
+            }
         },
         async stopFuture() {
             this.start = !this.start
             this.modal = !this.modal
-            console.log(localStorage.start)
         },
         async startStatus() {
             const start = await axios.get('api/task-status/' + this.user.id)
-            if (start) {
-                this.start = start
+            if (start.data.start) {
+                this.start = true
+            } else {
+                this.start = false
             }
-            this.start = false
+
+            if (start.data.paused) {
+                this.pause = true
+            } else {
+                this.pause = false
+            }
+
+            if (start.data.waiting) {
+                this.waiting = true
+            } else {
+                this.waiting = false
+            }
         },
         async currentTasks() {
             const task = await axios.get('api/current-task/' + this.user.id)
@@ -116,7 +161,7 @@ export default {
                 user_id : this.user.id
             })
 
-            this.start = !this.start
+           window.location.reload();
         }
     },
     mounted() {
@@ -126,6 +171,7 @@ export default {
         this.getTask()
         this.startStatus()
         this.currentTasks()
+        console.log('pause:',this.waiting)
     },
     created() {
         setInterval(this.getNow, 1000);
@@ -172,6 +218,14 @@ export default {
     padding: 4px;
     width: 140px;
     height: 70px;
+}
+
+.btn:disabled {
+    cursor: not-allowed;
+    opacity: 1!important;
+    background: #b7b881 !important;
+    border-color: #ddd!important;
+    /*color: #999!important;*/
 }
 
 .btn_stop:focus, .btn_pause:focus {

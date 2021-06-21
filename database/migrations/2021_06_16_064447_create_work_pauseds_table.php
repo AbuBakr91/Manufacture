@@ -16,7 +16,7 @@ class CreateWorkPausedsTable extends Migration
         Schema::create('work_paused', function (Blueprint $table) {
             $table->id();
             $table->dateTime('pause_begin');
-            $table->dateTime('pause_finish');
+            $table->dateTime('pause_finish')->nullable();
             $table->unsignedBigInteger('work_id');
             $table->foreign('work_id')->references('id')->on('performing_tasks');
             $table->timestamps();

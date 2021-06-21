@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class WorkPaused extends Model
 {
     use HasFactory;
+
+    protected $table = 'work_paused';
 }

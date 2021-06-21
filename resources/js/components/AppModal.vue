@@ -30,7 +30,7 @@ export default {
     emits:['close'],
     data() {
         return {
-            count: 10,
+            count: '',
             defects: 0,
             user: JSON.parse(store.state.auth.user),
         }
@@ -44,6 +44,7 @@ export default {
                 defects: this.defects
             })
             this.$emit('close')
+            window.location.reload();
         }
     },
     mounted() {

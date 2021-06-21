@@ -31,6 +31,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::resource("tech_card", TechnicalCardController::class);
 Route::resource("user_task", DepartmentTaskController::class);
 Route::post("login", [AuthController::class, 'login']);
+Route::post("add-paused", [TaskController::class, 'addPaused']);
+Route::post("add-waiting", [TaskController::class, 'addWaiting']);
 Route::get("cards", [CardController::class, 'index']);
 Route::get("cards/{id}", [CardController::class, 'getCardByCategory']);
 Route::get("task-status/{id}", [TaskController::class, 'taskStatusUser']);

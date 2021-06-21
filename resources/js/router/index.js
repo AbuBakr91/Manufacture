@@ -8,6 +8,7 @@ import UsersList from "../dashboard/pages/UsersList"
 import DashboardHome from "../dashboard/components/DashboardHome";
 import ManagerProfile from "../dashboard/pages/ManagerProfile";
 import TechnicalCard from "../dashboard/pages/TechnicalCard"
+import UserWorks from "../dashboard/pages/UserWorks"
 
 const routes = [
     {
@@ -44,6 +45,11 @@ const routes = [
                 component: ManagerProfile
             },
             {
+                name: 'user-work',
+                path: 'user-work',
+                component: UserWorks
+            },
+            {
                 name: 'listmap',
                 path: 'listmap',
                 component: TechnicalCard
@@ -73,6 +79,7 @@ const routes = [
 const router = createRouter({
     history: createWebHistory(),
     routes,
+    linkActiveClass: "active"
 });
 
 router.beforeEach((to, from, next) => {

@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class WorkWaiting extends Model
 {
     use HasFactory;
+
+    protected $table = 'work_waiting';
 }

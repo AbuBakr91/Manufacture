@@ -10,8 +10,8 @@
                     Pages
                 </li>
 
-                <li class="sidebar-item active">
-                    <router-link :to="{ path: `/manager/`}" class="sidebar-link">
+                <li class="sidebar-item" >
+                    <router-link :to="{ path: `/manager/`}" :active="isActive" class="sidebar-link">
                         <i class="align-middle" data-feather="sliders"></i> <span class="align-middle">Панель</span>
                     </router-link>
                 </li>
@@ -25,6 +25,12 @@
                 <li class="sidebar-item">
                     <router-link :to="{ path: `/manager/users/`}" class="sidebar-link">
                         <i class="align-middle" data-feather="users"></i> <span class="align-middle">Сотрудники</span>
+                    </router-link >
+                </li>
+
+                <li class="sidebar-item">
+                    <router-link :to="{ path: `/manager/user-work/`}" class="sidebar-link">
+                        <i class="align-middle" data-feather="check-square"></i> <span class="align-middle">Тех. операции</span>
                     </router-link >
                 </li>
 

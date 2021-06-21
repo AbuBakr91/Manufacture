@@ -16,7 +16,7 @@ class CreateWorkWaitingsTable extends Migration
         Schema::create('work_waiting', function (Blueprint $table) {
             $table->id();
             $table->dateTime('waiting_begin');
-            $table->dateTime('waiting_finish');
+            $table->dateTime('waiting_finish')->nullable();
             $table->unsignedBigInteger('work_id');
             $table->foreign('work_id')->references('id')->on('performing_tasks');
             $table->timestamps();
