@@ -65,6 +65,7 @@ class WorkTimeController extends Controller
 
             $status = $workTime->update([
                 'count' => $request->count,
+                'defects' => $request->defects,
                 'finish' => Carbon::now()
             ]);
 

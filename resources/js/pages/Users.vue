@@ -22,7 +22,8 @@
                         <div class="col-8">
                             <h4 class="text-center">Задание от руководителя:</h4>
                             <select class="form-control form-control-lg" v-model="card">
-                                <option v-for="task in taskManager" :value="task.id">{{task.name}} - {{task.user_count}} шт.</option>
+                                <option value="selected">Выберите тех.карту</option>
+                                <option v-for="task in taskManager" :value="task.id">{{task.name}} {{task.user_count}}</option>
                             </select>
                         </div>
                         <div class="col-8 mt-3">
@@ -38,7 +39,7 @@
                         </div>
                     </div>
                     <div class="row mt-5" v-if="start">
-                        <h2 class="text-center mb-5">Название тех.карты: <b>{{card}}</b></h2>
+                        <h2 class="text-center mb-5">Название тех.карты: <b>{{currentTask[0].name}} Количество: {{currentTask[0].user_count}}</b></h2>
                         <div class="col-8 m-auto content_stop mt-5">
                             <button class="btn btn_pause" @click="pause = !pause" v-html="pause ? pauseIcon : 'PAUSE'" type="submit"></button>
                             <button class="btn btn_pause" @click="waiting = !waiting" v-html="waiting ? pauseIcon : 'Ожидание'" type="submit"></button>
@@ -51,21 +52,23 @@
             </div>
         </div>
     </div>
-    <app-modal v-if="modal" @close="modal = false"></app-modal>
+    <app-modal v-if="modal" :task="currentTask[0].name" @close="modal = false"></app-modal>
 </template>
 
 <script>
 import store from "../store"
 import AppHeader from "../Components/AppHeader";
 import AppModal from "../components/AppModal";
+
 export default {
     data() {
         return {
-            card: '',
-            modal:false,
+            card: 'selected',
+            modal: false,
             start: false,
             pause: false,
             waiting: false,
+            currentTask: [],
             dataTime: '',
             taskManager: [],
             user: JSON.parse(store.state.auth.user),
@@ -87,18 +90,24 @@ export default {
         },
         async getTask() {
             const tasks = await axios.get('api/user_task/' + this.user.department_id)
-            this.taskManager.push(...tasks.data)
+            this.taskManager.push(tasks.data)
             console.log(this.taskManager)
         },
         async stopFuture() {
-
             this.start = !this.start
             this.modal = !this.modal
             console.log(localStorage.start)
         },
         async startStatus() {
             const start = await axios.get('api/task-status/' + this.user.id)
-            this.start = start
+            if (start) {
+                this.start = start
+            }
+            this.start = false
+        },
+        async currentTasks() {
+            const task = await axios.get('api/current-task/' + this.user.id)
+            this.currentTask.push(...task.data)
         },
        async startWork() {
             const start = await axios.post('api/work-time', {
@@ -116,6 +125,7 @@ export default {
         }
         this.getTask()
         this.startStatus()
+        this.currentTasks()
     },
     created() {
         setInterval(this.getNow, 1000);

@@ -34,6 +34,7 @@ Route::post("login", [AuthController::class, 'login']);
 Route::get("cards", [CardController::class, 'index']);
 Route::get("cards/{id}", [CardController::class, 'getCardByCategory']);
 Route::get("task-status/{id}", [TaskController::class, 'taskStatusUser']);
+Route::get("current-task/{id}", [TaskController::class, 'currentTask']);
 Route::get("categories", [CategoryController::class, 'index']);
 Route::get("departments", [DepartmentsController::class, 'index']);
 Route::resource('users', UserController::class);
