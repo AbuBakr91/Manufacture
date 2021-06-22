@@ -35,8 +35,14 @@
                 </li>
 
                 <li class="sidebar-item">
-                    <router-link :to="{ path: `/manager/listmap`}" class="sidebar-link">
+                    <router-link :to="{ path: `/manager/list-map`}" class="sidebar-link">
                         <i class="align-middle" data-feather="list"></i> <span class="align-middle">Тех. карты</span>
+                    </router-link>
+                </li>
+
+                <li class="sidebar-item">
+                    <router-link :to="{ path: `/manager/journal`}" class="sidebar-link">
+                        <i class="align-middle" data-feather="clipboard"></i> <span class="align-middle">Журнал</span>
                     </router-link>
                 </li>
 

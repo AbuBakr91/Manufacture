@@ -2,9 +2,20 @@
     <div class="container mt-3">
         <div class="row">
             <div class="col-8">
-                <h5 v-for="card in cards[0]">
-                    {{card.name}}
-                </h5>
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Название</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(card,i) in cards[0]">
+                            <td >{{i+1}}</td>
+                            <td>{{card.name}}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

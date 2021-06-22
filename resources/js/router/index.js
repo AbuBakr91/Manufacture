@@ -9,6 +9,7 @@ import DashboardHome from "../dashboard/components/DashboardHome";
 import ManagerProfile from "../dashboard/pages/ManagerProfile";
 import TechnicalCard from "../dashboard/pages/TechnicalCard"
 import UserWorks from "../dashboard/pages/UserWorks"
+import RecordTask from "../dashboard/pages/RecordTask"
 
 const routes = [
     {
@@ -50,9 +51,14 @@ const routes = [
                 component: UserWorks
             },
             {
-                name: 'listmap',
-                path: 'listmap',
+                name: 'list-map',
+                path: 'list-map',
                 component: TechnicalCard
+            },
+            {
+                name: 'journal',
+                path: 'journal',
+                component: RecordTask
             }
         ]
     },
