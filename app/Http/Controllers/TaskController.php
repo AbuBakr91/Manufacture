@@ -41,6 +41,10 @@ class TaskController extends Controller
         ]);
     }
 
+    /**
+     * @param $user_id
+     * @return \Illuminate\Support\Collection
+     */
     public function currentTask($user_id): \Illuminate\Support\Collection
     {
         $currentTask = DB::table('performing_tasks')
@@ -52,6 +56,9 @@ class TaskController extends Controller
         return $currentTask ?  $currentTask :  false;
     }
 
+    /**
+     * @param Request $request
+     */
     public function addPaused(Request $request)
     {
         if ($request->begin) {
@@ -70,7 +77,9 @@ class TaskController extends Controller
         }
     }
 
-
+    /**
+     * @param Request $request
+     */
     public function addWaiting(Request $request)
     {
         if ($request->begin) {
@@ -88,11 +97,82 @@ class TaskController extends Controller
 
         }
     }
+
+    /**
+     * @return int
+     */
+    public function userTaskPaused($user_id)
+    {
+         $allPauses = PerformingTasks::find($user_id)->taskPaused()->get();
+
+        $init = 0;
+
+        foreach ($allPauses as $pause) {
+           $begin = Carbon::createMidnightDate($pause->pause_begin);
+           $finish = Carbon::createMidnightDate($pause->pause_finish);
+
+           $init += $begin->diffInSeconds($finish);
+         }
+
+        if ($init >= 60) {
+            $day = floor($init / 86400);
+            $hours = floor(($init -($day*86400)) / 3600);
+            $minutes = floor(($init / 60) % 60);
+        }
+
+        if ($hours > 0) {
+            return $hours.' час '.$minutes.' минуты';
+        }
+
+        return $minutes.' минуты';
+    }
+
+    /**
+     * @return int
+     */
+    public function userTaskWaiting($task_id): int
+    {
+        $allPauses = PerformingTasks::find($task_id)->taskWaiting()->get();
+
+        $init = 0;
+
+        foreach ($allPauses as $pause) {
+            $begin = Carbon::createMidnightDate($pause->waiting_begin);
+            $finish = Carbon::createMidnightDate($pause->waiting_finish);
+
+            $init += $begin->diffInMinutes($finish);
+        }
+
+        if ($init >= 60) {
+            $day = floor($init / 86400);
+            $hours = floor(($init -($day*86400)) / 3600);
+            $minutes = floor(($init / 60) % 60);
+        }
+
+        if ($hours > 0) {
+            return $hours.' час '.$minutes.' минуты';
+        }
+
+        return $minutes.' минут';
+    }
+
+    public function adminJournal()
+    {
+        $taskOrder = TaskOrder::all();
+
+        $result = [];
+
+        foreach ($taskOrder as $item) {
+            $tasks[] = TaskOrder::find($item->id)->userTask()->get();
+
+        }
+
+        foreach ($tasks[0] as $task) {
+            $taskPaused[] = $this->userTaskPaused($task->id);
+        }
+
+        $result['user_task'] = $tasks;
+
+        return response()->json($taskPaused);
+    }
 }
-
-
-//SELECT tc.name, task_orders.user_count FROM performing_tasks pt
-//LEFT JOIN task_orders
-//ON pt.task_id = task_orders.id
-//LEFT JOIN technical_cards tc
-//ON tc.id = task_orders.card_id
