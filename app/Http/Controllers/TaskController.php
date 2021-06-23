@@ -51,7 +51,7 @@ class TaskController extends Controller
             ->leftJoin('task_orders', 'performing_tasks.task_id', '=', 'task_orders.id')
             ->leftJoin('technical_cards', 'task_orders.card_id', '=', 'technical_cards.id')
             ->select('performing_tasks.id', 'technical_cards.name', 'task_orders.user_count')
-           ->where( 'performing_tasks.count', null)->get();
+            ->where( 'performing_tasks.count', null)->get();
 
         return $currentTask ?  $currentTask :  false;
     }
@@ -103,16 +103,16 @@ class TaskController extends Controller
      */
     public function userTaskPaused($user_id)
     {
-         $allPauses = PerformingTasks::find($user_id)->taskPaused()->get();
+        $allPauses = PerformingTasks::find($user_id)->taskPaused()->get();
 
         $init = 0;
 
         foreach ($allPauses as $pause) {
-           $begin = Carbon::createMidnightDate($pause->pause_begin);
-           $finish = Carbon::createMidnightDate($pause->pause_finish);
+            $begin = Carbon::createMidnightDate($pause->pause_begin);
+            $finish = Carbon::createMidnightDate($pause->pause_finish);
 
-           $init += $begin->diffInSeconds($finish);
-         }
+            $init += $begin->diffInSeconds($finish);
+        }
 
         if ($init >= 60) {
             $day = floor($init / 86400);
@@ -179,11 +179,13 @@ class TaskController extends Controller
 
     public function technicalOperation(): \Illuminate\Support\Collection
     {
-        return DB::table('performing_tasks')
+        $result = [];
+        $allOrders = DB::table('performing_tasks')
             ->join('users', 'users.id', '=', 'performing_tasks.user_id')
             ->join('task_orders', 'task_orders.id', '=', 'performing_tasks.task_id')
             ->join('technical_cards', 'technical_cards.id', '=', 'task_orders.card_id')
             ->select('performing_tasks.count', 'performing_tasks.defects', 'users.firstname', 'users.lastname', 'technical_cards.name')->get();
+
+
     }
 }
-

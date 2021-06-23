@@ -1,44 +1,39 @@
 <template>
     <tr>
-        <td>Сборка</td>
-        <td>SN-2-flash</td>
-        <td>90</td>
-        <td>21/06/2021</td>
+        <td>{{orderDetail.department}}</td>
+        <td>{{orderDetail.card}}</td>
+        <td>{{orderDetail.counts}}</td>
+        <td>{{orderDetail.date}}</td>
         <td><button class="btn btn-primary" @click="show = !show">Подробнее</button></td>
     </tr>
     <tr v-if="show">
         <td><b>Сотрудник:</b></td>
         <td><b>Количество:</b></td>
+        <td><b>Время:</b></td>
         <td><b>Пауза:</b></td>
         <td><b>Ожидание:</b></td>
     </tr>
-    <tr v-if="show">
-        <td>Устинов</td>
-        <td>90 шт.</td>
-        <td>52 минуты</td>
-        <td>0</td>
+    <tr v-if="show" v-for="user in orderDetail.usersDetail">
+        <td>{{user.name}}</td>
+        <td>{{user.count}} шт.</td>
+        <td>{{user.worktime}}</td>
+        <td>{{user.paused}}</td>
+        <td>{{user.waiting}}</td>
     </tr>
-<!--    <div v-if="show">-->
-<!--        <div class="row">-->
-<!--            <div class="col-6">-->
-<!--                <h4>Пауза: {{task.paused}}</h4>-->
-<!--            </div>-->
-<!--            <div class="col-6">-->
-<!--                <h4>Ожидание: {{task.waiting}}</h4>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
 </template>
 
 <script>
 export default {
-    props : ['task'],
+    props : ['orderDetail'],
     data() {
         return {
-            show: false
+            show: false,
         }
     },
     methods: {
+    },
+    mounted() {
+        console.log(this.orderDetail)
     }
 }
 </script>

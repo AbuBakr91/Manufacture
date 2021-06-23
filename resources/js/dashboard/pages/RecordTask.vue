@@ -13,7 +13,7 @@
             </tr>
             </thead>
             <tbody>
-                <show-task v-for="task in tasks" :task="task"></show-task>
+            <show-task v-for="orderDetail in orderDetails" :orderDetail="orderDetail"></show-task>
             </tbody>
         </table>
     </div>
@@ -25,7 +25,21 @@ import ShowTask from "../components/ShowTask"
 export default {
     data() {
         return {
-            tasks: [1]
+            tasks: [],
+            orderDetails: [
+                { department: "Сборка", card: "SN-2-flash", counts: 90, date: "21/06/2021", usersDetail:
+                        [
+                            {name: "Устинов", count: 10, worktime: 20, paused: 23, waiting: 0},
+                            {name: "Лагизов", count: 44, worktime: 345, paused: 33, waiting: 0}
+                        ]
+                },
+                { department: "Сборка", card: "SN-2-flash", counts: 90, date: "21/06/2021", usersDetail:
+                        [
+                            {name: "Устинов", count: 50, worktime: 163, paused: 53, waiting: 0},
+                            {name: "Лагизов", count: 40, worktime: 143, paused: 35, waiting: 0}
+                        ]
+                }
+            ],
         }
     },
     methods: {
