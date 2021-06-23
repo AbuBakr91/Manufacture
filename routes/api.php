@@ -37,6 +37,7 @@ Route::get("cards", [CardController::class, 'index']);
 
 Route::get("paused", [TaskController::class, 'userTaskPaused']);
 Route::get("journal", [TaskController::class, 'adminJournal']);
+Route::get("operation", [TaskController::class, 'technicalOperation']);
 
 Route::get("cards/{id}", [CardController::class, 'getCardByCategory']);
 Route::get("task-status/{id}", [TaskController::class, 'taskStatusUser']);

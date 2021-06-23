@@ -12,11 +12,11 @@
             </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>Устинов</td>
-                    <td>LV-1-case</td>
-                    <td>100</td>
-                    <td>2</td>
+                <tr v-for="item in operation[0]">
+                    <td>{{item.firstname}} {{item.lastname}}</td>
+                    <td>{{item.name}}</td>
+                    <td>{{item.count}}</td>
+                    <td>{{item.defects}}</td>
                     <td><button class="btn btn-primary">провести</button></td>
                 </tr>
             </tbody>
@@ -26,7 +26,22 @@
 
 <script>
 export default {
-
+    data() {
+        return {
+            operation: []
+        }
+    },
+    methods: {
+        async getOperation() {
+            const data = await axios.get('/api/operation/')
+            this.operation.push(data.data)
+            console.log(...data.data)
+        }
+    },
+    mounted() {
+        this.getOperation()
+        console.log(this.operation)
+    }
 }
 </script>
 
