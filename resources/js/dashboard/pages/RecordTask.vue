@@ -26,28 +26,18 @@ export default {
     data() {
         return {
             tasks: [],
-            orderDetails: [
-                { department: "Сборка", card: "SN-2-flash", counts: 90, date: "21/06/2021", usersDetail:
-                        [
-                            {name: "Устинов", count: 10, worktime: 20, paused: 23, waiting: 0},
-                            {name: "Лагизов", count: 44, worktime: 345, paused: 33, waiting: 0}
-                        ]
-                },
-                { department: "Сборка", card: "SN-2-flash", counts: 90, date: "21/06/2021", usersDetail:
-                        [
-                            {name: "Устинов", count: 50, worktime: 163, paused: 53, waiting: 0},
-                            {name: "Лагизов", count: 40, worktime: 143, paused: 35, waiting: 0}
-                        ]
-                }
-            ],
+            orderDetails: [],
         }
     },
     methods: {
         async getTaskJournal() {
-            const dataRecord = axios.get('/api/journal')
-
-            this.tasks.push(...dataRecord.data)
+            const dataRecord = await axios.get('/api/journal/')
+             this.orderDetails.push(...dataRecord.data)
+            console.log(this.orderDetails)
         }
+    },
+    mounted() {
+        this.getTaskJournal()
     },
     components: {ShowTask}
 }

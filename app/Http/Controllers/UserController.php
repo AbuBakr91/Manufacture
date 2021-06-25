@@ -137,4 +137,8 @@ class UserController extends Controller
         $user->delete();
     }
 
+    protected function getUserName($user_id)
+    {
+        return User::find($user_id);
+    }
 }
