@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GetMapController;
+use App\Http\Controllers\OperationTaskController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,6 +18,8 @@ Route::get('{any}', function () {
     return view('layouts.app');
 })->where('any', '.*');
 
+
+//Route::get('/', [OperationTaskController::class, 'operationMoySklad']);
 //Route::get('/maps', [App\Http\Controllers\GetMapController::class,'index']);
 
 //Auth::routes();

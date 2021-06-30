@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTechnicalCardsTable extends Migration
+class CreateJsonProductsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,11 @@ class CreateTechnicalCardsTable extends Migration
      */
     public function up()
     {
-        Schema::create('technical_cards', function (Blueprint $table) {
+        Schema::create('json_products', function (Blueprint $table) {
             $table->id();
-            $table->char('tech_id')->unique();
-            $table->string('name');
-            $table->unsignedBigInteger('cat_id');
-            $table->foreign('cat_id')->references('id')->on('categories');
+            $table->char('card_id');
+            $table->json('meta')->nullable();
+            $table->json('product')->nullable();
             $table->timestamps();
         });
     }
@@ -30,6 +29,6 @@ class CreateTechnicalCardsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('technical_cards');
+        Schema::dropIfExists('json_products');
     }
 }

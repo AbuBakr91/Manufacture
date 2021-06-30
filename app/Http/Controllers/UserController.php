@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Department;
 use App\Models\Role;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -43,6 +44,10 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        $department1 = Department::where('id', 1)->first();
+        $department2 = Department::where('id', 2)->first();
+        $department3 = Department::where('id', 3)->first();
+
         try {
             $user = new User();
             $user->firstname = $request->firstname;
@@ -52,6 +57,13 @@ class UserController extends Controller
             $user->save();
             $role = Role::where('slug', $request->slug)->first();
             $user->roles()->attach($role);
+            if ($request->slug === 'collector') {
+                $user->department()->attach($department3);
+            } elseif ($request->slug === 'machine-operator') {
+                $user->department()->attach($department1);
+            } elseif ($request->slug === 'shareholder') {
+                $user->department()->attach($department2);
+            }
 
             return response()->json([
                 "status" => true,

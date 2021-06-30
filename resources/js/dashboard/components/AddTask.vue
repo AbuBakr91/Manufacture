@@ -40,6 +40,10 @@ export default {
     },
     mounted() {
         this.getTask()
+        // window.Echo.channel('show-task').listen('ShowTask', ({tas}) => {
+        //     this.arrayTask.push(tas)
+        //     console.log(tas)
+        // })
     },
     methods: {
         async getTask() {
@@ -72,11 +76,6 @@ export default {
                 const card = await axios.get('/api/cards/' + id)
                 this.cards.push(...card.data)
             }
-        },
-        async getCardName(id) {
-            const card = await axios.get('/api/tech_card/' + id)
-            console.log(card.data.name)
-            return "df"
         }
     }
 }

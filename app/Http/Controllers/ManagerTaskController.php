@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use BeyondCode\LaravelWebSockets\Apps\App;
 use Illuminate\Http\Request;
 use App\Models\TaskOrder;
 use Illuminate\Support\Facades\DB;
+use App\Events\ShowTask;
 
 class ManagerTaskController extends Controller
 {
@@ -15,7 +17,7 @@ class ManagerTaskController extends Controller
      */
     public function index()
     {
-        return TaskOrder::all();
+        return TaskOrder::all()->where('user_count', '!=', 0);
     }
 
     /**

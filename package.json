@@ -28,9 +28,20 @@
     "dependencies": {
         "bootstrap-icons": "^1.5.0",
         "es6-promise": "^4.2.8",
+        "laravel-echo": "^1.11.0",
+        "socket.io-client": "^4.1.2",
         "vee-validate": "^4.4.1",
         "vue-router": "^4.0.8",
         "vuex": "^4.0.1",
         "yup": "^0.32.9"
+    },
+    "require": {
+        "illuminate/validation": "^6.16",
+        "illuminate/filesystem": "^6.16",
+        "illuminate/translation": "^6.16",
+        "illuminate/http": "^6.16",
+        "illuminate/config": "^6.16",
+        "jenssegers/blade": "^1.2",
+        "league/flysystem": "^1.0"
     }
 }

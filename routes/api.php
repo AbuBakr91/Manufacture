@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\OperationTaskController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -38,8 +39,15 @@ Route::get("cards", [CardController::class, 'index']);
 Route::get("paused", [TaskController::class, 'userTaskPaused']);
 Route::get("journal", [TaskController::class, 'adminJournal']);
 Route::get("operation", [TaskController::class, 'technicalOperation']);
+Route::post("operation-status", [TaskController::class, 'taskOperationStatus']);
 
 Route::get("cards/{id}", [CardController::class, 'getCardByCategory']);
+
+
+
+Route::post("material", [OperationTaskController::class, 'operationMoySklad']);
+
+
 Route::get("task-status/{id}", [TaskController::class, 'taskStatusUser']);
 Route::get("current-task/{id}", [TaskController::class, 'currentTask']);
 Route::get("categories", [CategoryController::class, 'index']);

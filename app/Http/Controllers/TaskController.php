@@ -114,12 +114,6 @@ class TaskController extends Controller
             $init += $begin->diffInMinutes($finish);
         }
 
-        if ($init >= 60) {
-            $day = floor($init / 86400);
-            $hours = floor(($init -($day*86400)) / 3600);
-            $minutes = floor(($init / 60) % 60);
-        }
-
         return $init;
     }
 
@@ -144,10 +138,6 @@ class TaskController extends Controller
             $hours = floor(($init -($day*86400)) / 3600);
             $minutes = floor(($init / 60) % 60);
         }
-
-//        if ($hours > 0) {
-//            return $hours.' час '.$minutes.' минуты';
-//        }
 
         return $minutes;
     }
@@ -194,7 +184,7 @@ class TaskController extends Controller
         }
 
     /**
-     * @return \Illuminate\Http\JsonResponse
+     * @return array
      */
     public function adminJournal()
     {
@@ -225,13 +215,6 @@ class TaskController extends Controller
 
         }
 
-//{ department: "Сборка", card: "SN-2-flash", counts: 90, date: "21/06/2021", usersDetail:
-//        [
-//            {name: "Устинов", count: 10, worktime: 20, paused: 23, waiting: 0},
-//            {name: "Лагизов", count: 44, worktime: 345, paused: 33, waiting: 0}
-//        ]
-//}
-
         return $result;
     }
 
@@ -242,8 +225,17 @@ class TaskController extends Controller
         ->join('users', 'users.id', '=', 'performing_tasks.user_id')
         ->join('task_orders', 'task_orders.id', '=', 'performing_tasks.task_id')
         ->join('technical_cards', 'technical_cards.id', '=', 'task_orders.card_id')
-        ->select('performing_tasks.count', 'performing_tasks.defects', 'users.firstname', 'users.lastname', 'technical_cards.name')
-        ->where('performing_tasks.count', '!=', 0)->get();
+        ->select('performing_tasks.id', 'performing_tasks.count', 'performing_tasks.defects', 'users.firstname', 'users.lastname', 'technical_cards.name', 'technical_cards.tech_id')
+        ->where('performing_tasks.count', '!=', 0)
+        ->where('performing_tasks.operation', '=', '0')->get();
+    }
+
+
+    public function taskOperationStatus(Request $request)
+    {
+        $task = PerformingTasks::where('id', $request->id);
+
+        $task->update(['operation' => true]);
     }
 }
 

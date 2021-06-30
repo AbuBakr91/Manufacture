@@ -12,20 +12,17 @@
             </tr>
             </thead>
             <tbody>
-                <tr v-for="item in operation[0]">
-                    <td>{{item.firstname}} {{item.lastname}}</td>
-                    <td>{{item.name}}</td>
-                    <td>{{item.count}}</td>
-                    <td>{{item.defects}}</td>
-                    <td><button class="btn btn-primary">провести</button></td>
-                </tr>
+                <operation-work @success="removeTask" v-if="operation.length" :task="item" v-for="item in operation"></operation-work>
+                <h4 class="text-center mt-3" v-else>Нет операций для проведения</h4>
             </tbody>
         </table>
     </div>
 </template>
 
 <script>
+import OperationWork from "../components/OperationWork";
 export default {
+    components: {OperationWork},
     data() {
         return {
             operation: []
@@ -34,8 +31,12 @@ export default {
     methods: {
         async getOperation() {
             const data = await axios.get('/api/operation/')
-            this.operation.push(data.data)
-            console.log(...data.data)
+            this.operation.push(...data.data)
+        },
+        removeTask(id) {
+            this.operation = this.operation.filter(item => item.tech_id !== id)
+            console.log(id)
+            console.log(this.operation)
         }
     },
     mounted() {

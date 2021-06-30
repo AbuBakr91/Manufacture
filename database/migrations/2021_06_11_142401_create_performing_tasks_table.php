@@ -20,6 +20,7 @@ class CreatePerformingTasksTable extends Migration
             $table->bigInteger('count')->nullable();
             $table->bigInteger('defects')->nullable();
             $table->dateTime('begin');
+            $table->boolean('operation')->default(0);
             $table->dateTime('finish')->nullable();
             $table->foreign('task_id')->references('id')->on('task_orders');
             $table->foreign('user_id')->references('id')->on('users');

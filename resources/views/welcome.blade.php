@@ -31,11 +31,11 @@
                 </div>
             @endif
         </div>
-<?php
-        foreach ($cat_id as $cat) {
-            echo $cat[0]->id."<br>";
-        }
-        ?>
+        <?php
+        echo '<pre>',
+                $data,
+            '</pre>';
+            ?>
         <script src="{{asset('js/app.js')}}"></script>
     </body>
 </html>
