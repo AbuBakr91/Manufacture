@@ -1,7 +1,7 @@
 <template>
     <div class="main">
         <h4 class="text-center">Статус работ</h4>
-        <table class="table table-striped mt-3">
+        <table class="table table-striped mt-3" v-if="operation.length">
             <thead>
             <tr>
                 <th style="width:22%;">Сотрудник</th>
@@ -12,10 +12,10 @@
             </tr>
             </thead>
             <tbody>
-                <operation-work @success="removeTask" v-if="operation.length" :task="item" v-for="item in operation"></operation-work>
-                <h4 class="text-center mt-3" v-else>Нет операций для проведения</h4>
+                <operation-work @success="removeTask" :task="item" v-for="item in operation"></operation-work>
             </tbody>
         </table>
+        <h4 class="text-center mt-3" v-else>Нет операций для проведения</h4>
     </div>
 </template>
 

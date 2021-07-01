@@ -21,20 +21,27 @@
                     <div class="row mt-5 content_start" v-if="!start">
                         <div class="col-8">
                             <h4 class="text-center">Задание от руководителя:</h4>
-                            <select class="form-control form-control-lg" v-model="card">
+                            <select :disabled="taskManager.length === 0" class="form-control form-control-lg" v-model="card">
                                 <option value="selected">Выберите тех.карту</option>
                                 <option v-for="task in taskManager" :value="task.id">{{task.name}} {{task.user_count}}</option>
                             </select>
                         </div>
                         <div class="col-8 mt-3">
-                            <h4 class="text-center">Выбрать произвольно:</h4>
-                            <select :disabled="taskManager.length !== 0" class="form-control form-control-lg">
-                                <option>Выберите тех.карту</option>
-                                <option>LV-1-hand</option>
-                                <option>Relay-4S-Case</option>
-                            </select>
+                            <h4 class="text-center">Выставить задание:</h4>
+                            <div class="selects">
+                                <select class="form-control category" @change="getCards(category)" v-model="category" name="category" id="category">
+                                    <option value="0">Выберите категорию</option>
+                                    <option v-for="cat in categories" :value="cat.id">{{cat.name}}</option>
+                                </select>
+                                <select class="form-control category" v-model="card_id" name="category" id="technical_card">
+                                    <option value="0">Выберите техкарту</option>
+                                    <option v-for="card in cards" :value="card.id">{{card.name}}</option>
+                                </select>
+                                <input type="number" class="form-control category" v-model="count" placeholder="Введите количество">
+                                <button class="btn" @click="addTask">Выставить</button>
+                            </div>
                         </div>
-                        <div class="col-8 mt-5 d-flex justify-content-center">
+                        <div class="col-8 mt-5 d-flex justify-content-center" v-if="taskManager.length !== 0">
                             <button class="btn primary btn_start" @click="startWork" type="submit">START</button>
                         </div>
                     </div>
@@ -59,6 +66,7 @@
 import store from "../store"
 import AppHeader from "../Components/AppHeader";
 import AppModal from "../components/AppModal";
+import axios from "axios";
 
 export default {
     data() {
@@ -68,6 +76,12 @@ export default {
             start: false,
             pause: false,
             waiting: false,
+            category: '0',
+            cards: [],
+            card_id: '0',
+            count: '',
+            arrayTask: [],
+            categories: [],
             currentTask: [],
             dataTime: '',
             taskManager: [],
@@ -88,9 +102,32 @@ export default {
           }
             return 'Пайщик'
         },
+        async addTask() {
+            await axios.post('/api/manager-task', {
+                dep_id: this.user.department_id,
+                card_id: this.card_id,
+                counts: this.count,
+            })
+            window.location.reload();
+        },
         async getTask() {
             const tasks = await axios.get('api/user_task/' + this.user.department_id)
             this.taskManager.push(...tasks.data)
+        },
+        async  getCategory() {
+            const cat = await axios.get('/api/categories');
+            this.categories.push(...cat.data)
+        },
+        async getCards(id)
+        {
+            if (this.cards.length === 0) {
+                const card = await axios.get('/api/cards/' + id)
+                this.cards.push(...card.data)
+            } else {
+                this.cards.length = 0
+                const card = await axios.get('/api/cards/' + id)
+                this.cards.push(...card.data)
+            }
         },
         async addPaused() {
             if (!this.pause) {
@@ -171,7 +208,7 @@ export default {
         this.getTask()
         this.startStatus()
         this.currentTasks()
-        console.log('pause:',this.waiting)
+        this.getCategory()
     },
     created() {
         setInterval(this.getNow, 1000);
@@ -198,6 +235,15 @@ export default {
 .left_block {
     height: 86vh;
     border-right: 1px solid #0a427d;
+}
+
+.selects {
+    display: flex;
+}
+
+.category {
+    width: 250px;
+    margin-right: 16px;
 }
 
 .btn {

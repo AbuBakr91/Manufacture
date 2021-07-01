@@ -148,7 +148,7 @@ class TaskController extends Controller
      */
     public function userWorkTime($task_id)
     {
-        $workTime = PerformingTasks::where('id',$task_id)->get();
+        $workTime = PerformingTasks::where('id', $task_id)->get();
 
         $minutes = 0;
 
@@ -188,7 +188,7 @@ class TaskController extends Controller
      */
     public function adminJournal()
     {
-        $taskOrder = TaskOrder::all();
+        $taskOrder = TaskOrder::all()->where('user_count', '=', 0);
 
         $result = [];
 
@@ -202,7 +202,9 @@ class TaskController extends Controller
         }
 
         foreach ($dep as $key => $item) {
-            $result[$key] = $this->userWorkTime($this->getUserDetail($task_id[$key])[0]->id);
+            $result[$key] = $this->userWorkTime(
+                $this->getUserDetail($task_id[$key]) ? $this->getUserDetail($task_id[$key])[0]->id : ''
+            );
 
             $result[$key] = [
                 'id' => $task_id[$key],
@@ -227,7 +229,7 @@ class TaskController extends Controller
         ->join('technical_cards', 'technical_cards.id', '=', 'task_orders.card_id')
         ->select('performing_tasks.id', 'performing_tasks.count', 'performing_tasks.defects', 'users.firstname', 'users.lastname', 'technical_cards.name', 'technical_cards.tech_id')
         ->where('performing_tasks.count', '!=', 0)
-        ->where('performing_tasks.operation', '=', '0')->get();
+        ->where('performing_tasks.operation', '=', 0)->get();
     }
 
 

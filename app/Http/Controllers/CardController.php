@@ -19,6 +19,6 @@ class CardController extends Controller
 
     public function getCardByCategory($id)
     {
-        return TechnicalCards::where('cat_id', $id)->get();
+        return TechnicalCards::orderBy('name')->where('cat_id', $id)->get();
     }
 }

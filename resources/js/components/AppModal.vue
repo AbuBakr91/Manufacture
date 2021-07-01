@@ -40,12 +40,18 @@ export default {
             await axios.post('/api/work-time/', {
                 user_id: this.user.id,
                 finish: true,
-                count: this.count,
+                count: this.outputCount(this.count),
                 defects: this.defects
             })
             this.$emit('close')
             window.location.reload();
-        }
+        },
+      outputCount(num) {
+          if(num === '') {
+            return 0
+          }
+          return num
+      }
     },
     mounted() {
         console.log(this.task)

@@ -8,6 +8,6 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        return Categories::all();
+        return Categories::orderBy('name')->get();
     }
 }
