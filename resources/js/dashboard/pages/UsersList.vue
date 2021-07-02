@@ -16,7 +16,7 @@
             <tr v-for="user in users" :key="user.id">
                 <td>{{user.firstname}}</td>
                 <td>{{user.lastname}}</td>
-                <td>{{user.slug}}</td>
+                <td>{{department(user.slug)}}</td>
                 <td class="d-none d-md-table-cell">{{user.email}}</td>
                 <td class="table-action">
                     <a @click.prevent="editUser(user.id)" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 align-middle"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></a>
@@ -113,6 +113,19 @@ export default {
       async  getCategory() {
           const cat = await axios.get('/api/categories');
           this.category.push(...cat.data)
+        },
+        department(slug) {
+            if (slug === 'collector') {
+                return 'Отдел сборки'
+            }
+
+            if (slug === 'machine-operator') {
+                return 'Автоматический монтаж'
+            }
+
+            if (slug === 'shareholder') {
+                return 'Ручной монтаж'
+            }
         }
     },
   components: {AppAlert, UserModal, UserEdit, AddTask}

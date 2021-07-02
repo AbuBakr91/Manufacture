@@ -31,28 +31,24 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::resource("tech_card", TechnicalCardController::class);
 Route::resource("user_task", DepartmentTaskController::class);
+Route::resource('users', UserController::class);
+Route::resource('manager-task', ManagerTaskController::class);
+Route::resource('work-time', WorkTimeController::class);
+
 Route::post("login", [AuthController::class, 'login']);
 Route::post("add-paused", [TaskController::class, 'addPaused']);
 Route::post("add-waiting", [TaskController::class, 'addWaiting']);
 Route::get("cards", [CardController::class, 'index']);
+Route::post("current-task", [TaskController::class, 'taskOperationStatus']);
+Route::post("material", [OperationTaskController::class, 'operationMoySklad']);
 
+Route::get("current-task/{id}", [TaskController::class, 'currentTask']);
+Route::get("task-status/{id}", [TaskController::class, 'taskStatusUser']);
+Route::get("cards/{id}", [CardController::class, 'getCardByCategory']);
 Route::get("paused", [TaskController::class, 'userTaskPaused']);
 Route::get("journal", [TaskController::class, 'adminJournal']);
 Route::get("operation", [TaskController::class, 'technicalOperation']);
-Route::post("current-task", [TaskController::class, 'taskOperationStatus']);
-
-Route::get("cards/{id}", [CardController::class, 'getCardByCategory']);
-
-
-
-Route::post("material", [OperationTaskController::class, 'operationMoySklad']);
-
-
-Route::get("task-status/{id}", [TaskController::class, 'taskStatusUser']);
-Route::get("current-task/{id}", [TaskController::class, 'currentTask']);
 Route::get("categories", [CategoryController::class, 'index']);
 Route::get("departments", [DepartmentsController::class, 'index']);
-Route::resource('users', UserController::class);
-Route::resource('manager-task', ManagerTaskController::class);
-Route::resource('work-time', WorkTimeController::class);
+
 
