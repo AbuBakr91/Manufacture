@@ -91,9 +91,70 @@ class OperationTaskController extends Controller
         return $result;
     }
 
+    protected function getCardForStore($card_id)
+    {
+        // вытаскиваем карты со склада Берзарина
+        $arrCards = TechnicalCards::select('tech_id')->where('name', 'like', '%Hybrid%')
+            ->orWhere('name', 'like', '%DUO%')->get();
+
+        $result = [];
+        foreach ($arrCards as $card) {
+            if ($card->tech_id === $card_id) {
+                $result[]=$card->tech_id;
+            }
+        }
+
+        return $result;
+    }
+
+    protected function productsStore($card_id)
+    {
+        $result = $this->getCardForStore($card_id);
+        $store = [];
+
+        if(count($result)) {
+              $store['meta'] = [
+                 "href" => "https://online.moysklad.ru/api/remap/1.1/entity/store/b437351e-8d0a-11e5-7a40-e8970059ee20",
+                 "metadataHref" => "http://online.moysklad.ru/api/remap/1.1/entity/store/metadata",
+                 "type" => "store",
+                 "mediaType" => "application/json"
+             ];
+        } else {
+            $store['meta'] = [
+                    "href" => "https://online.moysklad.ru/api/remap/1.1/entity/store/0e054440-b971-11eb-0a80-0898000fbaed",
+                    "metadataHref" => "http://online.moysklad.ru/api/remap/1.1/entity/store/metadata",
+                    "type" => "store",
+                    "mediaType" => "application/json"
+                ];
+        }
+        return $store;
+    }
+
+    protected function materialsStore($card_id)
+    {
+        $result = $this->getCardForStore($card_id);
+        $store = [];
+
+        if(count($result)) {
+            $store['meta'] = [
+                 "href" => "https://online.moysklad.ru/api/remap/1.1/entity/store/b437351e-8d0a-11e5-7a40-e8970059ee20",
+                 "metadataHref" => "http://online.moysklad.ru/api/remap/1.1/entity/store/metadata",
+                 "type" => "store",
+                 "mediaType" => "application/json"
+            ];
+        } else {
+            $store['meta'] = [
+                "href" => "https://online.moysklad.ru/api/remap/1.1/entity/store/0e054440-b971-11eb-0a80-0898000fbaed",
+                "metadataHref" => "http://online.moysklad.ru/api/remap/1.1/entity/store/metadata",
+                "type" => "store",
+                "mediaType" => "application/json"
+            ];
+        }
+        return $store;
+    }
+
     protected function getMaterials()
     {
-        $count = 1;
         $card_id = '00283c7f-c21d-11eb-0a80-058900230736';
         $materialData = Materials::select('meta', 'materials')->where('card_id', $card_id)->get();
         $productData = Products::select('meta', 'product')->where('card_id', $card_id)->get();
@@ -137,22 +198,8 @@ class OperationTaskController extends Controller
                     "mediaType" => "application/json"
                 ]
             ],
-            "productsStore" => [
-                "meta" => [
-                    "href" => "https://online.moysklad.ru/api/remap/1.1/entity/store/0e054440-b971-11eb-0a80-0898000fbaed",
-                    "metadataHref" => "http://online.moysklad.ru/api/remap/1.1/entity/store/metadata",
-                    "type" => "store",
-                    "mediaType" => "application/json"
-                ]
-            ],
-            "materialsStore" => [
-                "meta" => [
-                    "href" => "https://online.moysklad.ru/api/remap/1.1/entity/store/0e054440-b971-11eb-0a80-0898000fbaed",
-                    "metadataHref" => "http://online.moysklad.ru/api/remap/1.1/entity/store/metadata",
-                    "type" => "store",
-                    "mediaType" => "application/json"
-                ]
-            ],
+            "productsStore" => $this->productsStore($request->card_id),
+            "materialsStore" =>$this->materialsStore($request->card_id),
             "products" => [
                 "meta" => $this->getProductMeta($request->card_id),
                 "rows" => $this->getProductsCard($request->card_id)
@@ -164,7 +211,6 @@ class OperationTaskController extends Controller
         ];
 
 
-        $data = response()->json($json);
         if ($request->count) {
             $response = Http::withBasicAuth('multishop@4wimax', '3hQ&ue1x')->post('https://online.moysklad.ru/api/remap/1.1/entity/processing', $json);
         }
@@ -193,7 +239,6 @@ class OperationTaskController extends Controller
                         "mediaType" => "application/json"
                     ]
                 ],
-//                "moment" => Carbon::now()->addMinute(180)->format('Y-m-d H:i:s'),
                 "positions" => $this->getProductForDefects($request->card_id, $request->defects)
             ];
 
@@ -204,28 +249,3 @@ class OperationTaskController extends Controller
         return $response->body();
     }
 }
-
-//{
-//    "name": "888",
-//  "organization": {
-//    "meta": {
-//        "href": "https://online.moysklad.ru/api/remap/1.1/entity/organization/850c8195-f504-11e5-8a84-bae50000015e",
-//      "type": "organization",
-//      "mediaType": "application/json"
-//    }
-//  },
-//  "agent": {
-//    "meta": {
-//        "href": "https://online.moysklad.ru/api/remap/1.1/entity/counterparty/a09246c4-da3d-11eb-0a80-0dc20018cc35/accounts",
-//        "type": "account",
-//        "mediaType": "application/json",
-//    }
-//  },
-//  "store": {
-//    "meta": {
-//        "href": "https://online.moysklad.ru/api/remap/1.1/entity/store/850ee995-f504-11e5-8a84-bae500000160",
-//      "type": "store",
-//      "mediaType": "application/json"
-//    }
-//  }
-//}
