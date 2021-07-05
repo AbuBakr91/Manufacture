@@ -17018,12 +17018,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     };
   },
   mounted: function mounted() {
-    this.getTask(); // window.Echo.channel('show-task').listen('ShowTask', ({tas}) => {
+    this.getTask(); //слушатель для sockets
+    // window.Echo.channel('show-task').listen('ShowTask', ({tas}) => {
     //     this.arrayTask.push(tas)
     //     console.log(tas)
     // })
   },
   methods: {
+    //вернуть задания для отдела
     getTask: function getTask() {
       var _this = this;
 
@@ -17051,6 +17053,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee);
       }))();
     },
+    //выставить новое задание для отдела
     addTask: function addTask() {
       var _this2 = this;
 
@@ -17083,6 +17086,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee2);
       }))();
     },
+    //удалить задание отдела
     removeTask: function removeTask(id) {
       var _this3 = this;
 
@@ -17107,6 +17111,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee3);
       }))();
     },
+    //взять карты по категории
     getCards: function getCards(id) {
       var _this4 = this;
 

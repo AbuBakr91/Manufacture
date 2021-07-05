@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 class UserController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * возвращает список пользователей
      *
      * @return \Illuminate\Http\Response
      */
@@ -37,7 +37,7 @@ class UserController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * создает пользователя
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -55,8 +55,10 @@ class UserController extends Controller
             $user->email = $request->email;
             $user->password = bcrypt($request->password);
             $user->save();
+
             $role = Role::where('slug', $request->slug)->first();
             $user->roles()->attach($role);
+
             if ($request->slug === 'collector') {
                 $user->department()->attach($department3);
             } elseif ($request->slug === 'machine-operator') {
@@ -71,7 +73,8 @@ class UserController extends Controller
             ]);
         } catch (\Exception $exception) {
             return response()->json([
-                "status" => false
+                "status" => false,
+                "message" => $exception->getMessage()
             ]);
         }
     }
@@ -99,7 +102,7 @@ class UserController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * редактирует пользователя
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id

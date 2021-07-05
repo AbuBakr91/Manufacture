@@ -15,6 +15,7 @@ class TaskController extends Controller
     /**
      * @param $user_id
      * @return bool
+     * возвращаем состояние кнопок "старт", "пауза", "ожидание"
      */
     public function taskStatusUser($user_id)
     {
@@ -44,6 +45,7 @@ class TaskController extends Controller
     /**
      * @param $user_id
      * @return \Illuminate\Support\Collection
+     * возвращаем текущую задачу пользователя, которую запустил пользователь
      */
     public function currentTask($user_id): \Illuminate\Support\Collection
     {
@@ -59,6 +61,7 @@ class TaskController extends Controller
 
     /**
      * @param Request $request
+     * метод добавление паузы
      */
     public function addPaused(Request $request)
     {
@@ -80,6 +83,7 @@ class TaskController extends Controller
 
     /**
      * @param Request $request
+     * метод добавление ожидания
      */
     public function addWaiting(Request $request)
     {
@@ -101,6 +105,7 @@ class TaskController extends Controller
 
     /**
      * @return int
+     * метод подсчета времени паузы
      */
     public function userTaskPaused($user_id)
     {
@@ -120,6 +125,7 @@ class TaskController extends Controller
 
     /**
      * @return int
+     * метод подсчета времени ожидания
      */
     public function userTaskWaiting($task_id): int
     {
@@ -134,18 +140,14 @@ class TaskController extends Controller
             $init += $begin->diffInMinutes($finish);
         }
 
-        if ($init >= 60) {
-            $day = floor($init / 86400);
-            $hours = floor(($init -($day*86400)) / 3600);
-            $minutes = floor(($init / 60) % 60);
-        }
-
-        return $minutes;
+        return $init;
     }
 
     /**
      * @param $task_id
      * @return int
+     *
+     * метод подсчета времени на задачу
      */
     public function userWorkTime($task_id)
     {
@@ -166,6 +168,7 @@ class TaskController extends Controller
     /**
      * @param $task_id
      * @return array
+     * формирует детали по исполнителям(их затраченное время, паузы, ожидания, количество)
      */
     protected function getUserDetail($task_id): array
     {
@@ -186,6 +189,7 @@ class TaskController extends Controller
 
     /**
      * @return array
+     * вывод заданий в журнал
      */
     public function adminJournal()
     {
@@ -222,6 +226,10 @@ class TaskController extends Controller
     }
 
 
+    /**
+     * @return \Illuminate\Support\Collection
+     * возвращает коллекцию непроведенных задач
+     */
     public function technicalOperation()
     {
         return DB::table('performing_tasks')
@@ -234,6 +242,10 @@ class TaskController extends Controller
     }
 
 
+    /**
+     * @param Request $request
+     * обновления статуса при првоедении тех операции
+     */
     public function taskOperationStatus(Request $request)
     {
         $task = PerformingTasks::where('id', $request->id);
