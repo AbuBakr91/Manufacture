@@ -33,7 +33,7 @@ class WorkTimeController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     *
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -44,7 +44,9 @@ class WorkTimeController extends Controller
         if ($request->begin) {
             $workTime = new PerformingTasks;
             $task = TaskOrder::find($request->task_id);
+
             $task->update(['in_work' => true]);
+
             $workTime->task_id = $request->task_id;
             $workTime->user_id = $request->user_id;
             $workTime->begin = Carbon::now();

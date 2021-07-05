@@ -8,8 +8,7 @@ use App\Models\TechnicalCards;
 class CardController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
+     * возвращем тех карты
      * @return \Illuminate\Http\Response
      */
     public function index()
@@ -17,6 +16,11 @@ class CardController extends Controller
         return TechnicalCards::all();
     }
 
+    /**
+     * @param $id
+     * @return mixed
+     * возвращаем тех карты для переданной категории
+     */
     public function getCardByCategory($id)
     {
         return TechnicalCards::orderBy('name')->where('cat_id', $id)->get();

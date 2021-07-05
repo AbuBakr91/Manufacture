@@ -40,16 +40,19 @@ export default {
     },
     mounted() {
         this.getTask()
+        //слушатель для sockets
         // window.Echo.channel('show-task').listen('ShowTask', ({tas}) => {
         //     this.arrayTask.push(tas)
         //     console.log(tas)
         // })
     },
     methods: {
+        //вернуть задания для отдела
         async getTask() {
           const tasks = await axios.get('/api/manager-task/' + this.dep_id)
             this.arrayTask.push(...tasks.data)
         },
+        //выставить новое задание для отдела
         async addTask() {
             await axios.post('/api/manager-task', {
                 dep_id: this.dep_id,
@@ -62,10 +65,12 @@ export default {
             this.isSelect = !this.isSelect
             window.location.reload();
         },
+        //удалить задание отдела
         async removeTask(id) {
             await axios.delete('/api/manager-task/' + id)
             this.arrayTask = this.arrayTask.filter(task => task.id !== id)
         },
+        //взять карты по категории
         async getCards(id)
         {
             if (this.cards.length === 0) {

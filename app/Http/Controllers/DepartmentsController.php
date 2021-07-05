@@ -7,13 +7,12 @@ use App\Models\Department;
 
 class DepartmentsController extends Controller
 {
+    /**
+     * @return Department[]|\Illuminate\Database\Eloquent\Collection
+     */
     public function index()
     {
         return Department::all();
     }
 
-    public function getUserNotDepartment()
-    {
-
-    }
 }

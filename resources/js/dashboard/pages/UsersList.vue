@@ -70,6 +70,7 @@ export default {
         this.getTask()
     },
     methods: {
+
         async getTask() {
             const tasks = await axios.get('/api/manager-task')
             this.arrayTask.push(...tasks.data)
