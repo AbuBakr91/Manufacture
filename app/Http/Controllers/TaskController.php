@@ -236,7 +236,7 @@ class TaskController extends Controller
         ->join('users', 'users.id', '=', 'performing_tasks.user_id')
         ->join('task_orders', 'task_orders.id', '=', 'performing_tasks.task_id')
         ->join('technical_cards', 'technical_cards.id', '=', 'task_orders.card_id')
-        ->select('performing_tasks.id', 'performing_tasks.count', 'performing_tasks.defects', 'users.firstname', 'users.lastname', 'technical_cards.name', 'technical_cards.tech_id')
+        ->select('performing_tasks.id', 'performing_tasks.count', 'performing_tasks.defects', 'users.firstname', 'users.lastname', 'technical_cards.name', 'technical_cards.tech_id', 'performing_tasks.finish')
         ->where('performing_tasks.count', '!=', 0)
         ->where('performing_tasks.operation', '=', 0)->get();
     }

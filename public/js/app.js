@@ -17592,9 +17592,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
                 (_this$orderDetails = _this.orderDetails).push.apply(_this$orderDetails, _toConsumableArray(dataRecord.data));
 
-                console.log(_this.orderDetails);
-
-              case 5:
+              case 4:
               case "end":
                 return _context.stop();
             }
@@ -17628,7 +17626,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         var mnt = Math.floor(minutes % 60);
 
         if (hour && mnt) {
-          return hour + ' ' + this.getNoun(hour, 'час', 'часа', 'часов') + ' : ' + mnt + ' ' + this.getNoun(mnt, 'минута', 'минуты', 'минут');
+          return hour + ' : ' + mnt + ' ' + this.getNoun(mnt, 'минута', 'минуты', 'минут');
         }
 
         if (hour && !mnt) {
@@ -17645,7 +17643,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   },
   mounted: function mounted() {
     this.getTaskJournal();
-    console.log(this.orderDetails);
   },
   components: {
     ShowTask: _components_ShowTask__WEBPACK_IMPORTED_MODULE_1__.default

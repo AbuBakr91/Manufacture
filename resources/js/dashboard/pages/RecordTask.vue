@@ -48,7 +48,6 @@ export default {
         async getTaskJournal() {
             const dataRecord = await axios.get('/api/journal/')
              this.orderDetails.push(...dataRecord.data)
-            console.log(this.orderDetails)
         },
         getNoun(number, one, two, five) {
             let n = Math.abs(number);
@@ -71,7 +70,7 @@ export default {
                 const mnt = Math.floor(minutes % 60)
 
                 if (hour && mnt) {
-                    return hour + ' ' + this.getNoun(hour, 'час', 'часа', 'часов') + ' : '
+                    return hour + ' : '
                         + mnt + ' ' + this.getNoun(mnt, 'минута', 'минуты', 'минут')
                 }
 
@@ -89,7 +88,6 @@ export default {
     },
     mounted() {
         this.getTaskJournal()
-        console.log(this.orderDetails)
     },
     components: {ShowTask}
 }

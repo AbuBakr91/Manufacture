@@ -238,7 +238,7 @@ class OperationTaskController extends Controller
             "processingSum" => 0,
             "applicable" => false,
             "quantity" => $count,
-            "moment" => Carbon::now()->subMinute(1)->format('Y-m-d H:i:s'),
+            "moment" => $request->moment,
             "processingPlan" => [
                 "meta" => [
                     "href" => "http://online.moysklad.ru/api/remap/1.1/entity/processingplan/" . $request->card_id,
