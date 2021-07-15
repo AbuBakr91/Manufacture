@@ -5,8 +5,8 @@ import Auth from "../pages/Auth";
 import Users from "../pages/Users";
 import NotFound from "../pages/404"
 import UsersList from "../dashboard/pages/UsersList"
-import DashboardHome from "../dashboard/components/DashboardHome";
 import ManagerProfile from "../dashboard/pages/ManagerProfile";
+import UserTask from "../dashboard/pages/UserTask";
 import TechnicalCard from "../dashboard/pages/TechnicalCard"
 import UserWorks from "../dashboard/pages/UserWorks"
 import RecordTask from "../dashboard/pages/RecordTask"
@@ -33,7 +33,7 @@ const routes = [
             {
                 name: 'home',
                 path: '',
-                component: DashboardHome
+                component: UserWorks
             },
             {
                 name: 'users',
@@ -48,7 +48,7 @@ const routes = [
             {
                 name: 'user-work',
                 path: 'user-work',
-                component: UserWorks
+                component: UserTask
             },
             {
                 name: 'list-map',

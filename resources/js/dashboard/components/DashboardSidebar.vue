@@ -30,7 +30,7 @@
 
                 <li class="sidebar-item">
                     <router-link :to="{ path: `/manager/user-work/`}" class="sidebar-link">
-                        <i class="align-middle" data-feather="check-square"></i> <span class="align-middle">Тех. операции</span>
+                        <i class="align-middle" data-feather="check-square"></i> <span class="align-middle">Тех. задачи</span>
                     </router-link >
                 </li>
 
@@ -44,16 +44,6 @@
                     <router-link :to="{ path: `/manager/journal`}" class="sidebar-link">
                         <i class="align-middle" data-feather="clipboard"></i> <span class="align-middle">Журнал</span>
                     </router-link>
-                </li>
-
-                <li class="sidebar-header">
-                    Records
-                </li>
-
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="/charts-chartjs">
-                        <i class="align-middle" data-feather="bar-chart-2"></i> <span class="align-middle">Charts</span>
-                    </a>
                 </li>
             </ul>
         </div>

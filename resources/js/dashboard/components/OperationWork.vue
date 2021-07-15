@@ -19,9 +19,8 @@ export default {
                 "count" : this.task.count,
                 "defects" : this.task.defects
             })
-           console.log(!!data.data.name)
-           console.log(data.data)
-           if(!!data.data.name) {
+
+           if(!!data.data.moment) {
                axios.post('/api/operation-status', {"id" : this.task.id})
                this.$emit('success', this.task.tech_id)
            }

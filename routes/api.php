@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\OperationTaskController;
+use App\Http\Controllers\WebHooksController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -38,10 +39,11 @@ Route::resource('work-time', WorkTimeController::class);
 Route::post("login", [AuthController::class, 'login']);
 Route::post("add-paused", [TaskController::class, 'addPaused']);
 Route::post("add-waiting", [TaskController::class, 'addWaiting']);
-Route::get("cards", [CardController::class, 'index']);
-Route::post("current-task", [TaskController::class, 'taskOperationStatus']);
+Route::post("operation-status", [TaskController::class, 'taskOperationStatus']);
 Route::post("material", [OperationTaskController::class, 'operationMoySklad']);
+Route::post("webhook-create", [WebHooksController::class, 'webHook']);
 
+Route::get("cards", [CardController::class, 'index']);
 Route::get("current-task/{id}", [TaskController::class, 'currentTask']);
 Route::get("task-status/{id}", [TaskController::class, 'taskStatusUser']);
 Route::get("cards/{id}", [CardController::class, 'getCardByCategory']);

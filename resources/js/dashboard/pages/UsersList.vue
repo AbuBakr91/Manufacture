@@ -33,10 +33,6 @@
             <user-modal v-if="modal" @user="addUserList" @close="modal=false"></user-modal>
         </teleport>
     </div>
-    <div class="container">
-        <h4 class="mt-3 text-center">ТЕХ ЗАДАНИЕ</h4>
-        <add-task :categories="category" v-for="department in departments" :tasks="arrayTask" :departments="department"></add-task>
-    </div>
 </template>
 
 <script>
@@ -50,17 +46,9 @@ export default {
     data() {
         return {
             users: [],
-            departments: [],
             modal: false,
             edit: false,
-            alert: null,
-            arrayTask: [],
-            isSelect: false,
-            category: [],
-            technical_card: [
-                {id: 1, name: 'LV-1-hand'},
-                {id: 2, name: 'Smart-Air-hand'}
-            ],
+            alert: null
         }
     },
     mounted() {
@@ -70,7 +58,6 @@ export default {
         this.getTask()
     },
     methods: {
-
         async getTask() {
             const tasks = await axios.get('/api/manager-task')
             this.arrayTask.push(...tasks.data)

@@ -1,5 +1,6 @@
 <template>
     <div class="main">
+        <app-alert v-if="alert" :alert="alert" @close="alert = null"></app-alert>
         <h4 class="text-center">Статус работ</h4>
         <table class="table table-striped mt-3" v-if="operation.length">
             <thead>
@@ -21,11 +22,12 @@
 
 <script>
 import OperationWork from "../components/OperationWork";
+import AppAlert from "../../components/AppAlert";
 export default {
-    components: {OperationWork},
     data() {
         return {
-            operation: []
+            operation: [],
+            alert: null
         }
     },
     methods: {
@@ -35,14 +37,17 @@ export default {
         },
         removeTask(id) {
             this.operation = this.operation.filter(item => item.tech_id !== id)
-            console.log(id)
-            console.log(this.operation)
+            this.alert = {
+                type: 'primary',
+                title: 'Успешно!',
+                text: `Операция успешно проведена!`
+            }
         }
     },
     mounted() {
         this.getOperation()
-        console.log(this.operation)
-    }
+    },
+    components: {OperationWork, AppAlert}
 }
 </script>
 
