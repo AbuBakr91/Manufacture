@@ -4,6 +4,7 @@
         <td>{{task.name}}</td>
         <td>{{task.count}}</td>
         <td>{{task.defects}}</td>
+        <td>{{task.finish}}</td>
         <td><button class="btn btn-primary" @click="spendOperation">провести</button></td>
     </tr>
 </template>
@@ -17,7 +18,8 @@ export default {
             const data = await axios.post('/api/material/', {
                 "card_id" : this.task.tech_id,
                 "count" : this.task.count,
-                "defects" : this.task.defects
+                "defects" : this.task.defects,
+                "moment" : this.task.finish
             })
 
            if(!!data.data.moment) {
@@ -25,8 +27,8 @@ export default {
                this.$emit('success', this.task.tech_id)
            }
 
-           if(data.data.errors[0].code === 3007) {
-                alert('Нельзя использовать отсутствующий на складе товар')
+           if(data.data.errors[0].code) {
+               this.$emit('danger', data.data.errors[0].code)
            }
 
         }

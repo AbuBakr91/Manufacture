@@ -5,15 +5,16 @@
         <table class="table table-striped mt-3" v-if="operation.length">
             <thead>
             <tr>
-                <th style="width:22%;">Сотрудник</th>
-                <th style="width:22%;">Тех. карта</th>
-                <th style="width:22%">Количество</th>
-                <th class="d-none d-md-table-cell" style="width:22%">Брак</th>
-                <th class="d-none d-md-table-cell" style="width:22%">Статус</th>
+                <th>Сотрудник</th>
+                <th>Тех. карта</th>
+                <th>Количество</th>
+                <th>Брак</th>
+                <th>Время</th>
+                <th class="d-none d-md-table-cell">Статус</th>
             </tr>
             </thead>
             <tbody>
-                <operation-work @success="removeTask" :task="item" v-for="item in operation"></operation-work>
+                <operation-work @danger="infoCode" @success="removeTask" :task="item" v-for="item in operation"></operation-work>
             </tbody>
         </table>
         <h4 class="text-center mt-3" v-else>Нет операций для проведения</h4>
@@ -41,6 +42,13 @@ export default {
                 type: 'primary',
                 title: 'Успешно!',
                 text: `Операция успешно проведена!`
+            }
+        },
+        infoCode(code) {
+            this.alert = {
+                type: 'danger',
+                title: `Ошибка: ${code}`,
+                text: `Нельзя использовать отсутствующий на складе товар`
             }
         }
     },
