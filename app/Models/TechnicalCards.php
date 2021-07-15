@@ -9,5 +9,4 @@ class TechnicalCards extends Model
 {
     use HasFactory;
     protected $hidden = ['created_at', 'updated_at'];
-    public $timestamps = false;
 }
