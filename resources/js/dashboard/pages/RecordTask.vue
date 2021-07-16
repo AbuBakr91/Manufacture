@@ -22,7 +22,7 @@
                         {{printWorkTime(orderDetail.usersDetail[0].worktime)}}
                         <span v-if="orderDetail.usersDetail[0].paused">
                             ({{printWorkTime(orderDetail.usersDetail[0].paused)}},
-                        {{printWorkTime(orderDetail.usersDetail[0].waiting)}} )
+                            {{printWorkTime(orderDetail.usersDetail[0].waiting)}} )
                         </span>
                     </td>
                     <td>{{orderDetail.counts}}</td>

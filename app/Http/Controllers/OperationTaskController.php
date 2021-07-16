@@ -236,7 +236,7 @@ class OperationTaskController extends Controller
                 ]
             ],
             "processingSum" => 0,
-            "applicable" => false,
+            "applicable" => $request->applicable ? false : true,
             "quantity" => $count,
             "moment" => $request->moment,
             "processingPlan" => [

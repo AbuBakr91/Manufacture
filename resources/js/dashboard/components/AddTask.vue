@@ -40,11 +40,6 @@ export default {
     },
     mounted() {
         this.getTask()
-        //слушатель для sockets
-        // window.Echo.channel('show-task').listen('ShowTask', ({tas}) => {
-        //     this.arrayTask.push(tas)
-        //     console.log(tas)
-        // })
     },
     methods: {
         //вернуть задания для отдела

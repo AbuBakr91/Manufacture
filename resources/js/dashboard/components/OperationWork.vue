@@ -29,6 +29,14 @@ export default {
 
            if(data.data.errors[0].code) {
                this.$emit('danger', data.data.errors[0].code)
+
+               const data = await axios.post('/api/material/', {
+                   "card_id" : this.task.tech_id,
+                   "count" : this.task.count,
+                   "defects" : this.task.defects,
+                   "moment" : this.task.finish,
+                   "applicable" : true
+               })
            }
 
         }

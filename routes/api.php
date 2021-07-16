@@ -42,6 +42,7 @@ Route::post("add-waiting", [TaskController::class, 'addWaiting']);
 Route::post("operation-status", [TaskController::class, 'taskOperationStatus']);
 Route::post("material", [OperationTaskController::class, 'operationMoySklad']);
 Route::post("webhook-create", [WebHooksController::class, 'webHook']);
+Route::post("record-time", [TechnicalCardController::class, 'recordStaticTime']);
 
 Route::get("cards", [CardController::class, 'index']);
 Route::get("current-task/{id}", [TaskController::class, 'currentTask']);
@@ -52,5 +53,6 @@ Route::get("journal", [TaskController::class, 'adminJournal']);
 Route::get("operation", [TaskController::class, 'technicalOperation']);
 Route::get("categories", [CategoryController::class, 'index']);
 Route::get("departments", [DepartmentsController::class, 'index']);
+Route::get("record-card", [TechnicalCardController::class, 'recordTimeTechCard']);
 
 
