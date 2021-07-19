@@ -1,7 +1,10 @@
 <template>
     <div class="ml-3 mt-3">
         <h4 class="text-center">Журнал выполненных работ</h4>
-        <input type="search" class="form-control m-2 search" placeholder="поиск..." v-model="search">
+        <div class="search__block mb-2">
+            <Calendar v-model="picked" dateFormat="yy-mm-dd" selectionMode="range" placeholder="поиск по дате..."/>
+            <input type="search" class="form-control search" placeholder="поиск..." v-model="search">
+        </div>
         <table class="table table-striped table-hover">
             <thead>
             <tr>
@@ -34,7 +37,7 @@
 
 <script>
 import Fuse from 'fuse.js'
-
+import Calendar from 'primevue/calendar';
 export default {
     data() {
         return {
@@ -43,6 +46,8 @@ export default {
             search: '',
             fuse: null,
             result: [],
+            picked: new Date(),
+            time: null,
             options : {
                 isCaseSensitive: false,
                 findAllMatches: true,
@@ -114,7 +119,8 @@ export default {
             console.log(this.result)
             console.log(this.search.trim())
         }
-    }
+    },
+    components: {Calendar}
 }
 </script>
 
@@ -122,5 +128,9 @@ export default {
 .search {
     width: 300px;
     float: right;
+}
+.p-calendar {
+    width: 300px;
+    height: 37px;
 }
 </style>
