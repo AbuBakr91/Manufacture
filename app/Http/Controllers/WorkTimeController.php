@@ -89,11 +89,11 @@ class WorkTimeController extends Controller
                 $cardId = $task->get(['card_id'])->pluck('card_id');
 
                 $newCardTime = ($workTime - $workPaused - $workWaiting)/$request->count;
-                $cardCurrentTime = TechCardTime::get(['dynamic_time'])->pluck('dynamic_time');
+                $cardCurrentTime = TechCardTime::where('card_id', $cardId)->get('dynamic_time')[0]->dynamic_time;
                 $updateCardTime = TechCardTime::where('card_id', $cardId);
 
                 $updateCardTime->update([
-                    "dynamic_time" => $newCardTime
+                    "dynamic_time" => ($cardCurrentTime + $newCardTime)/2
                 ]);
             }
         }
