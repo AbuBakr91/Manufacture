@@ -265,40 +265,44 @@ class OperationTaskController extends Controller
             $response = Http::withBasicAuth('multishop@4wimax', '3hQ&ue1x')->post('https://online.moysklad.ru/api/remap/1.1/entity/processing', $json);
         }
 
+        //возвращаем ответ с мойсклад
+        return $response->body();
+    }
+
+
+    public function operationDefects(Request $request)
+    {
         //формируем json если переданы браки
         $defectJson = [
-                "organization" => [
-                    "meta" => [
-                        "href" => "http://online.moysklad.ru/api/remap/1.1/entity/organization/75311b0b-af1f-11e7-7a6c-d2a9000300d1",
-                        "metadataHref" => "http://online.moysklad.ru/api/remap/1.1/entity/organization/metadata",
-                        "type" => "organization",
-                        "mediaType" => "application/json"
-                    ]
-                ],
-                "agent" => [
-                    "meta" => [
-                        "href" => "https://online.moysklad.ru/api/remap/1.1/entity/counterparty/a09246c4-da3d-11eb-0a80-0dc20018cc35",
-                        "metadataHref" => "https://online.moysklad.ru/api/remap/1.1/entity/counterparty/metadata",
-                        "type" => "counterparty",
-                        "mediaType" => "application/json",
-                    ]
-                ],
-                "store" => [
-                    "meta" => [
-                        "href"=> "https://online.moysklad.ru/api/remap/1.1/entity/store/0e054440-b971-11eb-0a80-0898000fbaed",
-                        "type" => "store",
-                        "mediaType" => "application/json"
-                    ]
-                ],
-                "positions" => $this->getProductForDefects($request->card_id, $request->defects)
-            ];
+            "organization" => [
+                "meta" => [
+                    "href" => "http://online.moysklad.ru/api/remap/1.1/entity/organization/75311b0b-af1f-11e7-7a6c-d2a9000300d1",
+                    "metadataHref" => "http://online.moysklad.ru/api/remap/1.1/entity/organization/metadata",
+                    "type" => "organization",
+                    "mediaType" => "application/json"
+                ]
+            ],
+            "agent" => [
+                "meta" => [
+                    "href" => "https://online.moysklad.ru/api/remap/1.1/entity/counterparty/a09246c4-da3d-11eb-0a80-0dc20018cc35",
+                    "metadataHref" => "https://online.moysklad.ru/api/remap/1.1/entity/counterparty/metadata",
+                    "type" => "counterparty",
+                    "mediaType" => "application/json",
+                ]
+            ],
+            "store" => [
+                "meta" => [
+                    "href"=> "https://online.moysklad.ru/api/remap/1.1/entity/store/0e054440-b971-11eb-0a80-0898000fbaed",
+                    "type" => "store",
+                    "mediaType" => "application/json"
+                ]
+            ],
+            "positions" => $this->getProductForDefects($request->card_id, $request->defects)
+        ];
 
         //если передано количество брака создаем отгрузку на Брак
-        if ($request->defects) {
-            $response = Http::withBasicAuth('multishop@4wimax', '3hQ&ue1x')->post('https://online.moysklad.ru/api/remap/1.1/entity/demand', $defectJson);
-        }
+        $response = Http::withBasicAuth('multishop@4wimax', '3hQ&ue1x')->post('https://online.moysklad.ru/api/remap/1.1/entity/demand', $defectJson);
 
-        //возвращаем ответ с мойсклад
         return $response->body();
     }
 }

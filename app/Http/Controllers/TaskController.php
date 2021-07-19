@@ -170,21 +170,22 @@ class TaskController extends Controller
      * @return array
      * формирует детали по исполнителям(их затраченное время, паузы, ожидания, количество)
      */
-    protected function getUserDetail($task_id): array
+    protected function getUserDetail()
     {
-        return DB::select('SELECT performing_tasks.id, users.lastname, performing_tasks.count, technical_cards.name,
-                                        CAST(ROUND(TIME_TO_SEC(timediff(performing_tasks.finish,performing_tasks.begin))/60) as SIGNED) as worktime,
-                                        (SELECT CAST(SUM(ROUND(TIME_TO_SEC(timediff(w.pause_finish,w.pause_begin))/60)) as SIGNED) FROM work_paused w WHERE w.work_id = performing_tasks.id) as paused,
-                                        (SELECT CAST(SUM(ROUND(TIME_TO_SEC(timediff(w.waiting_finish ,w.waiting_begin))/60)) as SIGNED) FROM work_waiting w WHERE w.work_id = performing_tasks.id) as waiting
-                                        FROM performing_tasks
-                                    LEFT JOIN users
-                                        ON users.id = performing_tasks.user_id
-                                    LEFT JOIN task_orders
-                                        ON task_orders.id = performing_tasks.task_id
-                                    LEFT JOIN technical_cards
-                                        ON task_orders.card_id = technical_cards.id
-                                WHERE task_orders.id = ?
-                                ORDER BY id', array($task_id));
+        return DB::select('SELECT d.name as department, pt.id, pt.count, pt.finish, tc.name, users.lastname,
+                                        CAST(ROUND(TIME_TO_SEC(timediff(pt.finish, pt.begin))/60) as SIGNED) as worktime,
+                                        (SELECT CAST(SUM(ROUND(TIME_TO_SEC(timediff(w.pause_finish,w.pause_begin))/60)) as SIGNED) FROM work_paused w WHERE w.work_id = pt.id) as paused,
+                                        (SELECT CAST(SUM(ROUND(TIME_TO_SEC(timediff(w.waiting_finish ,w.waiting_begin))/60)) as SIGNED) FROM work_waiting w WHERE w.work_id = pt.id) as waiting
+                                    FROM performing_tasks pt
+                                    JOIN task_orders ot
+                                    ON ot.id = pt.task_id
+                                    JOIN technical_cards tc
+                                    ON ot.card_id = tc.id
+                                    JOIN departments d
+                                    ON d.id = ot.dep_id
+                                    JOIN users
+                                    ON users.id = pt.user_id
+                                ORDER BY id');
         }
 
     /**
@@ -193,31 +194,31 @@ class TaskController extends Controller
      */
     public function adminJournal()
     {
-        $taskOrder = TaskOrder::all()->where('user_count', '=', 0);
+//        $taskOrder = TaskOrder::all()->where('user_count', '=', 0);
+//
+//        $result = [];
+//
+//        foreach ($taskOrder as $item) {
+//            $task_id[] = $item->id;
+//            $dep[] = TaskOrder::find($item->id)->taskDeportment()->get();
+//            $task[] = PerformingTasks::where('task_id', $item->id)->get();
+//            $cards[] = TaskOrder::find($item->id)->taskCardName()->get();
+//            $count[] = DB::table('task_orders')->select('count')->where('id', $item->id)->get();
+//            $date[] = DB::table('task_orders')->select('created_at as date')->where('id', $item->id)->get();
+//        }
+//
+//        foreach ($dep as $key => $item) {
+//            $result[$key] = [
+//                'id' => $task_id[$key],
+//                'department' => $item[0]->name,
+//                'card' => $cards[$key][0]->name,
+//                'counts' => $count[$key][0]->count,
+//                'date' => $date[$key][0]->date,
+//                'usersDetail' => $this->getUserDetail($task_id[$key])
+//            ];
+//        }
 
-        $result = [];
-
-        foreach ($taskOrder as $item) {
-            $task_id[] = $item->id;
-            $dep[] = TaskOrder::find($item->id)->taskDeportment()->get();
-            $task[] = PerformingTasks::where('task_id', $item->id)->get();
-            $cards[] = TaskOrder::find($item->id)->taskCardName()->get();
-            $count[] = DB::table('task_orders')->select('count')->where('id', $item->id)->get();
-            $date[] = DB::table('task_orders')->select('created_at as date')->where('id', $item->id)->get();
-        }
-
-        foreach ($dep as $key => $item) {
-            $result[$key] = [
-                'id' => $task_id[$key],
-                'department' => $item[0]->name,
-                'card' => $cards[$key][0]->name,
-                'counts' => $count[$key][0]->count,
-                'date' => $date[$key][0]->date,
-                'usersDetail' => $this->getUserDetail($task_id[$key])
-            ];
-        }
-
-        return $result;
+        return $this->getUserDetail();
     }
 
 

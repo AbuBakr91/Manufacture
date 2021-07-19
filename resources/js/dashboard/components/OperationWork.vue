@@ -14,6 +14,13 @@ export default {
     props: ['task'],
     emits: ['success'],
     methods: {
+        operationDefects(id, defects, applicable) {
+            axios.post('/api/defects/', {
+                "card_id" : id,
+                "defects" : defects,
+                applicable
+            })
+        },
        async spendOperation() {
             const data = await axios.post('/api/material/', {
                 "card_id" : this.task.tech_id,
@@ -22,31 +29,37 @@ export default {
                 "moment" : this.task.finish
             })
 
-           if(!!data.data.moment) {
-               axios.post('/api/operation-status', {"id" : this.task.id})
-               this.$emit('success', this.task.tech_id)
-           }
+           console.log(data)
 
-           if(data.data.errors[0].code) {
+           if(data.data.errors) {
                this.$emit('danger', {
                    "code" : data.data.errors[0].code,
                    "message" : data.data.errors[0].error
                })
 
+           const response = await axios.post('/api/material/', {
+               "card_id" : this.task.tech_id,
+               "count" : this.task.count,
+               "defects" : this.task.defects,
+               "moment" : this.task.finish,
+               "applicable" : true
+           })
 
-               const response = await axios.post('/api/material/', {
-                   "card_id" : this.task.tech_id,
-                   "count" : this.task.count,
-                   "defects" : this.task.defects,
-                   "moment" : this.task.finish,
-                   "applicable" : true
-               })
-
-               if (!!response.data.moment) {
-                   axios.post('/api/operation-status', {"id" : this.task.id})
-                   this.$emit('success', this.task.tech_id)
+           if (!!response.data.moment) {
+               axios.post('/api/operation-status', {"id" : this.task.id})
+               if (this.task.defects > 0) {
+                   this.operationDefects(this.task.tech_id, this.task.defects, false)
                }
+               this.$emit('success', this.task.tech_id)
+            }
+           } else {
+               await axios.post('/api/operation-status', {"id" : this.task.id})
+               if(this.task.defects > 0) {
+                   await this.operationDefects(this.task.tech_id, this.task.defects, true)
+               }
+               this.$emit('success', this.task.tech_id)
            }
+
 
         }
     }

@@ -23,11 +23,6 @@ class WebHooksController extends Controller
             ->select('id')
             ->where('name', $category)->get()[0]->id;
 
-        DB::table('cache')
-            ->insert([
-                "webhook" => $categoryId
-            ]);
-
         $tech_card = new TechnicalCards;
         $tech_card->tech_id = $card_id;
         $tech_card->name = $response->json('name');
@@ -48,6 +43,7 @@ class WebHooksController extends Controller
         $product->meta = json_encode($productsData->meta);
         $product->product = json_encode($productsData->rows);
         $product->save();
+
     }
 
     protected function updateTechCard($card_id)
@@ -82,10 +78,7 @@ class WebHooksController extends Controller
         $card = explode( '"', $arrEnd);
         $cardId = $card[0];
 
-//        DB::table('cache')
-//            ->insert([
-//                "webhook" => json_encode($request->events[0])
-//            ]);
+
 
         if ($create) {
             $this->createTechCard($cardId);
@@ -93,6 +86,10 @@ class WebHooksController extends Controller
 
         if ($update) {
             $this->updateTechCard($cardId);
+            DB::table('cache')
+                ->insert([
+                    "webhook" => $cardId
+                ]);
         }
 
         return response()->json([

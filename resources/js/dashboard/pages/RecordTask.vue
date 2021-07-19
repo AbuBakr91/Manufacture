@@ -1,7 +1,7 @@
 <template>
     <div class="ml-3 mt-3">
         <h4 class="text-center">Журнал выполненных работ</h4>
-
+        <input type="search" class="form-control m-2 search" placeholder="поиск..." v-model="search">
         <table class="table table-striped table-hover">
             <thead>
             <tr>
@@ -14,34 +14,46 @@
             </tr>
             </thead>
             <tbody>
-                <tr v-for="orderDetail in orderDetails">
-                    <td>{{orderDetail.department}}</td>
-                    <td>{{orderDetail.usersDetail[0].lastname}}</td>
-                    <td>{{orderDetail.card}}</td>
+                <tr v-for="data in result">
+                    <td>{{data.department}}</td>
+                    <td>{{data.lastname}}</td>
+                    <td>{{data.name}}</td>
                     <td>
-                        {{printWorkTime(orderDetail.usersDetail[0].worktime)}}
-                        <span v-if="orderDetail.usersDetail[0].paused">
-                            ({{printWorkTime(orderDetail.usersDetail[0].paused)}},
-                            {{printWorkTime(orderDetail.usersDetail[0].waiting)}} )
+                        {{printWorkTime(data.worktime)}}
+                        <span v-if="data.paused">
+                            ({{printWorkTime(data.paused)}}, {{ printWorkTime(data.waiting)}})
                         </span>
                     </td>
-                    <td>{{orderDetail.counts}}</td>
-                    <td>{{orderDetail.date}}</td>
+                    <td>{{data.count}}</td>
+                    <td>{{data.finish}}</td>
                 </tr>
-<!--            <show-task v-for="orderDetail in orderDetails" :orderDetail="orderDetail"></show-task>-->
             </tbody>
         </table>
     </div>
 </template>
 
 <script>
-import ShowTask from "../components/ShowTask"
+import Fuse from 'fuse.js'
 
 export default {
     data() {
         return {
             tasks: [],
             orderDetails: [],
+            search: '',
+            fuse: null,
+            result: [],
+            options : {
+                isCaseSensitive: false,
+                findAllMatches: true,
+                includeScore: true,
+                keys: [
+                    "department",
+                    "name",
+                    "lastname",
+                    "finish"
+                ]
+            }
         }
     },
     methods: {
@@ -88,11 +100,27 @@ export default {
     },
     mounted() {
         this.getTaskJournal()
+        this.result = this.orderDetails
+        console.log(this.orderDetails)
     },
-    components: {ShowTask}
+    watch: {
+        search() {
+            this.fuse = new Fuse(this.orderDetails, this.options);
+            if (this.search.trim() === '') {
+                this.result = this.orderDetails
+            } else {
+                this.result = this.fuse.search(this.search.trim()).map(result => result.item)
+            }
+            console.log(this.result)
+            console.log(this.search.trim())
+        }
+    }
 }
 </script>
 
 <style scoped>
-
+.search {
+    width: 300px;
+    float: right;
+}
 </style>

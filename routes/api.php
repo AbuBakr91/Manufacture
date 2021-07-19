@@ -41,6 +41,7 @@ Route::post("add-paused", [TaskController::class, 'addPaused']);
 Route::post("add-waiting", [TaskController::class, 'addWaiting']);
 Route::post("operation-status", [TaskController::class, 'taskOperationStatus']);
 Route::post("material", [OperationTaskController::class, 'operationMoySklad']);
+Route::post("defects", [OperationTaskController::class, 'operationDefects']);
 Route::post("webhook-create", [WebHooksController::class, 'webHook']);
 Route::post("record-time", [TechnicalCardController::class, 'recordStaticTime']);
 
