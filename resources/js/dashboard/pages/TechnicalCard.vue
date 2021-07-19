@@ -17,14 +17,16 @@
                             <th>#</th>
                             <th>Название</th>
                             <th>Среднее время</th>
+                            <th>Ручной ввод</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="(card,i) in cards">
                             <td>{{i+1}}</td>
                             <td>{{card.name}}</td>
+                            <td>{{ ((card.dynamic_time)/60).toFixed(1)}}</td>
                             <td contenteditable @blur="saveTime($event, card.id)" >
-                                {{ (card.statistical_time ? card.statistical_time : (card.dynamic_time)/60).toFixed(1)}}
+                                {{ ((card.statistical_time)/60).toFixed(1)}}
                             </td>
                         </tr>
                     </tbody>

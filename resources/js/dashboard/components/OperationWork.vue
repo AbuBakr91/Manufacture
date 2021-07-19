@@ -28,15 +28,24 @@ export default {
            }
 
            if(data.data.errors[0].code) {
-               this.$emit('danger', data.data.errors[0].code)
+               this.$emit('danger', {
+                   "code" : data.data.errors[0].code,
+                   "message" : data.data.errors[0].error
+               })
 
-               const data = await axios.post('/api/material/', {
+
+               const response = await axios.post('/api/material/', {
                    "card_id" : this.task.tech_id,
                    "count" : this.task.count,
                    "defects" : this.task.defects,
                    "moment" : this.task.finish,
                    "applicable" : true
                })
+
+               if (!!response.data.moment) {
+                   axios.post('/api/operation-status', {"id" : this.task.id})
+                   this.$emit('success', this.task.tech_id)
+               }
            }
 
         }

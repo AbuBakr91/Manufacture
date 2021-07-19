@@ -44,11 +44,11 @@ export default {
                 text: `Операция успешно проведена!`
             }
         },
-        infoCode(code) {
+        infoCode(data) {
             this.alert = {
                 type: 'danger',
-                title: `Ошибка: ${code}`,
-                text: `Нельзя использовать отсутствующий на складе товар`
+                title: `Ошибка: ${data.code}`,
+                text: data.message
             }
         }
     },

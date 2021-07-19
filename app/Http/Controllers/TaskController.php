@@ -107,9 +107,9 @@ class TaskController extends Controller
      * @return int
      * метод подсчета времени паузы
      */
-    public function userTaskPaused($user_id)
+    public function taskPaused($task_id)
     {
-        $allPauses = PerformingTasks::find($user_id)->taskPaused()->get();
+        $allPauses = PerformingTasks::find($task_id)->taskPaused()->get();
 
         $init = 0;
 
@@ -117,7 +117,7 @@ class TaskController extends Controller
             $begin = Carbon::createMidnightDate($pause->pause_begin);
             $finish = Carbon::createMidnightDate($pause->pause_finish);
 
-            $init += $begin->diffInMinutes($finish);
+            $init += $begin->diffInSeconds($finish);
         }
 
         return $init;
@@ -127,17 +127,17 @@ class TaskController extends Controller
      * @return int
      * метод подсчета времени ожидания
      */
-    public function userTaskWaiting($task_id): int
+    public function taskWaiting($task_id): int
     {
-        $allPauses = PerformingTasks::find($task_id)->taskWaiting()->get();
+        $allWaiting = PerformingTasks::find($task_id)->taskWaiting()->get();
 
         $init = 0;
 
-        foreach ($allPauses as $pause) {
-            $begin = Carbon::createMidnightDate($pause->waiting_begin);
-            $finish = Carbon::createMidnightDate($pause->waiting_finish);
+        foreach ($allWaiting as $wait) {
+            $begin = Carbon::createMidnightDate($wait->waiting_begin);
+            $finish = Carbon::createMidnightDate($wait->waiting_finish);
 
-            $init += $begin->diffInMinutes($finish);
+            $init += $begin->diffInSeconds($finish);
         }
 
         return $init;
@@ -159,7 +159,7 @@ class TaskController extends Controller
             $begin = Carbon::createMidnightDate($time->begin);
             $finish = Carbon::createMidnightDate($time->finish);
 
-            $minutes+= $begin->diffInMinutes($finish);
+            $minutes+= $begin->diffInSeconds($finish);
         }
 
         return $minutes;
@@ -207,10 +207,6 @@ class TaskController extends Controller
         }
 
         foreach ($dep as $key => $item) {
-            $result[$key] = $this->userWorkTime(
-                $this->getUserDetail($task_id[$key]) ? $this->getUserDetail($task_id[$key])[0]->id : ''
-            );
-
             $result[$key] = [
                 'id' => $task_id[$key],
                 'department' => $item[0]->name,
@@ -219,7 +215,6 @@ class TaskController extends Controller
                 'date' => $date[$key][0]->date,
                 'usersDetail' => $this->getUserDetail($task_id[$key])
             ];
-
         }
 
         return $result;

@@ -17251,8 +17251,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _this = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
-        var data, _data;
-
+        var data, response;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -17277,11 +17276,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 }
 
                 if (!data.data.errors[0].code) {
-                  _context.next = 9;
+                  _context.next = 10;
                   break;
                 }
 
-                _this.$emit('danger', _data.data.errors[0].code);
+                _this.$emit('danger', {
+                  "code": data.data.errors[0].code,
+                  "message": data.data.errors[0].error
+                });
 
                 _context.next = 8;
                 return axios.post('/api/material/', {
@@ -17293,9 +17295,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 });
 
               case 8:
-                _data = _context.sent;
+                response = _context.sent;
 
-              case 9:
+                if (!!response.data.moment) {
+                  axios.post('/api/operation-status', {
+                    "id": _this.task.id
+                  });
+
+                  _this.$emit('success', _this.task.tech_id);
+                }
+
+              case 10:
               case "end":
                 return _context.stop();
             }
@@ -18090,11 +18100,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         text: "\u041E\u043F\u0435\u0440\u0430\u0446\u0438\u044F \u0443\u0441\u043F\u0435\u0448\u043D\u043E \u043F\u0440\u043E\u0432\u0435\u0434\u0435\u043D\u0430!"
       };
     },
-    infoCode: function infoCode(code) {
+    infoCode: function infoCode(data) {
       this.alert = {
         type: 'danger',
-        title: "\u041E\u0448\u0438\u0431\u043A\u0430: ".concat(code),
-        text: "\u041D\u0435\u043B\u044C\u0437\u044F \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u044C \u043E\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u044E\u0449\u0438\u0439 \u043D\u0430 \u0441\u043A\u043B\u0430\u0434\u0435 \u0442\u043E\u0432\u0430\u0440"
+        title: "\u041E\u0448\u0438\u0431\u043A\u0430: ".concat(data.code),
+        text: data.message
       };
     }
   },
@@ -20379,7 +20389,7 @@ var _hoisted_6 = {
   "class": "table table-striped table-hover"
 };
 
-var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("thead", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("tr", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", null, "#"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", null, "Название"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", null, "Среднее время")])], -1
+var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("thead", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("tr", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", null, "#"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", null, "Название"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", null, "Среднее время"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", null, "Ручной ввод")])], -1
 /* HOISTED */
 );
 
@@ -20411,12 +20421,14 @@ var render = /*#__PURE__*/_withId(function (_ctx, _cache, $props, $setup, $data,
     /* TEXT */
     ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(card.name), 1
     /* TEXT */
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)((card.dynamic_time / 60).toFixed(1)), 1
+    /* TEXT */
     ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", {
       contenteditable: "",
       onBlur: function onBlur($event) {
         return $options.saveTime($event, card.id);
       }
-    }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)((card.statistical_time ? card.statistical_time : card.dynamic_time / 60).toFixed(1)), 41
+    }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)((card.statistical_time / 60).toFixed(1)), 41
     /* TEXT, PROPS, HYDRATE_EVENTS */
     , ["onBlur"])]);
   }), 256

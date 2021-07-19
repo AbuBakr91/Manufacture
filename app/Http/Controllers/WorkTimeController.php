@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TechCardTime;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\PerformingTasks;
 use App\Models\TaskOrder;
 use Illuminate\Support\Facades\DB;
-use Symfony\Component\VarDumper\Cloner\Data;
-use function GuzzleHttp\Promise\task;
+use App\Http\Controllers\TaskController;
 
 class WorkTimeController extends Controller
 {
@@ -31,6 +31,8 @@ class WorkTimeController extends Controller
     {
         //
     }
+
+
 
     /**
      *
@@ -55,7 +57,7 @@ class WorkTimeController extends Controller
 
         if ($request->finish) {
 
-             $workTime = PerformingTasks::where('user_id', $request->user_id)
+            $workTime = PerformingTasks::where('user_id', $request->user_id)
                 ->where('count', null)
                 ->where('finish', null);
 
@@ -71,12 +73,27 @@ class WorkTimeController extends Controller
                 'finish' => Carbon::now()
             ]);
 
+            $taskTime = new TaskController;
+
+            $workTime = $taskTime->userWorkTime($task_id[0]->task_id);
+            $workPaused = $taskTime->taskPaused($task_id[0]->task_id);
+            $workWaiting = $taskTime->taskWaiting($task_id[0]->task_id);
 
             if ($status) {
                 $task = TaskOrder::find($task_id[0]->task_id);
                 $task->update([
                     'in_work' => false,
                     'user_count' => $task->user_count - $request->count
+                ]);
+
+                $cardId = $task->get(['card_id'])->pluck('card_id');
+
+                $newCardTime = ($workTime - $workPaused - $workWaiting)/$request->count;
+                $cardCurrentTime = TechCardTime::get(['dynamic_time'])->pluck('dynamic_time');
+                $updateCardTime = TechCardTime::where('card_id', $cardId);
+
+                $updateCardTime->update([
+                    "dynamic_time" => $newCardTime
                 ]);
             }
         }

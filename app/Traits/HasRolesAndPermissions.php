@@ -35,7 +35,7 @@ trait HasRolesAndPermissions
      * @param mixed ...$roles
      * @return bool
      */
-    public function hasRole(... $roles ): bool
+    public function hasRole(... $roles): bool
     {
         foreach ($roles as $role) {
             if ($this->roles->contains('slug', $role)) {
@@ -49,7 +49,7 @@ trait HasRolesAndPermissions
      * @param ...$departments
      * @return bool
      */
-    public function hasDepartment(... $departments ) {
+    public function hasDepartment(... $departments) {
         foreach ($departments as $department) {
             if ($this->department->contains('id', $department)) {
                 return true;
