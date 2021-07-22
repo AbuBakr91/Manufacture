@@ -20,7 +20,7 @@ class MaterilasSeeder extends Seeder
         $result = json_decode(TechnicalCards::select('tech_id')->get());
 
         for($i=0;$i<count($result); $i++) {
-            $results[] = json_decode(Http::withBasicAuth('multishop@4wimax', '3hQ&ue1x')->get('https://online.moysklad.ru/api/remap/1.1/entity/processingplan/'.$result[$i]->tech_id.'/materials'));
+            $results[] = json_decode(Http::withBasicAuth('multishop@4wimax', '3hQ&ue1x')->get('https://online.moysklad.ru/api/remap/1.2/entity/processingplan/'.$result[$i]->tech_id.'/materials'));
         }
 
         $output = [];

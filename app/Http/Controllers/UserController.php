@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Department;
 use App\Models\Role;
+use App\Models\UserDeportment;
+use App\Models\WorkRoom;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -19,9 +21,11 @@ class UserController extends Controller
     public function index()
     {
         return DB::table('users')
-            ->join('users_roles', 'users.id', '=', 'users_roles.user_id')
-            ->join('roles', 'roles.id', '=', 'users_roles.role_id')
-            ->select('users.id', 'users.firstname', 'users.lastname', 'users.email', 'roles.slug')
+            ->leftJoin('users_roles', 'users.id', '=', 'users_roles.user_id')
+            ->leftJoin('roles', 'roles.id', '=', 'users_roles.role_id')
+            ->leftJoin('user_work_rooms', 'user_work_rooms.user_id', '=', 'users.id')
+            ->leftJoin('work_rooms', 'user_work_rooms.work_room_id', '=', 'work_rooms.id')
+            ->select('users.id', 'users.firstname', 'users.lastname', 'users.email', 'roles.slug', 'work_rooms.name')
             ->where('roles.slug', '!=', 'manager')
             ->get();
     }
@@ -44,10 +48,6 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $department1 = Department::where('id', 1)->first();
-        $department2 = Department::where('id', 2)->first();
-        $department3 = Department::where('id', 3)->first();
-
         try {
             $user = new User();
             $user->firstname = $request->firstname;
@@ -56,16 +56,24 @@ class UserController extends Controller
             $user->password = bcrypt($request->password);
             $user->save();
 
-            $role = Role::where('slug', $request->slug)->first();
+            switch ($request->slug) {
+                case 1:
+                    $roleSlug = 'machine-operator';
+                    break;
+                case 2:
+                    $roleSlug = 'shareholder';
+                    break;
+                case 3:
+                    $roleSlug = 'collector';
+                    break;
+            }
+
+            $role = Role::where('slug', $roleSlug)->first();
+
             $user->roles()->attach($role);
 
-            if ($request->slug === 'collector') {
-                $user->department()->attach($department3);
-            } elseif ($request->slug === 'machine-operator') {
-                $user->department()->attach($department1);
-            } elseif ($request->slug === 'shareholder') {
-                $user->department()->attach($department2);
-            }
+            $user->department()->attach(Department::where('id', $request->slug)->first());
+            $user->workRoom()->attach(WorkRoom::where('id', $request->office)->first());
 
             return response()->json([
                 "status" => true,
@@ -87,7 +95,15 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        //
+        return DB::table('users')
+            ->leftJoin('users_roles', 'users.id', '=', 'users_roles.user_id')
+            ->leftJoin('roles', 'roles.id', '=', 'users_roles.role_id')
+            ->leftJoin('user_work_rooms', 'user_work_rooms.user_id', '=', 'users.id')
+            ->leftJoin('users_departments', 'users_departments.user_id', '=', 'users.id')
+            ->leftJoin('work_rooms', 'user_work_rooms.work_room_id', '=', 'work_rooms.id')
+            ->select('users_departments.id as deportment', 'users.id', 'users.firstname', 'users.lastname', 'users.email', 'roles.slug', 'work_rooms.name')
+            ->where('users.id', $id)
+            ->get();
     }
 
     /**

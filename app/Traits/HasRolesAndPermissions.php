@@ -6,6 +6,7 @@ namespace App\Traits;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Department;
+use App\Models\WorkRoom;
 
 trait HasRolesAndPermissions
 {
@@ -21,6 +22,11 @@ trait HasRolesAndPermissions
     public function department()
     {
         return $this->belongsToMany(Department::class,'users_departments');
+    }
+
+    public function workRoom()
+    {
+        return $this->belongsToMany(WorkRoom::class,'user_work_rooms');
     }
 
     /**
@@ -52,6 +58,15 @@ trait HasRolesAndPermissions
     public function hasDepartment(... $departments) {
         foreach ($departments as $department) {
             if ($this->department->contains('id', $department)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function hasWorkRoom(... $workRooms) {
+        foreach ($workRooms as $workRoom) {
+            if ($this->workRoom->contains('id', $workRoom)) {
                 return true;
             }
         }

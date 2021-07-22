@@ -5,10 +5,11 @@
         <table class="table table-striped mt-3">
             <thead>
             <tr>
-                <th style="width:22%;">Имя</th>
-                <th style="width:22%">Фамилия</th>
-                <th class="d-none d-md-table-cell" style="width:22%">Должность</th>
-                <th class="d-none d-md-table-cell" style="width:22%">Email</th>
+                <th>Имя</th>
+                <th>Фамилия</th>
+                <th>Отдел</th>
+                <th>Офис</th>
+                <th>Email</th>
                 <th>#</th>
             </tr>
             </thead>
@@ -17,6 +18,7 @@
                 <td>{{user.firstname}}</td>
                 <td>{{user.lastname}}</td>
                 <td>{{department(user.slug)}}</td>
+                <td>{{user.name}}</td>
                 <td class="d-none d-md-table-cell">{{user.email}}</td>
                 <td class="table-action">
                     <a @click.prevent="editUser(user.id)" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 align-middle"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></a>
@@ -29,8 +31,7 @@
         <button class="btn btn-primary" @click="modal = true">Добавить</button>
       </div>
         <teleport to="body">
-            <user-edit v-if="edit" @close="edit=false"></user-edit>
-            <user-modal v-if="modal" @user="addUserList" @close="modal=false"></user-modal>
+            <user-modal v-if="modal" :office="office" :position="position" @user="addUserList" @close="modal=false"></user-modal>
         </teleport>
     </div>
 </template>
@@ -39,7 +40,6 @@
 import axios from "axios";
 import UserModal from "../components/UserModal";
 import AppAlert from "../../components/AppAlert";
-import UserEdit from "../components/UserEdit";
 import AddTask from "../components/AddTask";
 
 export default {
@@ -48,29 +48,22 @@ export default {
             users: [],
             modal: false,
             edit: false,
-            alert: null
+            alert: null,
+            position: [],
+            office: []
         }
     },
     mounted() {
         this.getUsers()
-        this.getCategory()
-        this.getDepartments()
-        this.getTask()
+        this.getPosition()
+        this.getWorkRoom()
     },
     methods: {
-        async getTask() {
-            const tasks = await axios.get('/api/manager-task')
-            this.arrayTask.push(...tasks.data)
-        },
-      async  getUsers() {
+        async  getUsers() {
           const data =  await axios.get('/api/users')
           this.users.push(...data.data)
         },
-        async  getDepartments() {
-            const data =  await axios.get('/api/departments')
-            this.departments.push(...data.data)
-        },
-       async removeUser(id) {
+        async removeUser(id) {
            try {
                const person = this.users.find(user => user.id === id)
                await axios.delete('/api/users/' + id)
@@ -98,9 +91,16 @@ export default {
                 text: `Пользователь с именем "${data.firstname} ${data.lastname}" успешно добавлен!`
             }
         },
-      async  getCategory() {
-          const cat = await axios.get('/api/categories');
-          this.category.push(...cat.data)
+        async getPosition() {
+            const data = await axios.get('/api/departments')
+            this.position.push(...data.data)
+        },
+        async getWorkRoom() {
+            const data = await axios.get('/api/work-rooms')
+            this.office.push(...data.data)
+        },
+        editUser(id) {
+            this.$router.push(`/manager/users/${id}`)
         },
         department(slug) {
             if (slug === 'collector') {
@@ -114,9 +114,13 @@ export default {
             if (slug === 'shareholder') {
                 return 'Ручной монтаж'
             }
+
+            if (slug === 'sklad') {
+                return 'Склад'
+            }
         }
     },
-  components: {AppAlert, UserModal, UserEdit, AddTask}
+  components: {AppAlert, UserModal, AddTask}
 }
 </script>
 

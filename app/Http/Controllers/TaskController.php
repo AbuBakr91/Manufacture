@@ -244,6 +244,8 @@ class TaskController extends Controller
      */
     public function taskOperationStatus(Request $request)
     {
+        date_default_timezone_set('Europe/Moscow');
+
         $task = PerformingTasks::where('id', $request->id);
 
         $task->update(['operation' => true]);

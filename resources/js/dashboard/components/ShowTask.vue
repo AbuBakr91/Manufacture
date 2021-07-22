@@ -1,40 +1,36 @@
 <template>
+    <tr @click="show = !show">
+        <td>{{i+1}}</td>
+        <td>{{card.name}}</td>
+        <td>{{((card.dynamic_time)/60).toFixed(1)}}</td>
+        <td contenteditable @blur="saveTime($event, card.id)" >
+            {{((card.statistical_time)/60).toFixed(1)}}
+        </td>
+        <td>{{getDate(card.updated_at)}}</td>
+    </tr>
     <tr>
-        <td>{{orderDetail.department}}</td>
-        <td>{{orderDetail.card}}</td>
-        <td>{{orderDetail.counts}}</td>
-        <td>{{orderDetail.date}}</td>
-        <td><button class="btn btn-primary" @click="show = !show">Подробнее</button></td>
-    </tr>
-    <tr v-if="show">
-        <td><b>Сотрудник:</b></td>
-        <td><b>Количество:</b></td>
-        <td><b>Время:</b></td>
-        <td><b>Пауза:</b></td>
-        <td><b>Ожидание:</b></td>
-    </tr>
-    <tr v-if="show" v-for="user in orderDetail.usersDetail">
-        <td>{{user.lastname}}</td>
-        <td>{{user.count}} шт.</td>
-        <td>{{printWorkTime(user.worktime) }}</td>
-        <td>{{printWorkTime(user.paused)}}</td>
-        <td>{{printWorkTime(user.waiting)}}</td>
+        <td colspan="5">
+            <ol v-if="show">
+                <li v-for="materil in card.materials">
+                    {{materil.material_name}} - {{materil.count}} шт.
+                </li>
+            </ol>
+        </td>
     </tr>
 </template>
 
 <script>
 export default {
-    props : ['orderDetail'],
+    props : ['card', 'i'],
     data() {
         return {
             show: false,
         }
     },
     methods: {
-        
-    },
-    mounted() {
-        console.log(this.orderDetail)
+        getDate(data) {
+            return data.slice(0, 10)
+        }
     }
 }
 </script>

@@ -38,6 +38,8 @@ class ManagerTaskController extends Controller
      */
     public function store(Request $request)
     {
+        date_default_timezone_set('Europe/Moscow');
+
         $model = new TaskOrder;
         $request->dep_id ? $model->dep_id = $request->dep_id : null;
         $request->user_id ? $model->user_id = $request->user_id : null;

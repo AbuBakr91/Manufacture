@@ -19,13 +19,17 @@
               <input type="text" v-model="form.lastname" class="form-control" id="lastname">
             </div>
             <div class="form-group">
-              <label for="select-slug" class="col-form-label">Должность</label>
+              <label for="select-slug" class="col-form-label">Отдел</label>
               <select class="form-control" name="select-slug" id="select-slug" v-model="form.slug">
-                <option value="collector">Сборщик</option>
-                <option value="machine-operator">Оператор станка</option>
-                <option value="shareholder">Пайщик</option>
+                  <option v-for="item in position" :value="item.id">{{item.name}}</option>
               </select>
             </div>
+              <div class="form-group">
+                  <label for="select-office" class="col-form-label">Офис</label>
+                  <select class="form-control" name="select-office" id="select-office" v-model="form.office">
+                      <option v-for="item in office" :value="item.id">{{item.name}}</option>
+                  </select>
+              </div>
             <div class="form-group">
               <div class="form-group">
                 <label for="email" class="col-form-label">Email</label>
@@ -49,17 +53,22 @@
 import axios from "axios";
 
 export default {
-  data() {
-    return {
-      form: {
-          firstname: '',
-          lastname: '',
-          slug: 'collector',
-          email: '',
-          password: ''
-      }
-    }
-  },
+    props: ['position', 'office'],
+    data() {
+        return {
+            form: {
+              firstname: '',
+              lastname: '',
+              slug: 1,
+              office: 1,
+              email: '',
+              password: ''
+            }
+        }
+    },
+    mounted() {
+        console.log(this.position)
+    },
     methods: {
      async addUser() {
          const data = await axios.post('/api/users', this.form)

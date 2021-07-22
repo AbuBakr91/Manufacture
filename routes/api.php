@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\OperationTaskController;
 use App\Http\Controllers\WebHooksController;
+use App\Http\Controllers\WorkRoomController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -49,11 +50,11 @@ Route::get("cards", [CardController::class, 'index']);
 Route::get("current-task/{id}", [TaskController::class, 'currentTask']);
 Route::get("task-status/{id}", [TaskController::class, 'taskStatusUser']);
 Route::get("cards/{id}", [CardController::class, 'getCardByCategory']);
-Route::post("paused/{id}", [TaskController::class, 'taskPaused']);
 Route::get("journal", [TaskController::class, 'adminJournal']);
 Route::get("operation", [TaskController::class, 'technicalOperation']);
 Route::get("categories", [CategoryController::class, 'index']);
 Route::get("departments", [DepartmentsController::class, 'index']);
+Route::get("work-rooms", [WorkRoomController::class, 'index']);
 Route::get("record-card", [TechnicalCardController::class, 'recordTimeTechCard']);
 
 

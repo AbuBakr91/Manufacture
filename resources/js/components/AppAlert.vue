@@ -14,40 +14,5 @@ export default {
 </script>
 
 <style scoped>
-.alert {
-    padding: 1rem 1.5rem;
-    border-left-width: .5rem;
-    border-left-style: solid;
-    margin: 1rem 0.5rem;
-    position: relative;
-    border-bottom-right-radius: 2px;
-    border-top-right-radius: 2px;
-}
 
-.alert.primary {
-    border-color: #376DA6;
-    background-color: #f8f8f8;
-}
-
-.alert.danger {
-    border-color: #e53935;
-    background-color: #f8f8f8;
-}
-
-.alert.warning {
-    border-color: #c25205;
-    background-color: #f8f8f8;
-}
-
-.alert p {
-    color: #222;
-    line-height: 1.7;
-}
-
-.alert-title {
-    text-transform: uppercase;
-    font-weight: 600;
-    margin-bottom: -.4rem;
-    color: #222;
-}
 </style>

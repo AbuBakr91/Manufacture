@@ -10,6 +10,7 @@ import UserTask from "../dashboard/pages/UserTask";
 import TechnicalCard from "../dashboard/pages/TechnicalCard"
 import UserWorks from "../dashboard/pages/UserWorks"
 import RecordTask from "../dashboard/pages/RecordTask"
+import UserEdit from "../dashboard/pages/UserEdit"
 
 const routes = [
     {
@@ -39,6 +40,11 @@ const routes = [
                 name: 'users',
                 path: 'users',
                 component: UsersList
+            },
+            {
+                name: 'user',
+                path: 'user/:id',
+                component: UserEdit
             },
             {
                 name: 'profile',

@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MaterialForCard;
 use App\Models\Materials;
 use App\Models\Products;
 use App\Models\TechnicalCards;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Database\Seeders\TechnicalCardAndCategoriesSeeder;
 
 class OperationTaskController extends Controller
 {
@@ -191,26 +194,69 @@ class OperationTaskController extends Controller
     }
 
 
-    //для теста вывод в шаблон
-    protected function getMaterials()
+
+    protected function getCardsId(): array
     {
-        $card_id = '00283c7f-c21d-11eb-0a80-058900230736';
-        $materialData = Materials::select('meta', 'materials')->where('card_id', $card_id)->get();
-        $productData = Products::select('meta', 'product')->where('card_id', $card_id)->get();
+        $technicalCard = [];
+        $response = Http::withBasicAuth('multishop@4wimax', '3hQ&ue1x')->get('https://online.moysklad.ru/api/remap/1.2/entity/processingplan');
 
-        $output = [];
-
-        $material = json_decode($materialData[0]->materials);
-        $product = json_decode($materialData[0]->product);
-
-        foreach ($material as $item) {
-            $product[] = $item->product->meta;
-            $quantity[] = $item->quantity;
+        for ($i=0; $i<count($response['rows']); $i++) {
+            $technicalCard[] = $response['rows'][$i]['id'];
         }
 
-        $output['prod'] = $product;
-        $output['count'] = $quantity;
+        return $technicalCard;
+    }
 
+    protected function getMaterialsName($card_id, $allProducts)
+    {
+        $materialsRows = json_decode(Materials::select('materials')->where('card_id', $card_id)->get()[0]->materials);
+        $materialsHref = [];
+        foreach ($materialsRows as $key=> $row) {
+            $arr = explode('/', $row->product->meta->href);
+            $materialsHref[$key]['id'] = end($arr);
+            $materialsHref[$key]['count'] = $row->quantity;
+        }
+
+//        $allProducts = [];
+//        $allProducts[] = json_decode(Http::withBasicAuth('multishop@4wimax', '3hQ&ue1x')->get('https://online.moysklad.ru/api/remap/1.2/entity/product'))->rows;
+        $materialsName = [];
+
+        for($i=0; $i<count($allProducts[0]); $i++) {
+            for ($j=0;$j<count($materialsHref); $j++) {
+                if ($allProducts[0][$i]->id === $materialsHref[$j]['id']) {
+                    $name[] = $allProducts[0][$i]->name;
+                    $quantity[] = $materialsHref[$j]['count'];
+                }
+            }
+        }
+
+        for ($i=0; $i<count($name); $i++) {
+            $materialsName[$i]['name'] = $name[$i];
+            $materialsName[$i]['quantity'] = $quantity[$i];
+        }
+
+        return $materialsName;
+    }
+
+    //для теста вывод в шаблон
+    public function getMaterials()
+    {
+//        $technicalCard = $this->getCardsId();
+//        for ($i=0; $i<count($technicalCard); $i++){
+//            $output[] = TechnicalCards::where('tech_id', $technicalCard[$i])->get();
+//        }
+
+
+        $allProducts[] = json_decode(Http::withBasicAuth('multishop@4wimax', '3hQ&ue1x')->get('https://online.moysklad.ru/api/remap/1.2/entity/product'))->rows;
+
+
+        $output[] = $this->getMaterialsName('bd0ff34e-bfcf-11eb-0a80-041d000004f5', $allProducts);
+
+//        $technicalCard = TechnicalCards::all('tech_id');
+//        $output = [];
+//        foreach ($technicalCard as $card_id) {
+//            $output[] = $card_id->tech_id;
+//        }
         return view('welcome', compact('output'));
     }
 
@@ -229,8 +275,8 @@ class OperationTaskController extends Controller
         $json = [
             "organization" => [
                 "meta" => [
-                    "href" => "http://online.moysklad.ru/api/remap/1.1/entity/organization/75311b0b-af1f-11e7-7a6c-d2a9000300d1",
-                    "metadataHref" => "http://online.moysklad.ru/api/remap/1.1/entity/organization/metadata",
+                    "href" => "http://online.moysklad.ru/api/remap/1.2/entity/organization/75311b0b-af1f-11e7-7a6c-d2a9000300d1",
+                    "metadataHref" => "http://online.moysklad.ru/api/remap/1.2/entity/organization/metadata",
                     "type" => "organization",
                     "mediaType" => "application/json"
                 ]
@@ -276,8 +322,8 @@ class OperationTaskController extends Controller
         $defectJson = [
             "organization" => [
                 "meta" => [
-                    "href" => "http://online.moysklad.ru/api/remap/1.1/entity/organization/75311b0b-af1f-11e7-7a6c-d2a9000300d1",
-                    "metadataHref" => "http://online.moysklad.ru/api/remap/1.1/entity/organization/metadata",
+                    "href" => "http://online.moysklad.ru/api/remap/1.2/entity/organization/75311b0b-af1f-11e7-7a6c-d2a9000300d1",
+                    "metadataHref" => "http://online.moysklad.ru/api/remap/1.2/entity/organization/metadata",
                     "type" => "organization",
                     "mediaType" => "application/json"
                 ]

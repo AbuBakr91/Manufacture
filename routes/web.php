@@ -18,7 +18,7 @@ Route::get('{any}', function () {
     return view('layouts.app');
 })->where('any', '.*');
 
-//Route::get('/', [\App\Http\Controllers\TechnicalCardController::class, 'index']);
+//Route::get('/', [\App\Http\Controllers\OperationTaskController::class, 'getMaterials']);
 
 //Route::get('/maps', [App\Http\Controllers\GetMapController::class,'index']);
 

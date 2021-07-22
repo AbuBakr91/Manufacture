@@ -5,7 +5,6 @@
         <div class="main">
             <dashboard-header></dashboard-header>
             <router-view></router-view>
-            <dashboard-footer></dashboard-footer>
         </div>
     </div>
 
@@ -13,7 +12,6 @@
 
 <script>
 import DashboardHeader from "./components/DashboardHeader"
-import DashboardFooter from "./components/DashboardFooter";
 import DashboardSidebar from "./components/DashboardSidebar";
 import store from "../store";
 
@@ -28,7 +26,7 @@ export default {
       this.$router.push('/')
     }
   },
-  components: {DashboardHeader, DashboardFooter, DashboardSidebar}
+  components: {DashboardHeader, DashboardSidebar}
 }
 </script>
 

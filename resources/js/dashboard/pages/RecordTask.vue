@@ -1,8 +1,8 @@
-<template>
+    <template>
     <div class="ml-3 mt-3">
         <h4 class="text-center">Журнал выполненных работ</h4>
         <div class="search__block mb-2">
-            <Calendar v-model="picked" dateFormat="yy-mm-dd" selectionMode="range" placeholder="поиск по дате..."/>
+            <Calendar v-model="value" @change="searchDate()" :showButtonBar="true" dateFormat="yy-mm-dd" selectionMode="range" placeholder="поиск по дате..."/>
             <input type="search" class="form-control search" placeholder="поиск..." v-model="search">
         </div>
         <table class="table table-striped table-hover">
@@ -46,7 +46,7 @@ export default {
             search: '',
             fuse: null,
             result: [],
-            picked: new Date(),
+            value: '',
             time: null,
             options : {
                 isCaseSensitive: false,
@@ -65,6 +65,10 @@ export default {
         async getTaskJournal() {
             const dataRecord = await axios.get('/api/journal/')
              this.orderDetails.push(...dataRecord.data)
+        },
+        searchDate(e) {
+            console.log(this.value);
+            this.$nextTick(() => console.log(this.value));
         },
         getNoun(number, one, two, five) {
             let n = Math.abs(number);

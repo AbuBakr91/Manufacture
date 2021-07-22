@@ -6,6 +6,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Department;
+use App\Models\WorkRoom;
 use Illuminate\Database\Seeder;
 
 class UserSeeder extends Seeder
@@ -25,34 +26,38 @@ class UserSeeder extends Seeder
         $department1 = Department::where('id', 1)->first();
         $department2 = Department::where('id', 2)->first();
         $department3 = Department::where('id', 3)->first();
+        $workRoom215 = WorkRoom::where('id', 1)->first();
+        $workRoom220 = WorkRoom::where('id', 2)->first();
+        $workRoomSklad = WorkRoom::where('id', 3)->first();
 
-        $user1 = new User();
-        $user1->firstname = 'Антон';
-        $user1->lastname = 'Рогозников';
-        $user1->email = 'anton@emfy.com';
-        $user1->password = bcrypt('secret');
-        $user1->save();
-        $user1->roles()->attach($manager);
-        $user1->permissions()->attach($manageUsers);
+//        $user1 = new User();
+//        $user1->firstname = 'Антон';
+//        $user1->lastname = 'Рогозников';
+//        $user1->email = 'anton@emfy.com';
+//        $user1->password = bcrypt('secret');
+//        $user1->save();
+//        $user1->roles()->attach($manager);
+//        $user1->permissions()->attach($manageUsers);
 
         $user2 = new User();
-        $user2->firstname = 'Артем';
-        $user2->lastname = 'Устинов';
-        $user2->email = 'ustinov@emfy.com';
+        $user2->firstname = 'Миша';
+        $user2->lastname = 'Арапов';
+        $user2->email = 'misha@emfy.com';
         $user2->password = bcrypt('secret');
         $user2->save();
         $user2->department()->attach($department3);
         $user2->roles()->attach($collector);
+        $user2->workRoom()->attach($workRoomSklad);
 
-        $user3 = new User();
-        $user3->firstname = 'Борис';
-        $user3->lastname = 'Верник';
-        $user3->email = 'bordis@emdfy.com';
-        $user3->password = bcrypt('secret');
-        $user3->save();
-
-        $user3->department()->attach($department1);
-        $user3->roles()->attach($machineOperator);
+//        $user3 = new User();
+//        $user3->firstname = 'Борис';
+//        $user3->lastname = 'Верник';
+//        $user3->email = 'bordis@emdfy.com';
+//        $user3->password = bcrypt('secret');
+//        $user3->save();
+//
+//        $user3->department()->attach($department1);
+//        $user3->roles()->attach($machineOperator);
 
 
         $user4 = new User();
@@ -63,5 +68,6 @@ class UserSeeder extends Seeder
         $user4->save();
         $user4->department()->attach($department2);
         $user4->roles()->attach($shareholder);
+        $user4->workRoom()->attach($workRoom215);
     }
 }

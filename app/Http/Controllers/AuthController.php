@@ -21,7 +21,7 @@ class AuthController extends Controller
         if (!$token = JWTAuth::attempt($credentials)) {
             return response()->json([
                 "status" => false,
-                "message" => "Unauthorized"
+                "message" => "Неверный логин или пароль!"
             ]);
         }
 

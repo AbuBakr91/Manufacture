@@ -31,8 +31,11 @@
                 </div>
             @endif
         </div>
-
-                {{dd($data)}}
+        <?php
+//        echo '<pre>';
+//            print_r($output);
+//        echo '</pre>'?>
+        {{ dd($output) }}
         <script src="{{asset('js/app.js')}}"></script>
     </body>
 </html>

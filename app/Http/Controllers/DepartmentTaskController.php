@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Department;
 use Illuminate\Http\Request;
 use App\Models\TaskOrder;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +16,7 @@ class DepartmentTaskController extends Controller
      */
     public function index()
     {
-        //
+        return Department::all();
     }
 
     /**

@@ -23,7 +23,7 @@ class CreatePerformingTasksTable extends Migration
             $table->boolean('operation')->default(0);
             $table->dateTime('finish')->nullable();
             $table->foreign('task_id')->references('id')->on('task_orders');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -10,25 +10,19 @@
                 <option :value="0">Выберите категорию</option>
                 <option v-for="cat in categories" :value="cat.id">{{cat.name}}</option>
             </select>
-            <div class="col-8">
+            <div class="col-10">
                 <table class="table table-striped table-hover">
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Название</th>
+                            <th style="width: 20%">Название</th>
                             <th>Среднее время</th>
                             <th>Ручной ввод</th>
+                            <th style="width: 20%">Обновлено</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(card,i) in cards">
-                            <td>{{i+1}}</td>
-                            <td>{{card.name}}</td>
-                            <td>{{((card.dynamic_time)/60).toFixed(1)}}</td>
-                            <td contenteditable @blur="saveTime($event, card.id)" >
-                                {{((card.statistical_time)/60).toFixed(1)}}
-                            </td>
-                        </tr>
+                        <show-task v-for="(card,i) in cards" :card="card" :i="i"></show-task>
                     </tbody>
                 </table>
             </div>
@@ -38,7 +32,7 @@
 
 <script>
 import axios from "axios";
-
+import ShowTask from "../components/ShowTask";
 export default {
     data() {
         return {
@@ -51,7 +45,6 @@ export default {
     mounted(){
         this.getAllCards()
         this.getCategory()
-        console.log(this.cards)
     },
     methods: {
         async  getAllCards() {
@@ -79,7 +72,8 @@ export default {
                 time : event.path[0].innerText
             })
         }
-    }
+    },
+    components: {ShowTask}
 }
 </script>
 

@@ -22,7 +22,6 @@
                 </form>
             </div>
         </div>
-
         <hr class="my-0">
     </div>
 </template>

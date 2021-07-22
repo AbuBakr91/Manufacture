@@ -33,15 +33,25 @@ export default {
         }
     },
     actions: {
-        async login({commit}, payload) {
+        async login({commit, dispatch}, payload) {
             const router = useRouter()
-            const {data} = await axios.post('/api/login', {...payload, returnSecureToken: true})
+            try {
+                const {data} = await axios.post('/api/login', {...payload, returnSecureToken: true})
                 if (data.status) {
                     commit('setToken', data.token)
                     commit('setRole', data.user.slug)
                     commit('setUser', JSON.stringify(data.user))
+                } else {
+                    dispatch('setMessage', {
+                        value: data.message,
+                        type: 'danger'
+                    }, {root: true})
                 }
+            } catch (e) {
+                throw new Error()
             }
+        }
+
     },
     getters: {
         token(state) {

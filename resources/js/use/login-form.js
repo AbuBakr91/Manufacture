@@ -34,6 +34,7 @@ export function useLoginForm() {
             await store.dispatch('auth/login', values)
             router.push('/')
         } catch (e) {
+
         }
     })
 
