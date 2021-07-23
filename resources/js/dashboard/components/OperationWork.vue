@@ -29,8 +29,6 @@ export default {
                 "moment" : this.task.finish
             })
 
-           console.log(data)
-
            if(data.data.errors) {
                this.$emit('danger', {
                    "code" : data.data.errors[0].code,

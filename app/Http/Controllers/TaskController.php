@@ -111,17 +111,17 @@ class TaskController extends Controller
      * @return int
      * метод подсчета времени паузы
      */
-    public function taskPaused($task_id)
+    public function taskPaused($task_id): int
     {
         $allPauses = PerformingTasks::find($task_id)->taskPaused()->get();
-
         $init = 0;
+        if ($allPauses) {
+            foreach ($allPauses as $pause) {
+                $begin = Carbon::createMidnightDate($pause->pause_begin);
+                $finish = Carbon::createMidnightDate($pause->pause_finish);
 
-        foreach ($allPauses as $pause) {
-            $begin = Carbon::createMidnightDate($pause->pause_begin);
-            $finish = Carbon::createMidnightDate($pause->pause_finish);
-
-            $init += $begin->diffInSeconds($finish);
+                $init += $begin->diffInSeconds($finish);
+            }
         }
 
         return $init;
@@ -134,16 +134,16 @@ class TaskController extends Controller
     public function taskWaiting($task_id): int
     {
         $allWaiting = PerformingTasks::find($task_id)->taskWaiting()->get();
-
         $init = 0;
 
-        foreach ($allWaiting as $wait) {
-            $begin = Carbon::createMidnightDate($wait->waiting_begin);
-            $finish = Carbon::createMidnightDate($wait->waiting_finish);
+        if ($allWaiting) {
+            foreach ($allWaiting as $wait) {
+                $begin = Carbon::createMidnightDate($wait->waiting_begin);
+                $finish = Carbon::createMidnightDate($wait->waiting_finish);
 
-            $init += $begin->diffInSeconds($finish);
+                $init += $begin->diffInSeconds($finish);
+            }
         }
-
         return $init;
     }
 

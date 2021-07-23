@@ -243,8 +243,25 @@ class OperationTaskController extends Controller
     //для теста вывод в шаблон
     public function getMaterials()
     {
-        $output = [];
+        $task_id = DB::table('performing_tasks')
+            ->select('task_id', 'id')
+            ->where('user_id', 3)
+            ->where('count', null)
+            ->where('finish', null)->get();
 
+
+        $allPauses = PerformingTasks::find(44)->taskPaused()->get();
+        $init = 0;
+
+        foreach ($allPauses as $pause) {
+            $begin = Carbon::createMidnightDate($pause->pause_begin);
+            $finish = Carbon::createMidnightDate($pause->pause_finish);
+
+            $init += $begin->diffInSeconds($finish);
+        }
+        $taskTime = new TaskController;
+        $output = [];
+        $output[] = $taskTime->userWorkTime(44);
         return view('welcome', compact('output'));
     }
 

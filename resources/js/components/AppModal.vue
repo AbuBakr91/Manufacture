@@ -52,9 +52,6 @@ export default {
           }
           return num
       }
-    },
-    mounted() {
-        console.log(this.task)
     }
 }
 </script>

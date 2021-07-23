@@ -81,8 +81,6 @@ export default {
         clear() {
             // document.querySelector('.p-inputtext').value = ''
             this.value = null
-            // console.log(document.getElementsByClassName('p-inputtext').value)
-            console.log(this.value)
         },
         formatDate(date) {
             // if(date[1] === null) {
@@ -121,9 +119,6 @@ export default {
             //     return [year, month, day].join('-') + ' ' + [year2, month2, day2].join('-');
             // }
 
-        },
-        searchDate() {
-            console.log(this.formatDate(this.value));
         },
         searchWords(count) {
             return count + ' ' + this.getNoun(count, 'строка', 'строки', 'строк')
@@ -170,7 +165,6 @@ export default {
     mounted() {
         this.getTaskJournal()
         this.result = this.orderDetails
-        console.log(this.value)
     },
     watch: {
         search() {
@@ -190,7 +184,6 @@ export default {
                 this.countRows = ''
             } else {
                 this.result = this.fuse.search(this.formatDate(this.value)).map(result => result.item)
-                console.log(this.fuse.search(this.formatDate(this.value)))
                 this.countRows = this.result.length
             }
         }

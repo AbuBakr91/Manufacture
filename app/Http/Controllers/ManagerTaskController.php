@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PerformingTasks;
 use BeyondCode\LaravelWebSockets\Apps\App;
 use Illuminate\Http\Request;
 use App\Models\TaskOrder;
@@ -63,6 +64,7 @@ class ManagerTaskController extends Controller
             ->select('task_orders.id', 'task_orders.dep_id', 'task_orders.count', 'task_orders.card_id', 'technical_cards.name')
             ->where('task_orders.dep_id',  $id)
             ->where('task_orders.user_count', '!=', 0)
+            ->where('task_orders.deleted', '=', 0)
             ->get();
     }
 
@@ -97,7 +99,16 @@ class ManagerTaskController extends Controller
      */
     public function destroy($id)
     {
-        $task = TaskOrder::find($id);
-        $task->delete();
+        $task = TaskOrder::where('id',$id);
+        $perform_task = PerformingTasks::where('task_id', $id);
+        $count = $perform_task->count();
+
+        if ($count) {
+            $task->update([ "deleted" => true]);
+        } else {
+            $task->delete();
+        }
+
+        return ["message" => true];
     }
 }

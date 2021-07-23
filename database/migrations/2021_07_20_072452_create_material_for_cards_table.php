@@ -18,7 +18,7 @@ class CreateMaterialForCardsTable extends Migration
             $table->unsignedBigInteger('card_id');
             $table->char('material_name');
             $table->bigInteger('count');
-            $table->foreign('card_id')->references('id')->on('technical_cards')->onDelete('cascade');;
+            $table->foreign('card_id')->references('id')->on('technical_cards')->onDelete('cascade');
             $table->timestamps();
         });
     }

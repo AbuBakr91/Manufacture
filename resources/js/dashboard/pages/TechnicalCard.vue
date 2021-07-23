@@ -55,7 +55,6 @@ export default {
             if (id === 0) {
                 const cards = await axios.get('/api/tech_card')
                 this.cards.push(...cards.data)
-                console.log(this.cards)
             } else {
                 const cards = await axios.get('/api/tech_card')
                 this.cards.push(...cards.data)

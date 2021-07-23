@@ -39,7 +39,7 @@ class WorkTimeController extends Controller
                 ->where('finish', null);
 
             $task_id = DB::table('performing_tasks')
-                ->select('task_id')
+                ->select('task_id', 'id')
                 ->where('user_id', $request->user_id)
                 ->where('count', null)
                 ->where('finish', null)->get();
@@ -54,9 +54,9 @@ class WorkTimeController extends Controller
 
             $taskTime = new TaskController;
 
-            $workTime = $taskTime->userWorkTime($task_id[0]->task_id);
-            $workPaused = $taskTime->taskPaused($task_id[0]->task_id);
-            $workWaiting = $taskTime->taskWaiting($task_id[0]->task_id);
+            $workTime = $taskTime->userWorkTime($task_id[0]->id);
+            $workPaused = $taskTime->taskPaused($task_id[0]->id);
+            $workWaiting = $taskTime->taskWaiting($task_id[0]->id);
 
             if ($status) {
                 $task = TaskOrder::find($task_id[0]->task_id);

@@ -16964,9 +16964,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
       return num;
     }
-  },
-  mounted: function mounted() {
-    console.log(this.task);
   }
 });
 
@@ -17293,10 +17290,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               case 2:
                 data = _context.sent;
-                console.log(data);
 
                 if (!data.data.errors) {
-                  _context.next = 12;
+                  _context.next = 11;
                   break;
                 }
 
@@ -17305,7 +17301,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   "message": data.data.errors[0].error
                 });
 
-                _context.next = 8;
+                _context.next = 7;
                 return axios.post('/api/material/', {
                   "card_id": _this.task.tech_id,
                   "count": _this.task.count,
@@ -17314,7 +17310,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   "applicable": true
                 });
 
-              case 8:
+              case 7:
                 response = _context.sent;
 
                 if (!!response.data.moment) {
@@ -17329,28 +17325,28 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   _this.$emit('success', _this.task.tech_id);
                 }
 
-                _context.next = 18;
+                _context.next = 17;
                 break;
 
-              case 12:
-                _context.next = 14;
+              case 11:
+                _context.next = 13;
                 return axios.post('/api/operation-status', {
                   "id": _this.task.id
                 });
 
-              case 14:
+              case 13:
                 if (!(_this.task.defects > 0)) {
-                  _context.next = 17;
+                  _context.next = 16;
                   break;
                 }
 
-                _context.next = 17;
+                _context.next = 16;
                 return _this.operationDefects(_this.task.tech_id, _this.task.defects, true);
 
-              case 17:
+              case 16:
                 _this.$emit('success', _this.task.tech_id);
 
-              case 18:
+              case 17:
               case "end":
                 return _context.stop();
             }
@@ -17585,9 +17581,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     clear: function clear() {
       // document.querySelector('.p-inputtext').value = ''
-      this.value = null; // console.log(document.getElementsByClassName('p-inputtext').value)
-
-      console.log(this.value);
+      this.value = null;
     },
     formatDate: function formatDate(date) {
       // if(date[1] === null) {
@@ -17620,9 +17614,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       //
       //     return [year, month, day].join('-') + ' ' + [year2, month2, day2].join('-');
       // }
-    },
-    searchDate: function searchDate() {
-      console.log(this.formatDate(this.value));
     },
     searchWords: function searchWords(count) {
       return count + ' ' + this.getNoun(count, 'строка', 'строки', 'строк');
@@ -17675,7 +17666,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   mounted: function mounted() {
     this.getTaskJournal();
     this.result = this.orderDetails;
-    console.log(this.value);
   },
   watch: {
     search: function search() {
@@ -17701,7 +17691,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         this.result = this.fuse.search(this.formatDate(this.value)).map(function (result) {
           return result.item;
         });
-        console.log(this.fuse.search(this.formatDate(this.value)));
         this.countRows = this.result.length;
       }
     }
@@ -17801,7 +17790,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             switch (_context2.prev = _context2.next) {
               case 0:
                 if (!(id === 0)) {
-                  _context2.next = 8;
+                  _context2.next = 7;
                   break;
                 }
 
@@ -17813,15 +17802,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
                 (_this2$cards = _this2.cards).push.apply(_this2$cards, _toConsumableArray(cards.data));
 
-                console.log(_this2.cards);
-                _context2.next = 13;
+                _context2.next = 12;
                 break;
 
-              case 8:
-                _context2.next = 10;
+              case 7:
+                _context2.next = 9;
                 return axios__WEBPACK_IMPORTED_MODULE_1___default().get('/api/tech_card');
 
-              case 10:
+              case 9:
                 _cards = _context2.sent;
 
                 (_this2$cards2 = _this2.cards).push.apply(_this2$cards2, _toConsumableArray(_cards.data));
@@ -17830,7 +17818,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   return card.cat_id === id;
                 });
 
-              case 13:
+              case 12:
               case "end":
                 return _context2.stop();
             }
@@ -18024,7 +18012,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     this.getUser();
     this.getPosition();
     this.getWorkRoom();
-    console.log(this.user);
   }
 });
 
@@ -18493,7 +18480,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     editUser: function editUser(id) {
-      this.$router.push("/manager/users/".concat(id));
+      this.$router.push("/manager/user/".concat(id));
     },
     department: function department(slug) {
       if (slug === 'collector') {
@@ -20288,7 +20275,7 @@ var render = /*#__PURE__*/_withId(function (_ctx, _cache, $props, $setup, $data,
     "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
       return $data.value = $event;
     }),
-    onDateSelect: $options.searchDate,
+    onDateSelect: _ctx.searchDate,
     onClearClick: $options.clear,
     showButtonBar: true,
     dateFormat: "yy-mm-dd",

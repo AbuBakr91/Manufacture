@@ -18,7 +18,7 @@ class CreateWorkPausedsTable extends Migration
             $table->dateTime('pause_begin');
             $table->dateTime('pause_finish')->nullable();
             $table->unsignedBigInteger('work_id');
-            $table->foreign('work_id')->references('id')->on('performing_tasks');
+            $table->foreign('work_id')->references('id')->on('performing_tasks')->onDelete('cascade');
             $table->timestamps();
         });
 

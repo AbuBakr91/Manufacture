@@ -100,7 +100,7 @@ export default {
             this.office.push(...data.data)
         },
         editUser(id) {
-            this.$router.push(`/manager/users/${id}`)
+            this.$router.push(`/manager/user/${id}`)
         },
         department(slug) {
             if (slug === 'collector') {

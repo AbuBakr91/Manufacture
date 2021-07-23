@@ -70,7 +70,6 @@ export default {
         this.getUser()
         this.getPosition()
         this.getWorkRoom()
-        console.log(this.user)
     }
 }
 </script>
