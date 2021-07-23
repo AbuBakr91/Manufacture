@@ -2,7 +2,7 @@
     <div class="ml-3 mt-3">
         <h4 class="text-center">Журнал выполненных работ</h4>
         <div class="search__block mb-2">
-            <Calendar v-model="value" @change="searchDate()" :showButtonBar="true" dateFormat="yy-mm-dd" selectionMode="range" placeholder="поиск по дате..."/>
+            <Calendar v-model="value" @date-select="searchDate" @clear-click="clear" :showButtonBar="true" dateFormat="yy-mm-dd" placeholder="поиск по дате..."/>
             <input type="search" class="form-control search" placeholder="поиск..." v-model="search">
         </div>
         <table class="table table-striped table-hover">
@@ -52,7 +52,7 @@ export default {
             fuse: null,
             result: [],
             countRows: '',
-            value: '',
+            value: null,
             time: null,
             options : {
                 shouldSort: true,
@@ -78,9 +78,52 @@ export default {
             const dataRecord = await axios.get('/api/journal/')
              this.orderDetails.push(...dataRecord.data)
         },
-        searchDate(e) {
-            console.log(this.value);
-            this.$nextTick(() => console.log(this.value));
+        clear() {
+            // document.querySelector('.p-inputtext').value = ''
+            this.value = null
+            // console.log(document.getElementsByClassName('p-inputtext').value)
+            console.log(this.value)
+        },
+        formatDate(date) {
+            // if(date[1] === null) {
+                let d = new Date(date),
+                    month = '' + (d.getMonth() + 1),
+                    day = '' + d.getDate(),
+                    year = d.getFullYear();
+
+                if (month.length < 2)
+                    month = '0' + month;
+                if (day.length < 2)
+                    day = '0' + day;
+
+                return [year, month, day].join('-');
+            // } else {
+            //     let d = new Date(date[0]),
+            //         month = '' + (d.getMonth() + 1),
+            //         day = '' + d.getDate(),
+            //         year = d.getFullYear();
+            //
+            //     if (month.length < 2)
+            //         month = '0' + month;
+            //     if (day.length < 2)
+            //         day = '0' + day;
+            //
+            //     let d2 = new Date(date[1]),
+            //         month2 = '' + (d2.getMonth() + 1),
+            //         day2 = '' + d2.getDate(),
+            //         year2 = d2.getFullYear();
+            //
+            //     if (month2.length < 2)
+            //         month2 = month;
+            //     if (day2.length < 2)
+            //         day2 = '0' + day2;
+            //
+            //     return [year, month, day].join('-') + ' ' + [year2, month2, day2].join('-');
+            // }
+
+        },
+        searchDate() {
+            console.log(this.formatDate(this.value));
         },
         searchWords(count) {
             return count + ' ' + this.getNoun(count, 'строка', 'строки', 'строк')
@@ -127,7 +170,7 @@ export default {
     mounted() {
         this.getTaskJournal()
         this.result = this.orderDetails
-        console.log(this.orderDetails)
+        console.log(this.value)
     },
     watch: {
         search() {
@@ -137,6 +180,17 @@ export default {
                 this.countRows = ''
             } else {
                 this.result = this.fuse.search(this.search.trim()).map(result => result.item)
+                this.countRows = this.result.length
+            }
+        },
+        value() {
+            this.fuse = new Fuse(this.orderDetails, this.options);
+            if (this.value == null) {
+                this.result = this.orderDetails
+                this.countRows = ''
+            } else {
+                this.result = this.fuse.search(this.formatDate(this.value)).map(result => result.item)
+                console.log(this.fuse.search(this.formatDate(this.value)))
                 this.countRows = this.result.length
             }
         }

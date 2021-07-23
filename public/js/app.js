@@ -17539,7 +17539,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       fuse: null,
       result: [],
       countRows: '',
-      value: '',
+      value: null,
       time: null,
       options: {
         shouldSort: true,
@@ -17583,13 +17583,46 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee);
       }))();
     },
-    searchDate: function searchDate(e) {
-      var _this2 = this;
+    clear: function clear() {
+      // document.querySelector('.p-inputtext').value = ''
+      this.value = null; // console.log(document.getElementsByClassName('p-inputtext').value)
 
       console.log(this.value);
-      this.$nextTick(function () {
-        return console.log(_this2.value);
-      });
+    },
+    formatDate: function formatDate(date) {
+      // if(date[1] === null) {
+      var d = new Date(date),
+          month = '' + (d.getMonth() + 1),
+          day = '' + d.getDate(),
+          year = d.getFullYear();
+      if (month.length < 2) month = '0' + month;
+      if (day.length < 2) day = '0' + day;
+      return [year, month, day].join('-'); // } else {
+      //     let d = new Date(date[0]),
+      //         month = '' + (d.getMonth() + 1),
+      //         day = '' + d.getDate(),
+      //         year = d.getFullYear();
+      //
+      //     if (month.length < 2)
+      //         month = '0' + month;
+      //     if (day.length < 2)
+      //         day = '0' + day;
+      //
+      //     let d2 = new Date(date[1]),
+      //         month2 = '' + (d2.getMonth() + 1),
+      //         day2 = '' + d2.getDate(),
+      //         year2 = d2.getFullYear();
+      //
+      //     if (month2.length < 2)
+      //         month2 = month;
+      //     if (day2.length < 2)
+      //         day2 = '0' + day2;
+      //
+      //     return [year, month, day].join('-') + ' ' + [year2, month2, day2].join('-');
+      // }
+    },
+    searchDate: function searchDate() {
+      console.log(this.formatDate(this.value));
     },
     searchWords: function searchWords(count) {
       return count + ' ' + this.getNoun(count, 'строка', 'строки', 'строк');
@@ -17642,7 +17675,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   mounted: function mounted() {
     this.getTaskJournal();
     this.result = this.orderDetails;
-    console.log(this.orderDetails);
+    console.log(this.value);
   },
   watch: {
     search: function search() {
@@ -17655,6 +17688,20 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         this.result = this.fuse.search(this.search.trim()).map(function (result) {
           return result.item;
         });
+        this.countRows = this.result.length;
+      }
+    },
+    value: function value() {
+      this.fuse = new fuse_js__WEBPACK_IMPORTED_MODULE_1__.default(this.orderDetails, this.options);
+
+      if (this.value == null) {
+        this.result = this.orderDetails;
+        this.countRows = '';
+      } else {
+        this.result = this.fuse.search(this.formatDate(this.value)).map(function (result) {
+          return result.item;
+        });
+        console.log(this.fuse.search(this.formatDate(this.value)));
         this.countRows = this.result.length;
       }
     }
@@ -20241,20 +20288,18 @@ var render = /*#__PURE__*/_withId(function (_ctx, _cache, $props, $setup, $data,
     "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
       return $data.value = $event;
     }),
-    onChange: _cache[2] || (_cache[2] = function ($event) {
-      return $options.searchDate();
-    }),
+    onDateSelect: $options.searchDate,
+    onClearClick: $options.clear,
     showButtonBar: true,
     dateFormat: "yy-mm-dd",
-    selectionMode: "range",
     placeholder: "поиск по дате..."
   }, null, 8
   /* PROPS */
-  , ["modelValue"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("input", {
+  , ["modelValue", "onDateSelect", "onClearClick"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("input", {
     type: "search",
     "class": "form-control search",
     placeholder: "поиск...",
-    "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
+    "onUpdate:modelValue": _cache[2] || (_cache[2] = function ($event) {
       return $data.search = $event;
     })
   }, null, 512

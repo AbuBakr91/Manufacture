@@ -65,6 +65,8 @@ class TaskController extends Controller
      */
     public function addPaused(Request $request)
     {
+        date_default_timezone_set('Europe/Moscow');
+
         if ($request->begin) {
             $paused = new WorkPaused;
             $paused->pause_begin = Carbon::now();
@@ -87,6 +89,8 @@ class TaskController extends Controller
      */
     public function addWaiting(Request $request)
     {
+        date_default_timezone_set('Europe/Moscow');
+
         if ($request->begin) {
             $waiting = new WorkWaiting;
             $waiting->waiting_begin = Carbon::now();

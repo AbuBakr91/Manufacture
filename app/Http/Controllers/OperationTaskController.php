@@ -221,8 +221,6 @@ class OperationTaskController extends Controller
             $materialsHref[$key]['count'] = $row->quantity;
         }
 
-//        $allProducts = [];
-//        $allProducts[] = json_decode(Http::withBasicAuth('multishop@4wimax', '3hQ&ue1x')->get('https://online.moysklad.ru/api/remap/1.2/entity/product'))->rows;
         $materialsName = [];
 
         for($i=0; $i<count($allProducts[0]); $i++) {
@@ -308,6 +306,7 @@ class OperationTaskController extends Controller
 
     public function operationDefects(Request $request)
     {
+        date_default_timezone_set('Europe/Moscow');
         //формируем json если переданы браки
         $defectJson = [
             "organization" => [
