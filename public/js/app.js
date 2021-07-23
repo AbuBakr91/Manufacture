@@ -16889,10 +16889,7 @@ __webpack_require__.r(__webpack_exports__);
     });
     return {
       message: message,
-      title: title,
-      close: function close() {
-        return store.commit('clearMessage');
-      }
+      title: title
     };
   }
 });
@@ -17541,9 +17538,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       search: '',
       fuse: null,
       result: [],
+      countRows: '',
       value: '',
       time: null,
       options: {
+        shouldSort: true,
+        tokenize: true,
+        matchAllTokens: true,
+        threshold: 0,
+        location: 0,
+        distance: 0,
         isCaseSensitive: false,
         findAllMatches: true,
         includeScore: true,
@@ -17587,6 +17591,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         return console.log(_this2.value);
       });
     },
+    searchWords: function searchWords(count) {
+      return count + ' ' + this.getNoun(count, 'строка', 'строки', 'строк');
+    },
     getNoun: function getNoun(number, one, two, five) {
       var n = Math.abs(number);
       n %= 100;
@@ -17607,7 +17614,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
       return five;
     },
-    printWorkTime: function printWorkTime(minutes) {
+    printWorkTime: function printWorkTime(time) {
+      var paused = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+      var waiting = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+      var minutes = time - paused - waiting;
+
       if (minutes > 60) {
         var hour = Math.floor(minutes / 60);
         var mnt = Math.floor(minutes % 60);
@@ -17621,7 +17632,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }
       }
 
-      if (minutes === null) {
+      if (minutes == null || minutes < 0) {
         return '0 минут';
       }
 
@@ -17639,14 +17650,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
       if (this.search.trim() === '') {
         this.result = this.orderDetails;
+        this.countRows = '';
       } else {
         this.result = this.fuse.search(this.search.trim()).map(function (result) {
           return result.item;
         });
+        this.countRows = this.result.length;
       }
-
-      console.log(this.result);
-      console.log(this.search.trim());
     }
   },
   components: {
@@ -19124,12 +19134,7 @@ var render = /*#__PURE__*/_withId(function (_ctx, _cache, $props, $setup, $data,
   /* TEXT */
   )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("p", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.message.value), 1
   /* TEXT */
-  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", {
-    "class": "alert-close",
-    onClick: _cache[1] || (_cache[1] = function () {
-      return $setup.close && $setup.close.apply($setup, arguments);
-    })
-  }, "×")], 2
+  )], 2
   /* CLASS */
   )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true);
 });
@@ -20214,12 +20219,16 @@ var _hoisted_4 = {
   "class": "table table-striped table-hover"
 };
 
-var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("thead", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("tr", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", null, "Отдел"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", null, "Сотрудник"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", null, "Тех карта"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", null, "Время(пауза, ожидание)"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", null, "Количество"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", null, "Дата")])], -1
+var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("thead", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("tr", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", null, "Отдел"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", null, "Сотрудник"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", null, "Тех карта"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", null, "Время(пауза, ожидание)"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", null, "Количество"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", null, "Брак"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("th", null, "Дата")])], -1
 /* HOISTED */
 );
 
 var _hoisted_6 = {
   key: 0
+};
+var _hoisted_7 = {
+  key: 0,
+  "class": "mt-2"
 };
 
 (0,vue__WEBPACK_IMPORTED_MODULE_0__.popScopeId)();
@@ -20257,18 +20266,22 @@ var render = /*#__PURE__*/_withId(function (_ctx, _cache, $props, $setup, $data,
     /* TEXT */
     ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(data.name), 1
     /* TEXT */
-    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.printWorkTime(data.worktime)) + " ", 1
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.printWorkTime(data.worktime, data.paused, data.waiting)) + " ", 1
     /* TEXT */
     ), data.paused ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("span", _hoisted_6, " (" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.printWorkTime(data.paused)) + ", " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.printWorkTime(data.waiting)) + ") ", 1
     /* TEXT */
     )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(data.count), 1
+    /* TEXT */
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(data.defects), 1
     /* TEXT */
     ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("td", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(data.finish), 1
     /* TEXT */
     )]);
   }), 256
   /* UNKEYED_FRAGMENT */
-  ))])])]);
+  ))]), $data.countRows ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("h4", null, "Результат поиска " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.searchWords($data.countRows)), 1
+  /* TEXT */
+  )])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])]);
 });
 
 /***/ }),

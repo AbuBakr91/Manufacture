@@ -44,8 +44,10 @@ class WorkTimeController extends Controller
                 ->where('count', null)
                 ->where('finish', null)->get();
 
+            $count = (int)$request->count;
+
             $status = $workTime->update([
-                'count' => $request->count,
+                'count' => $count,
                 'defects' => $request->defects,
                 'finish' => Carbon::now()
             ]);
@@ -60,12 +62,12 @@ class WorkTimeController extends Controller
                 $task = TaskOrder::find($task_id[0]->task_id);
                 $task->update([
                     'in_work' => false,
-                    'user_count' => $task->user_count - $request->count
+                    'user_count' => $task->user_count - $count
                 ]);
 
-                $cardId = $task->get(['card_id'])->pluck('card_id');
+                $cardId = TaskOrder::select('card_id')->where('id', $task_id[0]->task_id)->get()[0]->card_id;
 
-                $newCardTime = ($workTime - $workPaused - $workWaiting)/$request->count;
+                $newCardTime = ($workTime - $workPaused - $workWaiting)/($count ? (int)$request->count : 1);
                 $cardCurrentTime = TechCardTime::where('card_id', $cardId)->get('dynamic_time')[0]->dynamic_time;
                 $updateCardTime = TechCardTime::where('card_id', $cardId);
 

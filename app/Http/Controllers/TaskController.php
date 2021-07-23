@@ -172,7 +172,7 @@ class TaskController extends Controller
      */
     protected function getUserDetail()
     {
-        return DB::select('SELECT d.name as department, pt.id, pt.count, pt.finish, tc.name, users.lastname,
+        return DB::select('SELECT d.name as department, pt.id, pt.count, pt.defects, pt.finish, tc.name, users.lastname,
                                         CAST(ROUND(TIME_TO_SEC(timediff(pt.finish, pt.begin))/60) as SIGNED) as worktime,
                                         (SELECT CAST(SUM(ROUND(TIME_TO_SEC(timediff(w.pause_finish,w.pause_begin))/60)) as SIGNED) FROM work_paused w WHERE w.work_id = pt.id) as paused,
                                         (SELECT CAST(SUM(ROUND(TIME_TO_SEC(timediff(w.waiting_finish ,w.waiting_begin))/60)) as SIGNED) FROM work_waiting w WHERE w.work_id = pt.id) as waiting
@@ -185,6 +185,7 @@ class TaskController extends Controller
                                     ON d.id = ot.dep_id
                                     JOIN users
                                     ON users.id = pt.user_id
+                                    WHERE pt.count + pt.defects != 0
                                 ORDER BY id');
         }
 

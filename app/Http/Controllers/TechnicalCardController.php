@@ -77,7 +77,7 @@ class TechnicalCardController extends Controller
                 $techCard{$i}->dynamic_time = round((
                         $this->techCardTime($this->taskIds($cards[$i])) -
                         $this->techCardWaited($this->taskIds($cards[$i])) -
-                        $this->techCardPaused($this->taskIds($cards[$i])))/ $this->getCardAllCount($cards[$i]), 1);
+                        $this->techCardPaused($this->taskIds($cards[$i])))/ ($this->getCardAllCount($cards[$i]) ?? 1), 1);
                 $techCard{$i}->save();
             } else {
                 $techCard{$i} = new TechCardTime();

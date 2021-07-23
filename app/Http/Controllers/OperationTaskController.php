@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\MaterialForCard;
 use App\Models\Materials;
+use App\Models\PerformingTasks;
 use App\Models\Products;
+use App\Models\TaskOrder;
+use App\Models\TechCardTime;
 use App\Models\TechnicalCards;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Database\Seeders\TechnicalCardAndCategoriesSeeder;
 
@@ -241,22 +245,8 @@ class OperationTaskController extends Controller
     //для теста вывод в шаблон
     public function getMaterials()
     {
-//        $technicalCard = $this->getCardsId();
-//        for ($i=0; $i<count($technicalCard); $i++){
-//            $output[] = TechnicalCards::where('tech_id', $technicalCard[$i])->get();
-//        }
+        $output = [];
 
-
-        $allProducts[] = json_decode(Http::withBasicAuth('multishop@4wimax', '3hQ&ue1x')->get('https://online.moysklad.ru/api/remap/1.2/entity/product'))->rows;
-
-
-        $output[] = $this->getMaterialsName('bd0ff34e-bfcf-11eb-0a80-041d000004f5', $allProducts);
-
-//        $technicalCard = TechnicalCards::all('tech_id');
-//        $output = [];
-//        foreach ($technicalCard as $card_id) {
-//            $output[] = $card_id->tech_id;
-//        }
         return view('welcome', compact('output'));
     }
 
