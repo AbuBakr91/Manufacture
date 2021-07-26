@@ -27,7 +27,7 @@
                             </select>
                         </div>
                         <div class="col-8 mt-3">
-                            <h4 class="text-center">Выставить задание:</h4>
+                            <h4 class="text-center">Добавить задание:</h4>
                             <div class="selects">
                                 <select class="form-control category" @change="getCards(category)" v-model="category" name="category" id="category">
                                     <option value="0">Выберите категорию</option>
@@ -38,17 +38,18 @@
                                     <option v-for="card in cards" :value="card.id">{{card.name}}</option>
                                 </select>
                                 <input type="number" class="form-control category" v-model="count" placeholder="Введите количество">
-                                <button class="btn" @click="addTask">Выставить</button>
+                                <button class="btn" @click="addTask">Добавить</button>
                             </div>
                         </div>
                         <div class="col-8 mt-5 d-flex justify-content-center" v-if="taskManager.length !== 0">
-                            <button class="btn primary btn_start" @click="startWork" type="submit">START</button>
+                            <button class="btn primary btn_start" @click="startWork" type="submit">Старт</button>
                         </div>
                     </div>
                     <div class="row mt-5" v-if="start">
                         <h2 class="text-center mb-5">Название тех.карты: <b>{{currentTask[0].name}} Количество: {{currentTask[0].user_count}}</b></h2>
                         <div class="col-8 m-auto content_stop mt-5">
-                            <button class="btn btn_pause" :disabled="waiting" @click="addPaused" v-html="pause ? pauseIcon : 'PAUSE'" type="submit"></button>
+                            <button class="btn btn_pause" :disabled="waiting" @click="addPaused" v-html="pause ? pauseIcon : 'Пауза'" type="submit"></button>
+                            <p class="work_begin">Начало: {{getTime(currentTask[0].begin)}}</p>
                             <button class="btn btn_pause" :disabled="pause" @click="addWaiting" v-html="waiting ? pauseIcon : 'Ожидание'" type="submit"></button>
                         </div>
                         <div class="col-12 d-flex justify-content-center mt-5">
@@ -91,6 +92,9 @@ export default {
         }
     },
     methods: {
+        getTime(date) {
+            return date.slice(10,date.length - 3)
+        },
         getNow() {
             this.dataTime = new Date().toLocaleTimeString()
         },
@@ -259,7 +263,11 @@ export default {
     cursor: pointer;
     border-radius: 5px;
 }
-
+.work_begin {
+    font-size: 20px;
+    font-weight: bold;
+    padding-top: 10px;
+}
 .btn_stop, .btn_pause, .btn_start {
     padding: 4px;
     width: 140px;

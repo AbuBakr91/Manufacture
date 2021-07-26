@@ -45,6 +45,7 @@ Route::post("material", [OperationTaskController::class, 'operationMoySklad']);
 Route::post("defects", [OperationTaskController::class, 'operationDefects']);
 Route::post("webhook-create", [WebHooksController::class, 'webHook']);
 Route::post("record-time", [TechnicalCardController::class, 'recordStaticTime']);
+Route::post("update-card/{id}", [TechnicalCardController::class, 'updateTechCard']);
 
 Route::get("cards", [CardController::class, 'index']);
 Route::get("current-task/{id}", [TaskController::class, 'currentTask']);

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Department;
 use App\Models\Role;
 use App\Models\UserDeportment;
+use App\Models\UserRoles;
+use App\Models\UserWorkRoom;
 use App\Models\WorkRoom;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -40,6 +42,20 @@ class UserController extends Controller
         //
     }
 
+    protected function roleForDeportment($deportment): string
+    {
+        switch ($deportment) {
+            case 1:
+                return 'machine-operator';
+                break;
+            case 2:
+                return 'shareholder';
+                break;
+            case 3:
+                return 'collector';
+                break;
+        }
+    }
     /**
      * создает пользователя
      *
@@ -56,19 +72,7 @@ class UserController extends Controller
             $user->password = bcrypt($request->password);
             $user->save();
 
-            switch ($request->slug) {
-                case 1:
-                    $roleSlug = 'machine-operator';
-                    break;
-                case 2:
-                    $roleSlug = 'shareholder';
-                    break;
-                case 3:
-                    $roleSlug = 'collector';
-                    break;
-            }
-
-            $role = Role::where('slug', $roleSlug)->first();
+            $role = Role::where('slug', $this->roleForDeportment($request->slug))->first();
 
             $user->roles()->attach($role);
 
@@ -101,7 +105,7 @@ class UserController extends Controller
             ->leftJoin('user_work_rooms', 'user_work_rooms.user_id', '=', 'users.id')
             ->leftJoin('users_departments', 'users_departments.user_id', '=', 'users.id')
             ->leftJoin('work_rooms', 'user_work_rooms.work_room_id', '=', 'work_rooms.id')
-            ->select('users_departments.id as deportment', 'users.id', 'users.firstname', 'users.lastname', 'users.email', 'roles.slug', 'work_rooms.name')
+            ->select('users_departments.department_id as deportment', 'users.id', 'users.firstname', 'users.lastname', 'users.email', 'work_rooms.id as office')
             ->where('users.id', $id)
             ->get();
     }
@@ -129,27 +133,42 @@ class UserController extends Controller
         $user = User::find($id);
 
         if ($request->firstname){
-            $user->firstname = $request->firstname;
+            $user->update(["firstname" => $request->firstname]);
         }
 
         if ($request->lastname){
-            $user->firstname = $request->lastname;
+            $user->update(["lastname" => $request->lastname]);
         }
 
         if ($request->email){
-            $user->email = $request->email;
+            $user->update(["email" => $request->email]);
         }
 
         if ($request->password){
-            $user->password = bcrypt($request->password);
+            $user->update(["password" => bcrypt($request->password)]);
         }
 
-        if ($request->slug){
-            $role = Role::where('slug', $request->slug)->first();
-            $user->roles()->attach($role);
+        if ($request->deportment){
+
+            $role = Role::where('slug', $this->roleForDeportment($request->deportment))->get()[0]->id;
+            $userRole = UserRoles::where('user_id', $id);
+            $userRole->update([
+                "role_id" => $role
+            ]);
+
+            $userDepot = UserDeportment::where('user_id', $id);
+            $userDepot->update([
+                'department_id' => $request->deportment
+            ]);
         }
 
-        $user->save();
+        if($request->office) {
+            $userOffice = UserWorkRoom::where('user_id', $id);
+            $userOffice->update([
+                'user_id' => $id,
+                'work_room_id' => $request->office
+            ]);
+        }
 
         return response()->json([
             "status" => true,

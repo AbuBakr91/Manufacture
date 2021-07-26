@@ -63,7 +63,7 @@ class MaterialNameSeeder extends Seeder
     public function run()
     {
         $cards = $this->getCards();
-        $allProducts[] = json_decode(Http::withBasicAuth('multishop@4wimax', '3hQ&ue1x')->get('https://online.moysklad.ru/api/remap/1.2/entity/product'))->rows;
+        $allProducts[] = json_decode(Http::withBasicAuth(env('M_LOGIN'), env('M_PASS'))->get('https://online.moysklad.ru/api/remap/1.2/entity/product'))->rows;
 
         for ($i=0; $i<count($cards); $i++) {
             for ($j=0; $j<count($this->getMaterialsName($cards[$i], $allProducts)); $j++) {

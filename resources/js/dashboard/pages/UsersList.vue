@@ -31,6 +31,7 @@
         <button class="btn btn-primary" @click="modal = true">Добавить</button>
       </div>
         <teleport to="body">
+            <edit-user-modal @close="closeModal" v-if="edit"></edit-user-modal>
             <user-modal v-if="modal" :office="office" :position="position" @user="addUserList" @close="modal=false"></user-modal>
         </teleport>
     </div>
@@ -39,6 +40,7 @@
 <script>
 import axios from "axios";
 import UserModal from "../components/UserModal";
+import EditUserModal from "../components/EditUserModal";
 import AppAlert from "../../components/AppAlert";
 import AddTask from "../components/AddTask";
 
@@ -57,6 +59,7 @@ export default {
         this.getUsers()
         this.getPosition()
         this.getWorkRoom()
+        console.log(this.$store.state.currentEditUser)
     },
     methods: {
         async  getUsers() {
@@ -82,6 +85,9 @@ export default {
                }
            }
        },
+        closeModal() {
+            window.location.reload()
+        },
         addUserList(data) {
             this.users.push(data)
             this.modal = false
@@ -99,8 +105,10 @@ export default {
             const data = await axios.get('/api/work-rooms')
             this.office.push(...data.data)
         },
-        editUser(id) {
-            this.$router.push(`/manager/user/${id}`)
+        async editUser(id) {
+            let user = await axios.get('/api/users/' + id)
+            this.$store.dispatch('getUser', ...user.data)
+            this.edit = true
         },
         department(slug) {
             if (slug === 'collector') {
@@ -120,7 +128,7 @@ export default {
             }
         }
     },
-  components: {AppAlert, UserModal, AddTask}
+  components: {AppAlert, UserModal, AddTask, EditUserModal}
 }
 </script>
 

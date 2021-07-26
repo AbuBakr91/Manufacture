@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use App\Models\TechnicalCards;
 use Illuminate\Support\Facades\DB;
+use mysql_xdevapi\Exception;
+use App\Http\Controllers\WebHooksController;
 
 class TechnicalCardController extends Controller
 {
@@ -24,7 +26,7 @@ class TechnicalCardController extends Controller
                 ->get();
     }
 
-    protected function getUpdate($card_id)
+    protected function getUpdate($card_id): \Illuminate\Support\Collection
     {
        return DB::table('materials')->select('updated_at')->where('card_id', $card_id)->get();
     }
@@ -36,6 +38,7 @@ class TechnicalCardController extends Controller
             ->leftJoin('tech_card_times', 'tech_card_times.card_id', '=', 'technical_cards.id')
             ->leftJoin('categories', 'categories.id', '=', 'tech_card_times.card_id')
             ->select('technical_cards.id', 'technical_cards.tech_id', 'technical_cards.name', 'technical_cards.cat_id', 'tech_card_times.dynamic_time', 'tech_card_times.statistical_time', 'categories.name as cat_name')
+            ->where('technical_cards.deleted', '=', 0)
             ->orderBy('technical_cards.name')
             ->get();
 
@@ -208,10 +211,26 @@ class TechnicalCardController extends Controller
     public function recordStaticTime(Request $request)
     {
         date_default_timezone_set('Europe/Moscow');
+        try {
+            $techCard = TechCardTime::where('card_id', $request->id);
+            if ($request->static) {
+                $techCard->update(["statistical_time" => (int)$request->time]);
+            } else {
+                $techCard->update(["dynamic_time" => (int)$request->time * 60]);
+            }
+            return response()->json(["status" =>200]);
+        } catch (Exception $e) {
+            $e->getMessage();
+        }
 
-        $techCard = TechCardTime::where('card_id', $request->id);
-        $techCard->update(["statistical_time" => $request->time]);
+    }
 
-        return response()->json(["status" =>200]);
+    public function updateTechCard($id)
+    {
+        $webHook = new WebHooksController;
+        $card_id = TechnicalCards::select('tech_id')->where('id', $id)->get()[0]->tech_id;
+        $webHook->updateTechCard($card_id);
+        $webHook->recordMaterialsName($card_id);
+
     }
 }

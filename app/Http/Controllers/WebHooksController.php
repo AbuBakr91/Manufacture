@@ -46,17 +46,17 @@ class WebHooksController extends Controller
         return $materialsName;
     }
 
-    protected function getMaterial($card_id)
+    public function getMaterial($card_id)
     {
-        return json_decode(Http::withBasicAuth('multishop@4wimax', '3hQ&ue1x')->get('https://online.moysklad.ru/api/remap/1.1/entity/processingplan/'. $card_id .'/materials'));
+        return json_decode(Http::withBasicAuth(env('M_LOGIN'), env('M_PASS'))->get('https://online.moysklad.ru/api/remap/1.1/entity/processingplan/'. $card_id .'/materials'));
     }
 
-    protected function getProducts($card_id)
+    public function getProducts($card_id)
     {
         return json_decode(Http::withBasicAuth('multishop@4wimax', '3hQ&ue1x')->get('https://online.moysklad.ru/api/remap/1.1/entity/processingplan/'. $card_id .'/products'));
     }
 
-    protected function recordMaterialsName($card_id)
+    public function recordMaterialsName($card_id)
     {
         $materialsData = $this->getMaterial($card_id);
         $allProducts[] = json_decode(Http::withBasicAuth('multishop@4wimax', '3hQ&ue1x')->get('https://online.moysklad.ru/api/remap/1.2/entity/product'))->rows;
@@ -116,7 +116,7 @@ class WebHooksController extends Controller
 
     }
 
-    protected function updateTechCard($card_id)
+    public function updateTechCard($card_id)
     {
         date_default_timezone_set('Europe/Moscow');
 

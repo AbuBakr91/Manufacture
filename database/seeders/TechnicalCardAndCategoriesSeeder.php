@@ -17,7 +17,7 @@ class TechnicalCardAndCategoriesSeeder extends Seeder
      */
     protected function getDataApi()
     {
-        $response = Http::withBasicAuth('multishop@4wimax', '3hQ&ue1x')->get('https://online.moysklad.ru/api/remap/1.2/entity/processingplan');
+        $response = Http::withBasicAuth(env('M_LOGIN'), env('M_PASS'))->get('https://online.moysklad.ru/api/remap/1.2/entity/processingplan');
         return $response->json();
     }
 

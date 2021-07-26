@@ -1,12 +1,15 @@
 <template>
-    <tr @click="show = !show">
+    <tr @click="show = !show" class="card_row">
         <td>{{i+1}}</td>
         <td>{{card.name}}</td>
-        <td>{{((card.dynamic_time)/60).toFixed(1)}}</td>
-        <td contenteditable @blur="saveTime($event, card.id)" >
-            {{((card.statistical_time)/60).toFixed(1)}}
+        <td contenteditable @blur="saveDynamic($event, card.id)">
+            {{((card.dynamic_time)/60).toFixed(1)}}
+        </td>
+        <td contenteditable @blur="saveStatic($event, card.id)">
+            {{(card.statistical_time ?? 0).toFixed(1)}}
         </td>
         <td>{{getDate(card.updated_at)}}</td>
+        <td><button @click="updateCard(card.id)" class="btn btn-primary">Обновить</button></td>
     </tr>
     <tr>
         <td colspan="5">
@@ -20,8 +23,11 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
     props : ['card', 'i'],
+    emits: ['update'],
     data() {
         return {
             show: false,
@@ -30,11 +36,31 @@ export default {
     methods: {
         getDate(data) {
             return data.slice(0, 10)
+        },
+        async saveStatic(event,id) {
+            await axios.post('/api/record-time', {
+                id : id,
+                time : event.path[0].innerText,
+                static: true
+            })
+        },
+        async saveDynamic(event,id) {
+            await axios.post('/api/record-time', {
+                id : id,
+                time : event.path[0].innerText,
+                dynamic: true
+            })
+        },
+        updateCard(id) {
+            axios.post('/api/update-card/' + id)
+            this.$emit('update', this.card.name)
         }
     }
 }
 </script>
 
 <style scoped>
-
+.card_row {
+    cursor: pointer;
+}
 </style>

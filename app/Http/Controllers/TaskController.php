@@ -52,7 +52,7 @@ class TaskController extends Controller
         $currentTask = DB::table('performing_tasks')
             ->leftJoin('task_orders', 'performing_tasks.task_id', '=', 'task_orders.id')
             ->leftJoin('technical_cards', 'task_orders.card_id', '=', 'technical_cards.id')
-            ->select('performing_tasks.id', 'technical_cards.name', 'task_orders.user_count')
+            ->select('performing_tasks.id', 'technical_cards.name', 'task_orders.user_count', 'performing_tasks.begin')
             ->where( 'performing_tasks.count', null)
             ->where('performing_tasks.user_id', $user_id)->get();
 

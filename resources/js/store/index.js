@@ -12,11 +12,18 @@ export default createStore({
     state() {
         return {
             message: null,
+            currentEditUser: null
         }
     },
     mutations: {
         setMessage(state, message) {
             state.message = message
+        },
+        async getEditUser(state, user) {
+            state.currentEditUser = user
+        },
+        clearEditUser(state) {
+            state.currentEditUser = null
         },
         clearMessage(state) {
             state.message = null
@@ -27,6 +34,12 @@ export default createStore({
         }
     },
     actions: {
+        getUser({commit}, id) {
+            commit('getEditUser', id)
+        },
+        clearEditUser({commit}) {
+            commit('clearEditUser')
+        },
         setMessage({commit}, message) {
             commit('setMessage', message)
             setTimeout(() => {
@@ -35,6 +48,11 @@ export default createStore({
         },
         setStart({commit}, start) {
             commit('setStart', start)
+        }
+    },
+    getters: {
+        getEditUser(state) {
+            return state.currentEditUser
         }
     },
     modules: {

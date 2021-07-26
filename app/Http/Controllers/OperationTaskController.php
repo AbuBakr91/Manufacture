@@ -202,7 +202,7 @@ class OperationTaskController extends Controller
     protected function getCardsId(): array
     {
         $technicalCard = [];
-        $response = Http::withBasicAuth('multishop@4wimax', '3hQ&ue1x')->get('https://online.moysklad.ru/api/remap/1.2/entity/processingplan');
+        $response = Http::withBasicAuth(env('M_LOGIN'), env('M_PASS'))->get('https://online.moysklad.ru/api/remap/1.2/entity/processingplan');
 
         for ($i=0; $i<count($response['rows']); $i++) {
             $technicalCard[] = $response['rows'][$i]['id'];
@@ -243,25 +243,11 @@ class OperationTaskController extends Controller
     //для теста вывод в шаблон
     public function getMaterials()
     {
-        $task_id = DB::table('performing_tasks')
-            ->select('task_id', 'id')
-            ->where('user_id', 3)
-            ->where('count', null)
-            ->where('finish', null)->get();
+        $output = Http::withBasicAuth(env('M_LOGIN'), env('M_PASS'))->get('https://online.moysklad.ru/api/remap/1.2/entity/processingplan/');
 
-
-        $allPauses = PerformingTasks::find(44)->taskPaused()->get();
-        $init = 0;
-
-        foreach ($allPauses as $pause) {
-            $begin = Carbon::createMidnightDate($pause->pause_begin);
-            $finish = Carbon::createMidnightDate($pause->pause_finish);
-
-            $init += $begin->diffInSeconds($finish);
-        }
-        $taskTime = new TaskController;
-        $output = [];
-        $output[] = $taskTime->userWorkTime(44);
+//     $output = [
+//         "login" => env('M_LOGIN')
+//     ];
         return view('welcome', compact('output'));
     }
 
@@ -313,7 +299,7 @@ class OperationTaskController extends Controller
 
         //если передано количество создаем тех операцию
         if ($request->count) {
-            $response = Http::withBasicAuth('multishop@4wimax', '3hQ&ue1x')->post('https://online.moysklad.ru/api/remap/1.1/entity/processing', $json);
+            $response = Http::withBasicAuth(env('M_LOGIN'), env('M_PASS'))->post('https://online.moysklad.ru/api/remap/1.1/entity/processing', $json);
         }
 
         //возвращаем ответ с мойсклад
@@ -353,7 +339,7 @@ class OperationTaskController extends Controller
         ];
 
         //если передано количество брака создаем отгрузку на Брак
-        $response = Http::withBasicAuth('multishop@4wimax', '3hQ&ue1x')->post('https://online.moysklad.ru/api/remap/1.1/entity/demand', $defectJson);
+        $response = Http::withBasicAuth(env('M_LOGIN'), env('M_PASS'))->post('https://online.moysklad.ru/api/remap/1.1/entity/demand', $defectJson);
 
         return $response->body();
     }

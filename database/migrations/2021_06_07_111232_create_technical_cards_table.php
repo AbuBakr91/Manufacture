@@ -18,6 +18,7 @@ class CreateTechnicalCardsTable extends Migration
             $table->char('tech_id')->unique();
             $table->string('name');
             $table->unsignedBigInteger('cat_id');
+            $table->boolean('deleted');
             $table->foreign('cat_id')->references('id')->on('categories');
             $table->timestamps();
         });
