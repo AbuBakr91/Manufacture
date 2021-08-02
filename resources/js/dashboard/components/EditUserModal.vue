@@ -9,7 +9,6 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-
         <div class="modal-body">
           <form @submit.prevent>
             <div class="form-group">
@@ -70,9 +69,9 @@ export default {
             this.office.push(...data.data)
         },
         async editUser() {
-            const data = await axios.patch('/api/users/' + this.user.id, this.user)
+            await axios.patch('/api/users/' + this.user.id, this.user)
             this.$store.dispatch('clearEditUser')
-            this.$emit('close')
+            this.$emit('success')
         }
     },
     mounted() {

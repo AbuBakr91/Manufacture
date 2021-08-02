@@ -16,8 +16,7 @@
         "predis/predis": "^1.1",
         "pusher/pusher-php-server": "~3.0",
         "tymon/jwt-auth": "^1.0",
-        "ext-json": "*",
-      "ext-mysql_xdevapi": "*"
+        "ext-json": "*"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

@@ -15,9 +15,14 @@
                             <h5>Должность:</h5>
                             <h6>{{printRole(user.slug)}}</h6>
                         </div>
+                        <div class="col-12 text-center">
+                            <h5>Кабинет:</h5>
+                            <h6>{{user.office}}</h6>
+                        </div>
                     </div>
                 </div>
                 <div class="col-9">
+                    <app-alert v-if="alert" :alert="alert" @close="alert = null"></app-alert>
                     <div class="row mt-5 content_start" v-if="!start">
                         <div class="col-8">
                             <h4 class="text-center">Задание от руководителя:</h4>
@@ -60,15 +65,15 @@
             </div>
         </div>
     </div>
-    <app-modal v-if="modal" :task="currentTask[0].name" @close="modal = false"></app-modal>
+    <app-modal v-if="modal" :task="currentTask[0]" @close="closeModal"></app-modal>
 </template>
 
 <script>
 import store from "../store"
 import AppHeader from "../Components/AppHeader";
 import AppModal from "../components/AppModal";
+import AppAlert from "../components/AppAlert";
 import axios from "axios";
-
 export default {
     data() {
         return {
@@ -77,6 +82,7 @@ export default {
             start: false,
             pause: false,
             waiting: false,
+            alert: null,
             category: '0',
             cards: [],
             card_id: '0',
@@ -97,6 +103,11 @@ export default {
         },
         getNow() {
             this.dataTime = new Date().toLocaleTimeString()
+        },
+        closeModal(data) {
+            this.alert = data
+            this.modal = false
+            // setTimeout(() => window.location.reload(), 3000)
         },
         printRole(slug) {
           if (slug === 'collector') {
@@ -196,13 +207,21 @@ export default {
             this.currentTask.push(...task.data)
         },
        async startWork() {
-            const start = await axios.post('api/work-time', {
-                task_id: this.card,
-                begin : true,
-                user_id : this.user.id
-            })
+            if (this.card === 'selected') {
+                this.alert = {
+                    type: 'danger',
+                    title: 'Ошибка!',
+                    text: `Не выбрана тех карта для старта!`
+                }
+            } else {
+                await axios.post('api/work-time', {
+                    task_id: this.card,
+                    begin : true,
+                    user_id : this.user.id
+                })
 
-           window.location.reload();
+                window.location.reload();
+            }
         }
     },
     mounted() {
@@ -217,7 +236,7 @@ export default {
     created() {
         setInterval(this.getNow, 1000);
     },
-    components: {AppHeader, AppModal}
+    components: {AppHeader, AppModal, AppAlert}
 }
 </script>
 

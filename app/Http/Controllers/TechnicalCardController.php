@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\WebHooksController;
 use App\Models\MaterialForCard;
 use App\Models\Materials;
 use App\Models\PerformingTasks;
@@ -13,15 +14,27 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use App\Models\TechnicalCards;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use mysql_xdevapi\Exception;
-use App\Http\Controllers\WebHooksController;
 
 class TechnicalCardController extends Controller
 {
+    /**
+     * @var \App\Http\Controllers\WebHooksController
+     */
+    private $webhook;
+
+    public function __construct(WebHooksController $webhook)
+    {
+        $this->webhook = $webhook;
+    }
+
     protected function outputJson($card_id): \Illuminate\Support\Collection
     {
-        return MaterialForCard::select('material_name', 'count')
-                ->where('card_id', $card_id)
+        return DB::table('material_for_cards')
+                ->join('product_names', 'material_for_cards.product_id', '=', 'product_names.id')
+                ->select('product_names.name', 'material_for_cards.count')
+                ->where('material_for_cards.card_id', $card_id)
                 ->distinct()
                 ->get();
     }
@@ -220,17 +233,30 @@ class TechnicalCardController extends Controller
             }
             return response()->json(["status" =>200]);
         } catch (Exception $e) {
-            $e->getMessage();
+            return $e->getMessage();
         }
-
     }
 
     public function updateTechCard($id)
     {
-        $webHook = new WebHooksController;
         $card_id = TechnicalCards::select('tech_id')->where('id', $id)->get()[0]->tech_id;
-        $webHook->updateTechCard($card_id);
-        $webHook->recordMaterialsName($card_id);
+        $this->webhook->updateCardForId($card_id);
+
+        return response()->json(["status" => true]);
+    }
+
+    public function updateAllTechCards()
+    {
+
+        $cardsId = TechnicalCards::select('tech_id')->get();
+        $allProduct1 = json_decode(Http::withBasicAuth(env('M_LOGIN'), env('M_PASS'))->get('https://online.moysklad.ru/api/remap/1.2/entity/product'))->rows;
+        $allProduct2 = json_decode(Http::withBasicAuth(env('M_LOGIN'), env('M_PASS'))->get('https://online.moysklad.ru/api/remap/1.2/entity/product?offset=1000'))->rows;
+        $allProducts[] = array_merge($allProduct1, $allProduct2);
+        foreach ($cardsId as $card) {
+            $this->webhook->updateTechCard($card->tech_id, $allProducts);
+        }
+
+        return response()->json(["status" => true]);
 
     }
 }

@@ -1,12 +1,20 @@
 <template>
     <div class="modal-backdrop"></div>
+    <app-loader v-if="loading"></app-loader>
     <div class="modal modal-dialog-centered" role="document">
         <div class="modal-content">
-            <div class="modal-body">
-                <div class="title-product text-center">
+            <div class="modal-header">
+                <div class="m-auto">
                     <h5><b>Наименование:</b></h5>
-                    <h4>{{task}}</h4>
+                    <div class="title-product text-center">
+                        <h4>{{task.name}}</h4>
+                    </div>
                 </div>
+                <button type="button" class="close ml-0" @click="$emit('close')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
                 <div class="count-product text-center">
                     <h5><b>Готово:</b></h5>
                     <input type="number" v-model="count" class="form-control input_count">
@@ -25,6 +33,7 @@
 
 <script>
 import store from "../store"
+import AppLoader from "../components/AppLoader"
 export default {
     props:['task'],
     emits:['close'],
@@ -32,27 +41,110 @@ export default {
         return {
             count: '',
             defects: 0,
+            loading: false,
             user: JSON.parse(store.state.auth.user),
         }
     },
     methods: {
         async addCountTask() {
+            this.loading = true
             await axios.post('/api/work-time/', {
                 user_id: this.user.id,
                 finish: true,
                 count: this.outputCount(this.count),
                 defects: this.defects
             })
-            this.$emit('close')
-            window.location.reload();
+
+            if (this.outputCount(this.count) !== 0) {
+                const response = await this.spendOperation(false)
+                if (!!response.moment && !this.defects) {
+                    this.$emit('close', {
+                        type: 'primary',
+                        title: 'Успешно!',
+                        text: `Операции в мойсклад созданы!`
+                    })
+                }
+
+                if(!!response.moment && this.defects) {
+                    await this.operationDefects(false)
+                    await this.operationRealShift(false)
+
+                    this.$emit('close', {
+                        type: 'primary',
+                        title: 'Успешно!',
+                        text: `Операции в мойсклад созданы!`
+                    })
+                }
+
+                if(!!response.errors) {
+                   const res = await this.spendOperation(true)
+                    if (this.defects) {
+                        await this.operationDefects(true)
+                        await this.operationRealShift(true)
+                    }
+
+                    if (!!res.moment) {
+                        this.$emit('close', {
+                            type: 'primary',
+                            title: 'Успешно!',
+                            text: `Операции в мойсклад созданы!`
+                        })
+                    } else {
+                        this.$emit('close', {
+                            type: 'danger',
+                            title: 'Ошибка!',
+                            text: `${res.errors}`
+                        })
+                    }
+                }
+            } else {
+                await this.operationDefects(true)
+
+                await this.operationRealShift(true)
+
+                this.$emit('close', {
+                    type: 'primary',
+                    title: 'Успешно!',
+                    text: `Операции в мойсклад созданы!`
+                })
+            }
+            this.loading = false
         },
-      outputCount(num) {
+        async spendOperation(applicable) {
+            const data = await axios.post('/api/material/', {
+                "card_id" : this.task.tech_id,
+                "count" : this.outputCount(this.count),
+                "office" : this.user.office,
+                "defects" : this.defects,
+                applicable
+            })
+
+            return data.data
+
+        },
+        async operationDefects(applicable) {
+            await axios.post('/api/defects/', {
+                "card_id" : this.task.tech_id,
+                "defects" : this.defects,
+                "office" : this.user.office,
+                applicable
+            })
+        },
+        async operationRealShift(applicable) {
+            await axios.post('/api/retail-shift/', {
+                "card_id" : this.task.tech_id,
+                "defects" : this.defects,
+                applicable
+            })
+        },
+        outputCount(num) {
           if(num === '') {
-            return 0
+            return parseInt(0)
           }
-          return num
-      }
-    }
+          return parseInt(num)
+        }
+    },
+    components: {AppLoader}
 }
 </script>
 

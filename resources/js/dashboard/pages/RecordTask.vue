@@ -2,14 +2,15 @@
     <div class="ml-3 mt-3">
         <h4 class="text-center">Журнал выполненных работ</h4>
         <div class="search__block mb-2 mt-3">
-            <Calendar v-model="value" @clear-click="clear" :showButtonBar="true" dateFormat="yy-mm-dd" placeholder="поиск по дате..."/>
+            <Calendar v-model="value" @clear-click="clear" selectionMode="range" :showButtonBar="true" dateFormat="yy-mm-dd" placeholder="поиск по дате..."/>
             <select class="form-control w-25" v-model="searchUser">
                 <option value="0">Выберите сотрудника</option>
                 <option v-for="user in users" :value="user.lastname">{{user.lastname}}</option>
             </select>
             <input type="search" class="form-control search" placeholder="поиск..." v-model="search">
         </div>
-        <table class="table table-striped table-hover">
+        <div class="table-scroll">
+            <table class="table table-striped main-table table-hover">
             <thead>
             <tr>
                 <th @click="sortTable('department')">Отдел
@@ -65,19 +66,24 @@
                 <td></td>
             </tr>
         </table>
+        </div>
     </div>
 </template>
 
 <script>
 import Fuse from 'fuse.js'
 import Calendar from 'primevue/calendar';
+import Moment from 'moment';
+import { extendMoment } from 'moment-range';
+import { mapGetters } from 'vuex'
+
 export default {
     data() {
         return {
             tasks: [],
             ascending: false,
             sortColumn: '',
-            orderDetails: [],
+            orderDetails: this.$store.getters.getTask,
             searchUser: 0,
             search: '',
             allTime: 0,
@@ -120,6 +126,7 @@ export default {
             this.users.push(...users.data)
         },
         clear() {
+            this.value = ''
             this.value = null
         },
         sortTable(col) {
@@ -142,7 +149,7 @@ export default {
             })
         },
         formatDate(date) {
-            // if(date[1] === null) {
+            if(date[1] === null) {
                 let d = new Date(date),
                     month = '' + (d.getMonth() + 1),
                     day = '' + d.getDate(),
@@ -153,30 +160,30 @@ export default {
                 if (day.length < 2)
                     day = '0' + day;
 
-                return [year, month, day].join('-');
-            // } else {
-            //     let d = new Date(date[0]),
-            //         month = '' + (d.getMonth() + 1),
-            //         day = '' + d.getDate(),
-            //         year = d.getFullYear();
-            //
-            //     if (month.length < 2)
-            //         month = '0' + month;
-            //     if (day.length < 2)
-            //         day = '0' + day;
-            //
-            //     let d2 = new Date(date[1]),
-            //         month2 = '' + (d2.getMonth() + 1),
-            //         day2 = '' + d2.getDate(),
-            //         year2 = d2.getFullYear();
-            //
-            //     if (month2.length < 2)
-            //         month2 = month;
-            //     if (day2.length < 2)
-            //         day2 = '0' + day2;
-            //
-            //     return [year, month, day].join('-') + ' ' + [year2, month2, day2].join('-');
-            // }
+                return {firstDate: [year, month, day].join('-')}
+            } else {
+                let d = new Date(date[0]),
+                    month = '' + (d.getMonth() + 1),
+                    day = '' + d.getDate(),
+                    year = d.getFullYear();
+
+                if (month.length < 2)
+                    month = '0' + month;
+                if (day.length < 2)
+                    day = '0' + day;
+
+                let d2 = new Date(date[1]),
+                    month2 = '' + (d2.getMonth() + 1),
+                    day2 = '' + d2.getDate(),
+                    year2 = d2.getFullYear();
+
+                if (month2.length < 2)
+                    month2 = month;
+                if (day2.length < 2)
+                    day2 = '0' + day2;
+
+                return {firstDate: [year, month, day].join('-'), secondDate: [year2, month2, day2].join('-')}
+            }
 
         },
         searchWords(count) {
@@ -317,14 +324,24 @@ export default {
                 }, 0)
             }
         },
-        value() {
+       async value() {
             this.fuse = new Fuse(this.orderDetails, this.options);
             if (this.value == null) {
                 this.result = this.orderDetails
                 this.countRows = ''
             } else {
-                this.result = this.fuse.search(this.formatDate(this.value)).map(result => result.item)
-                this.countRows = this.result.length
+                const dateRange = this.formatDate(this.value)
+                if (!dateRange.secondDate) {
+                    this.result = this.fuse.search(dateRange.firstDate).map(result => result.item)
+                    this.countRows = this.result.length
+                } else {
+                   const response = await axios.post('/api/date-range', {
+                        start: dateRange.firstDate,
+                        end: dateRange.secondDate
+                    })
+                    this.result.push(...response.data)
+                    // this.$store.dispatch('getTaskDetails', response.data)
+                }
             }
         }
     },
@@ -361,10 +378,9 @@ export default {
 
 .search__result {
     font-weight: bold;
-    font-size: 20px;
 }
 
-table th {
+table th, .search__result td {
     text-transform: uppercase;
     text-align: left;
     cursor: pointer;
@@ -378,5 +394,55 @@ table th:hover {
 .search__block {
     display: flex;
     justify-content: space-around;
+}
+
+.table-scroll {
+    position: relative;
+    width:100%;
+    z-index: 1;
+    margin: auto;
+    overflow: auto;
+    height: 100vh;
+}
+
+.table-scroll table {
+    width: 100%;
+    min-width: 1080px;
+    margin: auto;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+.table-wrap {
+    position: relative;
+}
+.table-scroll th,
+.table-scroll td {
+    background: #fff;
+    vertical-align: top;
+}
+.table-scroll thead th {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+}
+/* safari and ios need the tfoot itself to be position:sticky also */
+.table-scroll tfoot,
+.table-scroll tfoot th,
+.table-scroll tfoot td {
+    position: -webkit-sticky;
+    position: sticky;
+    bottom: 0;
+    z-index:4;
+}
+
+th:first-child {
+    position: -webkit-sticky;
+    position: sticky;
+    left: 0;
+    z-index: 2;
+}
+thead th:first-child,
+tfoot th:first-child {
+    z-index: 5;
 }
 </style>

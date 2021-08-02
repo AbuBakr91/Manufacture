@@ -16,9 +16,10 @@ class CreateMaterialForCardsTable extends Migration
         Schema::create('material_for_cards', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('card_id');
-            $table->char('material_name');
+            $table->unsignedBigInteger('product_id');
             $table->bigInteger('count');
             $table->foreign('card_id')->references('id')->on('technical_cards')->onDelete('cascade');
+            $table->foreign('product_id')->references('id')->on('product_names')->onDelete('cascade');
             $table->timestamps();
         });
     }

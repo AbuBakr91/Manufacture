@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\MaterialForCard;
 use App\Models\Materials;
 use App\Models\PerformingTasks;
+use App\Models\ProductNames;
 use App\Models\Products;
+use App\Models\StockModel;
 use App\Models\TaskOrder;
 use App\Models\TechCardTime;
 use App\Models\TechnicalCards;
@@ -140,7 +142,7 @@ class OperationTaskController extends Controller
      * @return array
      * выводит склад в зависимости от тех карты для материалов
      */
-    protected function productsStore($card_id)
+    protected function productsStore($card_id, $office)
     {
         $result = $this->getCardForStore($card_id);
 
@@ -148,18 +150,18 @@ class OperationTaskController extends Controller
 
         if(count($result)) {
               $store['meta'] = [
-                 "href" => "https://online.moysklad.ru/api/remap/1.1/entity/store/b437351e-8d0a-11e5-7a40-e8970059ee20",
-                 "metadataHref" => "http://online.moysklad.ru/api/remap/1.1/entity/store/metadata",
+                 "href" => "https://online.moysklad.ru/api/remap/1.2/entity/store/b437351e-8d0a-11e5-7a40-e8970059ee20",
+                 "metadataHref" => "https://online.moysklad.ru/api/remap/1.2/entity/store/metadata",
                  "type" => "store",
                  "mediaType" => "application/json"
              ];
         } else {
             $store['meta'] = [
-                    "href" => "https://online.moysklad.ru/api/remap/1.1/entity/store/0e054440-b971-11eb-0a80-0898000fbaed",
-                    "metadataHref" => "http://online.moysklad.ru/api/remap/1.1/entity/store/metadata",
-                    "type" => "store",
-                    "mediaType" => "application/json"
-                ];
+                "href" => $this->getOffice($office),
+                "metadataHref" => "https://online.moysklad.ru/api/remap/1.2/entity/store/metadata",
+                "type" => "store",
+                "mediaType" => "application/json"
+            ];
         }
         return $store;
     }
@@ -170,7 +172,7 @@ class OperationTaskController extends Controller
      *
      * выводит склад в зависимости от тех карты для материалов
      */
-    protected function materialsStore($card_id)
+    protected function materialsStore($card_id, $office)
     {
         //получаем результат сравнения карт
         $result = $this->getCardForStore($card_id);
@@ -181,15 +183,14 @@ class OperationTaskController extends Controller
         if(count($result)) {
             $store['meta'] = [
                  "href" => "https://online.moysklad.ru/api/remap/1.1/entity/store/b437351e-8d0a-11e5-7a40-e8970059ee20",
-                 "metadataHref" => "http://online.moysklad.ru/api/remap/1.1/entity/store/metadata",
+                 "metadataHref" => "https://online.moysklad.ru/api/remap/1.1/entity/store/metadata",
                  "type" => "store",
                  "mediaType" => "application/json"
             ];
         } else {
-            //слад производство 215
             $store['meta'] = [
-                "href" => "https://online.moysklad.ru/api/remap/1.1/entity/store/0e054440-b971-11eb-0a80-0898000fbaed",
-                "metadataHref" => "http://online.moysklad.ru/api/remap/1.1/entity/store/metadata",
+                "href" => $this->getOffice($office),
+                "metadataHref" => "https://online.moysklad.ru/api/remap/1.1/entity/store/metadata",
                 "type" => "store",
                 "mediaType" => "application/json"
             ];
@@ -199,7 +200,7 @@ class OperationTaskController extends Controller
 
 
 
-    protected function getCardsId(): array
+    public function getCardsId(): array
     {
         $technicalCard = [];
         $response = Http::withBasicAuth(env('M_LOGIN'), env('M_PASS'))->get('https://online.moysklad.ru/api/remap/1.2/entity/processingplan');
@@ -211,54 +212,40 @@ class OperationTaskController extends Controller
         return $technicalCard;
     }
 
-    protected function getMaterialsName($card_id, $allProducts)
+    protected function getSellQuantity($name, $products)
     {
-        $materialsRows = json_decode(Materials::select('materials')->where('card_id', $card_id)->get()[0]->materials);
-        $materialsHref = [];
-        foreach ($materialsRows as $key=> $row) {
-            $arr = explode('/', $row->product->meta->href);
-            $materialsHref[$key]['id'] = end($arr);
-            $materialsHref[$key]['count'] = $row->quantity;
-        }
-
-        $materialsName = [];
-
-        for($i=0; $i<count($allProducts[0]); $i++) {
-            for ($j=0;$j<count($materialsHref); $j++) {
-                if ($allProducts[0][$i]->id === $materialsHref[$j]['id']) {
-                    $name[] = $allProducts[0][$i]->name;
-                    $quantity[] = $materialsHref[$j]['count'];
-                }
+        foreach ($products->rows as $row) {
+            if ($row->assortment->name === $name) {
+                return (int)$row->sellQuantity;
             }
         }
-
-        for ($i=0; $i<count($name); $i++) {
-            $materialsName[$i]['name'] = $name[$i];
-            $materialsName[$i]['quantity'] = $quantity[$i];
-        }
-
-        return $materialsName;
     }
+
+    protected function returnQuantity($name, $products)
+    {
+        foreach ($products->rows as $row) {
+            if ($row->assortment->name === $name) {
+                return (int)$row->returnQuantity;
+            }
+        }
+    }
+
 
     //для теста вывод в шаблон
     public function getMaterials()
     {
-        $output = Http::withBasicAuth(env('M_LOGIN'), env('M_PASS'))->get('https://online.moysklad.ru/api/remap/1.2/entity/processingplan/');
 
-//     $output = [
-//         "login" => env('M_LOGIN')
-//     ];
-        return view('welcome', compact('output'));
+//        return view('welcome', compact('output'));
     }
 
     /**
      * @param Request $request
-     * @return array
+     * @return string
      * создаем тех операцию и отгрузку на Брак
      */
     public function operationMoySklad(Request $request)
     {
-        $count = $request->defects ? $request->count + $request->defects : $request->count;
+        $count = (int)$request->defects ? (int)$request->count + (int)$request->defects : (int)$request->count;
         //чтобы сохранял по мск времени
         date_default_timezone_set('Europe/Moscow');
 
@@ -266,26 +253,26 @@ class OperationTaskController extends Controller
         $json = [
             "organization" => [
                 "meta" => [
-                    "href" => "http://online.moysklad.ru/api/remap/1.2/entity/organization/75311b0b-af1f-11e7-7a6c-d2a9000300d1",
+                    "href" => "https://online.moysklad.ru/api/remap/1.2/entity/organization/12953484-8c3d-11e5-90a2-8ecb004019e1",
                     "metadataHref" => "http://online.moysklad.ru/api/remap/1.2/entity/organization/metadata",
                     "type" => "organization",
                     "mediaType" => "application/json"
                 ]
             ],
             "processingSum" => 0,
+            "moment" => Carbon::now()->subMinute()->format('Y-m-d H:i:s'),
             "applicable" => $request->applicable ? false : true,
             "quantity" => $count,
-            "moment" => $request->moment,
             "processingPlan" => [
                 "meta" => [
-                    "href" => "http://online.moysklad.ru/api/remap/1.1/entity/processingplan/" . $request->card_id,
-                    "metadataHref" => "http://online.moysklad.ru/api/remap/1.1/entity/processingplan/metadata",
+                    "href" => "https://online.moysklad.ru/api/remap/1.2/entity/processingplan/" . $request->card_id,
+                    "metadataHref" => "http://online.moysklad.ru/api/remap/1.2/entity/processingplan/metadata",
                     "type" => "processingplan",
                     "mediaType" => "application/json"
                 ]
             ],
-            "productsStore" => $this->productsStore($request->card_id),
-            "materialsStore" =>$this->materialsStore($request->card_id),
+            "productsStore" => $this->productsStore($request->card_id, $request->office),
+            "materialsStore" =>$this->materialsStore($request->card_id, $request->office),
             "products" => [
                 "meta" => $this->getProductMeta($request->card_id),
                 "rows" => $this->getProductsCard($request->card_id, $count)
@@ -310,16 +297,18 @@ class OperationTaskController extends Controller
     public function operationDefects(Request $request)
     {
         date_default_timezone_set('Europe/Moscow');
+
         //формируем json если переданы браки
         $defectJson = [
             "organization" => [
                 "meta" => [
-                    "href" => "http://online.moysklad.ru/api/remap/1.2/entity/organization/75311b0b-af1f-11e7-7a6c-d2a9000300d1",
-                    "metadataHref" => "http://online.moysklad.ru/api/remap/1.2/entity/organization/metadata",
+                    "href" => "https://online.moysklad.ru/api/remap/1.2/entity/organization/12953484-8c3d-11e5-90a2-8ecb004019e1",
+                    "metadataHref" => "https://online.moysklad.ru/api/remap/1.2/entity/organization/metadata",
                     "type" => "organization",
                     "mediaType" => "application/json"
                 ]
             ],
+            "applicable" => $request->applicable ? false : true,
             "agent" => [
                 "meta" => [
                     "href" => "https://online.moysklad.ru/api/remap/1.1/entity/counterparty/a09246c4-da3d-11eb-0a80-0dc20018cc35",
@@ -330,17 +319,63 @@ class OperationTaskController extends Controller
             ],
             "store" => [
                 "meta" => [
-                    "href"=> "https://online.moysklad.ru/api/remap/1.1/entity/store/0e054440-b971-11eb-0a80-0898000fbaed",
+                    "href"=> $this->getOffice($request->office),
                     "type" => "store",
                     "mediaType" => "application/json"
                 ]
             ],
-            "positions" => $this->getProductForDefects($request->card_id, $request->defects)
+            "positions" => $this->getProductForDefects($request->card_id, (int)$request->defects)
         ];
 
         //если передано количество брака создаем отгрузку на Брак
         $response = Http::withBasicAuth(env('M_LOGIN'), env('M_PASS'))->post('https://online.moysklad.ru/api/remap/1.1/entity/demand', $defectJson);
 
         return $response->body();
+    }
+
+    public function operationRetailShift(Request $request): string
+    {
+        date_default_timezone_set('Europe/Moscow');
+
+        $json = [
+            "sum" => 0,
+            "organization" => [
+                "meta" => [
+                    "href" => "https://online.moysklad.ru/api/remap/1.2/entity/organization/12953484-8c3d-11e5-90a2-8ecb004019e1",
+                    "metadataHref" => "https://online.moysklad.ru/api/remap/1.2/entity/organization/metadata",
+                    "type" => "organization",
+                    "mediaType" => "application/json"
+                ]
+            ],
+            "applicable" => $request->applicable ? false : true,
+            "store" => [
+                "meta" => [
+                    "href" => "https://online.moysklad.ru/api/remap/1.2/entity/store/eadaa0c3-ef77-11eb-0a80-06a800064572",
+                    "metadataHref" => "https://online.moysklad.ru/api/remap/1.2/entity/store/metadata",
+                    "type" => "store",
+                    "mediaType" => "application/json"
+                ]
+            ],
+            "positions" => $this->getProductForDefects($request->card_id, (int)$request->defects)
+        ];
+
+        $response = Http::withBasicAuth(env('M_LOGIN'), env('M_PASS'))->post('https://online.moysklad.ru/api/remap/1.1/entity/enter', $json);
+
+        return $response->body();
+    }
+
+    private function getOffice($office): string
+    {
+        if($office === '215 офис') {
+            return "https://online.moysklad.ru/api/remap/1.2/entity/store/0e054440-b971-11eb-0a80-0898000fbaed";
+        }
+
+        if ($office === '220 офис') {
+            return "https://online.moysklad.ru/api/remap/1.2/entity/store/14ba2afe-b971-11eb-0a80-0582000f9d1c";
+        }
+
+        if ($office === 'Склад') {
+            return "https://online.moysklad.ru/api/remap/1.2/entity/store/b437351e-8d0a-11e5-7a40-e8970059ee20";
+        }
     }
 }

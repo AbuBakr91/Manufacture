@@ -43,9 +43,11 @@ Route::post("add-waiting", [TaskController::class, 'addWaiting']);
 Route::post("operation-status", [TaskController::class, 'taskOperationStatus']);
 Route::post("material", [OperationTaskController::class, 'operationMoySklad']);
 Route::post("defects", [OperationTaskController::class, 'operationDefects']);
+Route::post("retail-shift", [OperationTaskController::class, 'operationRetailShift']);
 Route::post("webhook-create", [WebHooksController::class, 'webHook']);
 Route::post("record-time", [TechnicalCardController::class, 'recordStaticTime']);
 Route::post("update-card/{id}", [TechnicalCardController::class, 'updateTechCard']);
+Route::post("date-range", [TaskController::class, 'getDataForDate']);
 
 Route::get("cards", [CardController::class, 'index']);
 Route::get("current-task/{id}", [TaskController::class, 'currentTask']);
@@ -57,5 +59,6 @@ Route::get("categories", [CategoryController::class, 'index']);
 Route::get("departments", [DepartmentsController::class, 'index']);
 Route::get("work-rooms", [WorkRoomController::class, 'index']);
 Route::get("record-card", [TechnicalCardController::class, 'recordTimeTechCard']);
+Route::get("update-all-cards", [TechnicalCardController::class, 'updateAllTechCards']);
 
 

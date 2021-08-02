@@ -12,14 +12,23 @@ export default createStore({
     state() {
         return {
             message: null,
-            currentEditUser: null
+            currentEditUser: null,
+            taskDetails: []
         }
     },
     mutations: {
         setMessage(state, message) {
             state.message = message
         },
-        async getEditUser(state, user) {
+        async setDetails(state) {
+            const dataRecord = await axios.get('/api/journal/')
+            state.taskDetails.push(...dataRecord.data)
+        },
+        async setDetailsForDate(state, details) {
+            state.taskDetails = []
+            state.taskDetails.push(...details)
+        },
+        setEditUser(state, user) {
             state.currentEditUser = user
         },
         clearEditUser(state) {
@@ -35,7 +44,10 @@ export default createStore({
     },
     actions: {
         getUser({commit}, id) {
-            commit('getEditUser', id)
+            commit('setEditUser', id)
+        },
+        getTaskDetails({commit}, data) {
+            commit('setDetailsForDate', data)
         },
         clearEditUser({commit}) {
             commit('clearEditUser')
@@ -53,6 +65,9 @@ export default createStore({
     getters: {
         getEditUser(state) {
             return state.currentEditUser
+        },
+        getTask(state) {
+            return state.taskDetails
         }
     },
     modules: {

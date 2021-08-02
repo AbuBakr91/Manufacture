@@ -9,13 +9,13 @@
             {{(card.statistical_time ?? 0).toFixed(1)}}
         </td>
         <td>{{getDate(card.updated_at)}}</td>
-        <td><button @click="updateCard(card.id)" class="btn btn-primary">Обновить</button></td>
+        <td><button @click="updateCard(card.id, card.name)" class="btn btn-primary">Обновить</button></td>
     </tr>
     <tr>
         <td colspan="5">
             <ol v-if="show">
                 <li v-for="materil in card.materials">
-                    {{materil.material_name}} - {{materil.count}} шт.
+                    {{materil.name}} - {{materil.count}} шт.
                 </li>
             </ol>
         </td>
@@ -31,6 +31,7 @@ export default {
     data() {
         return {
             show: false,
+
         }
     },
     methods: {
@@ -51,9 +52,8 @@ export default {
                 dynamic: true
             })
         },
-        updateCard(id) {
-            axios.post('/api/update-card/' + id)
-            this.$emit('update', this.card.name)
+        updateCard(id, name) {
+            this.$emit('update', {id, name})
         }
     }
 }

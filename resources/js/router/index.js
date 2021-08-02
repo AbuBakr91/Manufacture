@@ -34,7 +34,7 @@ const routes = [
             {
                 name: 'home',
                 path: '',
-                component: UserWorks
+                component: UserTask
             },
             {
                 name: 'users',
@@ -51,11 +51,11 @@ const routes = [
                 path: 'profile',
                 component: ManagerProfile
             },
-            {
-                name: 'user-work',
-                path: 'user-work',
-                component: UserTask
-            },
+            // {
+            //     name: 'user-work',
+            //     path: 'user-work',
+            //     component: UserTask
+            // },
             {
                 name: 'list-map',
                 path: 'list-map',

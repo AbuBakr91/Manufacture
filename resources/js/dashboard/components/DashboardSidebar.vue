@@ -28,11 +28,11 @@
                     </router-link >
                 </li>
 
-                <li class="sidebar-item">
-                    <router-link :to="{ path: `/manager/user-work/`}" class="sidebar-link">
-                        <i class="align-middle" data-feather="check-square"></i> <span class="align-middle">Тех. задачи</span>
-                    </router-link >
-                </li>
+<!--                <li class="sidebar-item">-->
+<!--                    <router-link :to="{ path: `/manager/user-work/`}" class="sidebar-link">-->
+<!--                        <i class="align-middle" data-feather="check-square"></i> <span class="align-middle">Тех. задачи</span>-->
+<!--                    </router-link >-->
+<!--                </li>-->
 
                 <li class="sidebar-item">
                     <router-link :to="{ path: `/manager/list-map`}" class="sidebar-link">

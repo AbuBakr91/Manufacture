@@ -31,8 +31,8 @@
         <button class="btn btn-primary" @click="modal = true">Добавить</button>
       </div>
         <teleport to="body">
-            <edit-user-modal @close="closeModal" v-if="edit"></edit-user-modal>
             <user-modal v-if="modal" :office="office" :position="position" @user="addUserList" @close="modal=false"></user-modal>
+            <edit-user-modal @close="closeModal" v-if="edit"></edit-user-modal>
         </teleport>
     </div>
 </template>
@@ -86,6 +86,7 @@ export default {
            }
        },
         closeModal() {
+            this.$store.dispatch('clearEditUser')
             window.location.reload()
         },
         addUserList(data) {

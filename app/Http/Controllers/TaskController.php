@@ -8,6 +8,7 @@ use App\Models\PerformingTasks;
 use App\Models\TaskOrder;
 use App\Models\WorkPaused;
 use App\Models\WorkWaiting;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 
 class TaskController extends Controller
@@ -52,7 +53,7 @@ class TaskController extends Controller
         $currentTask = DB::table('performing_tasks')
             ->leftJoin('task_orders', 'performing_tasks.task_id', '=', 'task_orders.id')
             ->leftJoin('technical_cards', 'task_orders.card_id', '=', 'technical_cards.id')
-            ->select('performing_tasks.id', 'technical_cards.name', 'task_orders.user_count', 'performing_tasks.begin')
+            ->select('performing_tasks.id', 'technical_cards.tech_id', 'technical_cards.name', 'task_orders.user_count', 'performing_tasks.begin')
             ->where( 'performing_tasks.count', null)
             ->where('performing_tasks.user_id', $user_id)->get();
 
@@ -174,7 +175,7 @@ class TaskController extends Controller
      * @return array
      * формирует детали по исполнителям(их затраченное время, паузы, ожидания, количество)
      */
-    protected function getUserDetail()
+    protected function getUserDetail(): array
     {
         return DB::select('SELECT d.name as department, pt.id, pt.count, pt.defects, pt.finish, tc.name, users.lastname,
                                         CAST(ROUND(TIME_TO_SEC(timediff(pt.finish, pt.begin))/60) as SIGNED) as worktime,
@@ -190,14 +191,35 @@ class TaskController extends Controller
                                     JOIN users
                                     ON users.id = pt.user_id
                                     WHERE pt.count + pt.defects != 0
-                                ORDER BY id');
+                                ORDER BY pt.finish DESC');
+        }
+
+
+        public function getDataForDate(Request $request): array
+        {
+            return DB::select("SELECT d.name as department, pt.id, pt.count, pt.defects, pt.finish, tc.name, users.lastname,
+                                        CAST(ROUND(TIME_TO_SEC(timediff(pt.finish, pt.begin))/60) as SIGNED) as worktime,
+                                        (SELECT CAST(SUM(ROUND(TIME_TO_SEC(timediff(w.pause_finish,w.pause_begin))/60)) as SIGNED) FROM work_paused w WHERE w.work_id = pt.id) as paused,
+                                        (SELECT CAST(SUM(ROUND(TIME_TO_SEC(timediff(w.waiting_finish ,w.waiting_begin))/60)) as SIGNED) FROM work_waiting w WHERE w.work_id = pt.id) as waiting
+                                    FROM performing_tasks pt
+                                    JOIN task_orders ot
+                                    ON ot.id = pt.task_id
+                                    JOIN technical_cards tc
+                                    ON ot.card_id = tc.id
+                                    JOIN departments d
+                                    ON d.id = ot.dep_id
+                                    JOIN users
+                                    ON users.id = pt.user_id
+                                    WHERE pt.count + pt.defects != 0
+                                    AND date(finish) between date('$request->start') and date('$request->end')
+                                ORDER BY pt.finish DESC");
         }
 
     /**
      * @return array
      * вывод заданий в журнал
      */
-    public function adminJournal()
+    public function adminJournal(): array
     {
 //        $taskOrder = TaskOrder::all()->where('user_count', '=', 0);
 //
@@ -231,7 +253,7 @@ class TaskController extends Controller
      * @return \Illuminate\Support\Collection
      * возвращает коллекцию непроведенных задач
      */
-    public function technicalOperation()
+    public function technicalOperation(): \Illuminate\Support\Collection
     {
         return DB::table('performing_tasks')
         ->join('users', 'users.id', '=', 'performing_tasks.user_id')
@@ -255,5 +277,6 @@ class TaskController extends Controller
 
         $task->update(['operation' => true]);
     }
+
 }
 

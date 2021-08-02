@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Categories;
 use App\Models\MaterialForCard;
 use App\Models\Materials;
+use App\Models\ProductNames;
 use App\Models\Products;
 use App\Models\TechnicalCards;
 use Illuminate\Database\Eloquent\Model;
@@ -53,26 +54,20 @@ class WebHooksController extends Controller
 
     public function getProducts($card_id)
     {
-        return json_decode(Http::withBasicAuth('multishop@4wimax', '3hQ&ue1x')->get('https://online.moysklad.ru/api/remap/1.1/entity/processingplan/'. $card_id .'/products'));
+        return json_decode(Http::withBasicAuth(env('M_LOGIN'), env('M_PASS'))->get('https://online.moysklad.ru/api/remap/1.1/entity/processingplan/'. $card_id .'/products'));
     }
 
-    public function recordMaterialsName($card_id)
+    public function recordMaterialsName($materialsData, $cardId, $allProducts)
     {
-        $materialsData = $this->getMaterial($card_id);
-        $allProducts[] = json_decode(Http::withBasicAuth('multishop@4wimax', '3hQ&ue1x')->get('https://online.moysklad.ru/api/remap/1.2/entity/product'))->rows;
-        $cardId = TechnicalCards::select('id')->where('tech_id', $card_id)->get();
-        $materialNames = $this->getMaterialsName($materialsData->rows, $allProducts);
+        date_default_timezone_set('Europe/Moscow');
 
-        DB::table('cache')
-            ->insert([
-                "webhook" => $cardId
-            ]);
+        $materialNames = $this->getMaterialsName($materialsData->rows, $allProducts);
 
         for ($i=0; $i<count($cardId); $i++) {
             for ($j=0; $j<count($materialNames); $j++) {
                 $model{$j} = new MaterialForCard();
                 $model{$j}->card_id = $cardId[$i]->id;
-                $model{$j}->material_name = $materialNames[$j]['name'];
+                $model{$j}->product_id = ProductNames::select('id')->where('name', $materialNames[$j]['name'])->get()[0]->id;
                 $model{$j}->count = $materialNames[$j]['quantity'];
                 $model{$j}->save();
             }
@@ -80,11 +75,11 @@ class WebHooksController extends Controller
     }
 
 
-    protected function createTechCard($card_id)
+    protected function createTechCard($card_id, $allProducts)
     {
         date_default_timezone_set('Europe/Moscow');
 
-        $response = Http::withBasicAuth('multishop@4wimax', '3hQ&ue1x')->get('https://online.moysklad.ru/api/remap/1.2/entity/processingplan/' . $card_id);
+        $response = Http::withBasicAuth(env('M_LOGIN'), env('M_PASS'))->get('https://online.moysklad.ru/api/remap/1.2/entity/processingplan/' . $card_id);
         $category = $response->json('pathName');
 
         $categoryId = DB::table('categories')
@@ -111,36 +106,52 @@ class WebHooksController extends Controller
         $product->meta = json_encode($productsData->meta);
         $product->product = json_encode($productsData->rows);
         $product->save();
+        $id = TechnicalCards::select('id')->where('tech_id', $card_id)->get();
 
-        $this->recordMaterialsName($card_id);
+        $this->recordMaterialsName($materialsData, $id, $allProducts);
 
     }
 
-    public function updateTechCard($card_id)
+    protected function updateJsonProducts($card_id)
     {
-        date_default_timezone_set('Europe/Moscow');
-
-        $materials = Materials::where('card_id', $card_id);
         $products = Products::where('card_id', $card_id);
+        $products->update(['product' => $this->getProducts($card_id)->rows]);
+    }
+
+    protected function updateJsonMaterials($card_id)
+    {
+        $materials = Materials::where('card_id', $card_id);
+        $materials->update(['materials' => $this->getMaterial($card_id)->rows]);
+    }
+
+    public function updateTechCard($card_id, $allProducts)
+    {
+        $products = Products::where('card_id', $card_id);
+        $products->update(['product' => $this->getProducts($card_id)->rows]);
 
         $materialsData = $this->getMaterial($card_id);
-        $productsData = $this->getProducts($card_id);
+        $materials = Materials::where('card_id', $card_id);
 
-        $materialsRows = $materialsData->rows;
-        $productsRows = $productsData->rows;
+        $materials->update(['materials' => $materialsData->rows]);
 
-        $materials->update(['materials' => $materialsRows]);
-        $products->update(['product' => $productsRows]);
-
-        $id = TechnicalCards::select('id')->where('tech_id', $card_id)->get()[0]->id;
-        $delete = MaterialForCard::where('card_id', $id);
+        $cardId = TechnicalCards::select('id')->where('tech_id', $card_id)->get();
+        $delete = MaterialForCard::where('card_id', $cardId[0]->id);
         $delete->delete();
 
+        $this->recordMaterialsName($materialsData, $cardId, $allProducts);
+    }
+
+    public function updateCardForId($card_id) {
+        $allProduct1 = json_decode(Http::withBasicAuth(env('M_LOGIN'), env('M_PASS'))->get('https://online.moysklad.ru/api/remap/1.2/entity/product'))->rows;
+        $allProduct2 = json_decode(Http::withBasicAuth(env('M_LOGIN'), env('M_PASS'))->get('https://online.moysklad.ru/api/remap/1.2/entity/product?offset=1000'))->rows;
+        $allProducts[] = array_merge($allProduct1, $allProduct2);
+        $this->updateTechCard($card_id, $allProducts);
     }
 
     protected function delete($card_id)
     {
-
+        $techCard = TechnicalCards::where('tech_id', $card_id);
+        $techCard->update([ "deleted" => true]);
     }
 
     public function webHook(Request $request)
@@ -156,7 +167,10 @@ class WebHooksController extends Controller
         $card_id = $card[0];
 
         if ($create) {
-            $this->createTechCard($card_id);
+            $allProduct1 = json_decode(Http::withBasicAuth(env('M_LOGIN'), env('M_PASS'))->get('https://online.moysklad.ru/api/remap/1.2/entity/product'))->rows;
+            $allProduct2 = json_decode(Http::withBasicAuth(env('M_LOGIN'), env('M_PASS'))->get('https://online.moysklad.ru/api/remap/1.2/entity/product?offset=1000'))->rows;
+            $allProducts[] = array_merge($allProduct1, $allProduct2);
+            $this->createTechCard($card_id, $allProducts);
             DB::table('cache')
                 ->insert([
                     "webhook" => 'create: ' . $card_id
@@ -164,8 +178,10 @@ class WebHooksController extends Controller
         }
 
         if ($update) {
-            $this->updateTechCard($card_id);
-            $this->recordMaterialsName($card_id);
+            $allProduct1 = json_decode(Http::withBasicAuth(env('M_LOGIN'), env('M_PASS'))->get('https://online.moysklad.ru/api/remap/1.2/entity/product'))->rows;
+            $allProduct2 = json_decode(Http::withBasicAuth(env('M_LOGIN'), env('M_PASS'))->get('https://online.moysklad.ru/api/remap/1.2/entity/product?offset=1000'))->rows;
+            $allProducts[] = array_merge($allProduct1, $allProduct2);
+            $this->updateTechCard($card_id, $allProducts);
         }
 
         return response()->json([

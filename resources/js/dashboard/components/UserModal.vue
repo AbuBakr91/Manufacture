@@ -54,6 +54,7 @@ import axios from "axios";
 
 export default {
     props: ['position', 'office'],
+    emits: ['close'],
     data() {
         return {
             form: {

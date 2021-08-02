@@ -1,5 +1,6 @@
 <template>
     <div class="container mt-3">
+        <app-loader v-if="loading"></app-loader>
         <app-alert v-if="alert" :alert="alert" @close="alert = null"></app-alert>
         <h4 class="text-center"> Сортировка по категориям</h4>
         <div class="row">
@@ -39,6 +40,7 @@
 import axios from "axios";
 import ShowTask from "../components/ShowTask";
 import AppAlert from "../../components/AppAlert";
+import AppLoader from '../../components/AppLoader'
 export default {
     data() {
         return {
@@ -46,6 +48,7 @@ export default {
             cards: [],
             alert: null,
             category: 0,
+            loading: false,
             categories: []
         }
     },
@@ -54,15 +57,6 @@ export default {
         this.getCategory()
     },
     methods: {
-        updateCard(name) {
-            window.scroll(0, 0)
-            this.alert = {
-                type: 'primary',
-                title: 'Успешно!',
-                text: `Тех карта ${name} обновлена!`
-            }
-            // setTimeout(() => window.location.reload(), 1000)
-        },
         async  getAllCards() {
           const cards = await axios.get('/api/tech_card')
           this.cards.push(...cards.data)
@@ -81,17 +75,51 @@ export default {
             const cat = await axios.get('/api/categories');
             this.categories.push(...cat.data)
         },
-        updateAllCards() {
-          let card = confirm("Вы действительно хотите обновить все карты?");
+        async updateCard(data) {
+            this.loading = true
+            const response = await axios.post('/api/update-card/' + data.id)
+            if (response.status === 200) {
+                window.scroll(0, 0)
+                this.alert = {
+                    type: 'primary',
+                    title: 'Успешно!',
+                    text: `Тех карта ${data.name} обновлена!`
+                }
+            }
+            this.loading = false
 
-          alert(card ? 'Вы запустили процесс обновления' : 'привильно и так сойдут!')
+            setTimeout(() => window.location.reload(), 1000)
+        },
+        async updateAllCards() {
+          let card = confirm("Вы действительно хотите обновить все карты?");
+          if(card) {
+              this.loading = true
+              const data = await axios.get('/api/update-all-cards')
+              this.loading = false
+              window.scroll(0, 0)
+              if (data.status === 200) {
+                  this.alert = {
+                      type: 'primary',
+                      title: 'Успешно!',
+                      text: `Все тех карты обновлены!`
+                  }
+              } else {
+                  this.alert = {
+                      type: 'danger',
+                      title: 'Ошибка!',
+                      text: `Проблема на стороне сервера!`
+                  }
+              }
+
+          }
         }
     },
-    components: {ShowTask, AppAlert}
+    components: {ShowTask, AppAlert, AppLoader}
 }
 </script>
 
 <style scoped>
+
 .header {
     display: flex;
     justify-content: space-between;

@@ -4,7 +4,7 @@
         <div class="technical_task d-flex" v-if="arrayTask.length !== 0">
             <ul class="list-group list-group-numbered mb-2">
                 <li class="list-group-item" v-for="task in arrayTask">
-                    <span>Тех. карта:</span> {{ task.name }} - <span>Количество:</span><b>{{ task.count }}</b>
+                    <span>Тех. карта:</span> {{ task.name }} - <span>Количество:</span><b>{{ task.count }} ( {{task.count - task.user_count}} )</b>
                     <i @click="removeTask(task.id)" class="bi bi-x-square-fill"></i>
                 </li>
             </ul>
@@ -54,11 +54,8 @@ export default {
                 card_id: this.card_id,
                 counts: this.count,
             })
-            this.arrayTask.push({
-                name: this.card_id, counts: this.count
-            })
-            this.isSelect = !this.isSelect
             window.location.reload();
+            this.isSelect = !this.isSelect
         },
         //удалить задание отдела
         async removeTask(id) {
