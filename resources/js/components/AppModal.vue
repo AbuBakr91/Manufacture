@@ -57,17 +57,26 @@ export default {
 
             if (this.outputCount(this.count) !== 0) {
                 const response = await this.spendOperation(false)
-                if (!!response.moment && !this.defects) {
-                    this.$emit('close', {
-                        type: 'primary',
-                        title: 'Успешно!',
-                        text: `Операции в мойсклад созданы!`
-                    })
-                }
 
                 if(!!response.moment && this.defects) {
-                    await this.operationDefects(false)
-                    await this.operationRealShift(false)
+                    const defects = await this.operationDefects(false)
+                    const realShift = await this.operationRealShift(false)
+
+                    if (!!defects.errors) {
+                        await this.operationDefects(true)
+                        axios.post('/api/logging', {
+                            error: defects.errors,
+                            card_id: this.task.name
+                        })
+                    }
+
+                    if (!!realShift.errors) {
+                        await this.operationRealShift(true)
+                        axios.post('/api/logging', {
+                            error: realShift.errors,
+                            card_id: this.task.name
+                        })
+                    }
 
                     this.$emit('close', {
                         type: 'primary',
@@ -77,7 +86,11 @@ export default {
                 }
 
                 if(!!response.errors) {
-                   const res = await this.spendOperation(true)
+                    axios.post('/api/logging', {
+                        error: response.errors[0].error,
+                        card_id: this.task.name
+                    })
+                    const res = await this.spendOperation(true)
                     if (this.defects) {
                         await this.operationDefects(true)
                         await this.operationRealShift(true)
@@ -90,6 +103,10 @@ export default {
                             text: `Операции в мойсклад созданы!`
                         })
                     } else {
+                        axios.post('/api/logging', {
+                            error: res.errors,
+                            card_id: this.task.name
+                        })
                         this.$emit('close', {
                             type: 'danger',
                             title: 'Ошибка!',
@@ -97,10 +114,26 @@ export default {
                         })
                     }
                 }
-            } else {
-                await this.operationDefects(true)
+            }
+            if (this.outputCount(this.count) === 0 && this.defects){
+                const defects = await this.operationDefects(false)
+                const realShift = await this.operationRealShift(false)
 
-                await this.operationRealShift(true)
+                if (!!defects.errors) {
+                    await this.operationDefects(true)
+                    axios.post('/api/logging', {
+                        error: defects.errors,
+                        card_id: this.task.name
+                    })
+                }
+
+                if (!!realShift.errors) {
+                    await this.operationRealShift(true)
+                    axios.post('/api/logging', {
+                        error: realShift.errors,
+                        card_id: this.task.name
+                    })
+                }
 
                 this.$emit('close', {
                     type: 'primary',

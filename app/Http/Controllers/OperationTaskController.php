@@ -2,21 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MaterialForCard;
 use App\Models\Materials;
-use App\Models\PerformingTasks;
-use App\Models\ProductNames;
 use App\Models\Products;
-use App\Models\StockModel;
-use App\Models\TaskOrder;
-use App\Models\TechCardTime;
 use App\Models\TechnicalCards;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-use Database\Seeders\TechnicalCardAndCategoriesSeeder;
 
 class OperationTaskController extends Controller
 {
@@ -230,14 +221,6 @@ class OperationTaskController extends Controller
         }
     }
 
-
-    //для теста вывод в шаблон
-    public function getMaterials()
-    {
-
-//        return view('welcome', compact('output'));
-    }
-
     /**
      * @param Request $request
      * @return string
@@ -364,7 +347,7 @@ class OperationTaskController extends Controller
         return $response->body();
     }
 
-    private function getOffice($office): string
+    private function getOffice($office)
     {
         if($office === '215 офис') {
             return "https://online.moysklad.ru/api/remap/1.2/entity/store/0e054440-b971-11eb-0a80-0898000fbaed";
@@ -377,5 +360,7 @@ class OperationTaskController extends Controller
         if ($office === 'Склад') {
             return "https://online.moysklad.ru/api/remap/1.2/entity/store/b437351e-8d0a-11e5-7a40-e8970059ee20";
         }
+
+        return false;
     }
 }

@@ -83,7 +83,7 @@ export default {
             tasks: [],
             ascending: false,
             sortColumn: '',
-            orderDetails: this.$store.getters.getTask,
+            orderDetails: [],
             searchUser: 0,
             search: '',
             allTime: 0,
@@ -277,33 +277,78 @@ export default {
     },
     watch: {
         search() {
-            this.fuse = new Fuse(this.orderDetails, this.options);
-            if (this.search.trim() === '') {
-                this.result = this.orderDetails
-                this.countRows = ''
+            if (this.result.length === this.orderDetails.length) {
+                this.fuse = new Fuse(this.orderDetails, this.options);
+                if (this.search.trim() === '') {
+                    this.result = this.orderDetails
+                    this.countRows = ''
+                } else {
+                    this.result = this.fuse.search(this.search.trim()).map(result => result.item)
+                    this.countRows = this.result.length
+
+                    this.allCount = this.result.reduce((total, item) => {
+                        return total + item.count
+                    }, 0)
+
+                    this.allTime = this.result.reduce((total, item) => {
+                        return total + item.worktime
+                    }, 0)
+
+                    this.AllDefects = this.result.reduce((total, item) => {
+                        return total + item.defects
+                    }, 0)
+                }
             } else {
-                this.result = this.fuse.search(this.search.trim()).map(result => result.item)
-                this.countRows = this.result.length
+                this.fuse = new Fuse(this.result, this.options);
+                if (this.search.trim() === '') {
+                    this.result = this.orderDetails
+                    this.countRows = ''
+                } else {
+                    this.result = this.fuse.search(this.search.trim()).map(result => result.item)
+                    this.countRows = this.result.length
 
-                this.allCount = this.result.reduce((total, item) => {
-                    return total + item.count
-                }, 0)
+                    this.allCount = this.result.reduce((total, item) => {
+                        return total + item.count
+                    }, 0)
 
-                this.allTime = this.result.reduce((total, item) => {
-                    return total + item.worktime
-                }, 0)
+                    this.allTime = this.result.reduce((total, item) => {
+                        return total + item.worktime
+                    }, 0)
 
-                this.AllDefects = this.result.reduce((total, item) => {
-                    return total + item.defects
-                }, 0)
+                    this.AllDefects = this.result.reduce((total, item) => {
+                        return total + item.defects
+                    }, 0)
+                }
             }
         },
         searchUser() {
-            this.fuse = new Fuse(this.orderDetails, this.options);
-            if (this.searchUser === '0') {
-                this.result = this.orderDetails
-                this.countRows = ''
+            if (this.result.length === this.orderDetails.length) {
+                this.fuse = new Fuse(this.orderDetails, this.options);
+                if (this.searchUser === '0') {
+                    this.result = this.orderDetails
+                    this.countRows = ''
+                } else {
+                    this.result = this.fuse.search(this.searchUser.trim()).map(result => result.item)
+                    this.countRows = this.result.length
+
+                    this.allCount = this.result.reduce((total, item) => {
+                        return total + item.count
+                    }, 0)
+
+                    this.allTime = this.result.reduce((total, item) => {
+                        total += item.worktime - item.paused - item.waiting
+                        if (total < 0 ) {
+                            return 0
+                        }
+                        return total
+                    }, 0)
+
+                    this.AllDefects = this.result.reduce((total, item) => {
+                        return total + item.defects
+                    }, 0)
+                }
             } else {
+                this.fuse = new Fuse(this.result, this.options);
                 this.result = this.fuse.search(this.searchUser.trim()).map(result => result.item)
                 this.countRows = this.result.length
 
@@ -312,10 +357,10 @@ export default {
                 }, 0)
 
                 this.allTime = this.result.reduce((total, item) => {
-                     total += item.worktime - item.paused - item.waiting
-                        if (total < 0 ) {
-                            return 0
-                        }
+                    total += item.worktime - item.paused - item.waiting
+                    if (total < 0 ) {
+                        return 0
+                    }
                     return total
                 }, 0)
 

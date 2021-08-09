@@ -14,7 +14,7 @@ class StockSeeder extends Seeder
      * @param $products
      * @return int
      */
-    protected function getSellQuantity($name, $products)
+    protected function getSellQuantity($name, $products): int
     {
         foreach ($products->rows as $row) {
             if ($row->assortment->name === $name) {
@@ -28,7 +28,7 @@ class StockSeeder extends Seeder
      * @param $products
      * @return int
      */
-    protected function returnQuantity($name, $products)
+    protected function returnQuantity($name, $products): int
     {
         foreach ($products->rows as $row) {
             if ($row->assortment->name === $name) {

@@ -25,7 +25,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
          $schedule->command('seeder:cron')->hourly();
-         $schedule->command('updateQuantity:cron')->hourly();
+         $schedule->command('updateQuantity:cron')->daily();
     }
 
     /**

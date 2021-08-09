@@ -64,7 +64,7 @@ class ManagerTaskController extends Controller
             ->join('technical_cards', 'task_orders.card_id', '=', 'technical_cards.id')
             ->select('task_orders.id', 'task_orders.dep_id', 'task_orders.count', 'task_orders.user_count', 'task_orders.card_id', 'technical_cards.name')
             ->where('task_orders.dep_id',  $id)
-            ->where('task_orders.user_count', '!=', 0)
+            ->where('task_orders.user_count', '>', 0)
             ->where('task_orders.deleted', '=', 0)
             ->get();
     }

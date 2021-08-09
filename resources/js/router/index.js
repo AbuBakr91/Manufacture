@@ -11,6 +11,8 @@ import TechnicalCard from "../dashboard/pages/TechnicalCard"
 import UserWorks from "../dashboard/pages/UserWorks"
 import RecordTask from "../dashboard/pages/RecordTask"
 import UserEdit from "../dashboard/pages/UserEdit"
+import Logs from "../dashboard/pages/Logs";
+import Manufacture from "../dashboard/pages/Manufacture";
 
 const routes = [
     {
@@ -51,11 +53,16 @@ const routes = [
                 path: 'profile',
                 component: ManagerProfile
             },
-            // {
-            //     name: 'user-work',
-            //     path: 'user-work',
-            //     component: UserTask
-            // },
+            {
+                name: 'manufacture',
+                path: 'manufacture',
+                component: Manufacture
+            },
+            {
+                name: 'logs',
+                path: 'logs',
+                component: Logs
+            },
             {
                 name: 'list-map',
                 path: 'list-map',

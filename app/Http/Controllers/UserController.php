@@ -149,7 +149,6 @@ class UserController extends Controller
         }
 
         if ($request->deportment){
-
             $role = Role::where('slug', $this->roleForDeportment($request->deportment))->get()[0]->id;
             $userRole = UserRoles::where('user_id', $id);
             $userRole->update([
