@@ -47,13 +47,12 @@ class UserController extends Controller
         switch ($deportment) {
             case 1:
                 return 'machine-operator';
-                break;
             case 2:
                 return 'shareholder';
-                break;
             case 3:
                 return 'collector';
-                break;
+            default:
+                return throw new \Exception();
         }
     }
     /**

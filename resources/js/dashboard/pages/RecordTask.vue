@@ -285,18 +285,6 @@ export default {
                 } else {
                     this.result = this.fuse.search(this.search.trim()).map(result => result.item)
                     this.countRows = this.result.length
-
-                    this.allCount = this.result.reduce((total, item) => {
-                        return total + item.count
-                    }, 0)
-
-                    this.allTime = this.result.reduce((total, item) => {
-                        return total + item.worktime
-                    }, 0)
-
-                    this.AllDefects = this.result.reduce((total, item) => {
-                        return total + item.defects
-                    }, 0)
                 }
             } else {
                 this.fuse = new Fuse(this.result, this.options);
@@ -306,18 +294,6 @@ export default {
                 } else {
                     this.result = this.fuse.search(this.search.trim()).map(result => result.item)
                     this.countRows = this.result.length
-
-                    this.allCount = this.result.reduce((total, item) => {
-                        return total + item.count
-                    }, 0)
-
-                    this.allTime = this.result.reduce((total, item) => {
-                        return total + item.worktime
-                    }, 0)
-
-                    this.AllDefects = this.result.reduce((total, item) => {
-                        return total + item.defects
-                    }, 0)
                 }
             }
         },
@@ -330,22 +306,6 @@ export default {
                 } else {
                     this.result = this.fuse.search(this.searchUser.trim()).map(result => result.item)
                     this.countRows = this.result.length
-
-                    this.allCount = this.result.reduce((total, item) => {
-                        return total + item.count
-                    }, 0)
-
-                    this.allTime = this.result.reduce((total, item) => {
-                        total += item.worktime - item.paused - item.waiting
-                        if (total < 0 ) {
-                            return 0
-                        }
-                        return total
-                    }, 0)
-
-                    this.AllDefects = this.result.reduce((total, item) => {
-                        return total + item.defects
-                    }, 0)
                 }
             } else {
                 this.fuse = new Fuse(this.result, this.options);

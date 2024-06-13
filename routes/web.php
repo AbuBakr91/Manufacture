@@ -14,11 +14,11 @@ use App\Http\Controllers\GetMapController;
 |
 */
 
-//Route::get('{any}', function () {
-//    return view('layouts.app');
-//})->where('any', '.*');
+Route::get('{any}', function () {
+    return view('layouts.app');
+})->where('any', '.*');
 
-Route::get('/', [TestController::class, 'testData']);
+//Route::get('/', [TestController::class, 'testData']);
 
 //Route::get('/maps', [App\Http\Controllers\GetMapController::class,'index']);
 

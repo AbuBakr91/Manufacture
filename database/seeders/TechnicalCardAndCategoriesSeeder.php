@@ -45,7 +45,7 @@ class TechnicalCardAndCategoriesSeeder extends Seeder
         return $output;
     }
 
-    protected function category(): array
+    protected function category(): void
     {
         $data = $this->sortKeyArray($this->getCatForApi());
     }

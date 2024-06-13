@@ -38,7 +38,6 @@ class UpdateQuantityCron extends Command
      */
     public function handle()
     {
-//        return 0;
         artisan::call('db:seed --class=StockQuantitySeeder');
         $this->info("Продажи за 30 дней обновлены!");
     }

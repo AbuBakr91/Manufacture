@@ -50,7 +50,7 @@
                             <button class="btn primary btn_start" @click="startWork" type="submit">Старт</button>
                         </div>
                     </div>
-                    <div class="row mt-5" v-if="start">
+                    <div class="row mt-5">
                         <h2 class="text-center mb-5">Название тех.карты: <b>{{currentTask[0].name}} Количество: {{currentTask[0].user_count}}</b></h2>
                         <div class="col-8 m-auto content_stop mt-5">
                             <button class="btn btn_pause" :disabled="waiting" @click="addPaused" v-html="pause ? pauseIcon : 'Пауза'" type="submit"></button>
@@ -79,7 +79,7 @@ export default {
         return {
             card: 'selected',
             modal: false,
-            start: false,
+            start: true,
             pause: false,
             waiting: false,
             alert: null,

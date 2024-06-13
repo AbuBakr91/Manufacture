@@ -32,8 +32,8 @@ class MaterialNameSeeder extends Seeder
             $materialsHref[$key]['count'] = $row->quantity;
         }
 
-//        $allProducts = [];
-//        $allProducts[] = json_decode(Http::withBasicAuth('multishop@4wimax', '3hQ&ue1x')->get('https://online.moysklad.ru/api/remap/1.2/entity/product'))->rows;
+        $allProducts = [];
+        $allProducts[] = json_decode(Http::withBasicAuth('multishop@4wimax', '3hQ&ue1x')->get('https://online.moysklad.ru/api/remap/1.2/entity/product'))->rows;
         $materialsName = [];
         $name = [];
         $quantity = [];
