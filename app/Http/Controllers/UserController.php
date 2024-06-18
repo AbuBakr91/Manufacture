@@ -8,28 +8,31 @@ use App\Models\UserDeportment;
 use App\Models\UserRoles;
 use App\Models\UserWorkRoom;
 use App\Models\WorkRoom;
+use App\Services\UserService;
+use App\Services\UserServiceInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
+
 class UserController extends Controller
 {
+
+    protected UserService $service;
+
+    public function __construct(UserServiceInterface $service)
+    {
+        $this->service = $service;
+    }
     /**
      * возвращает список пользователей
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function index()
     {
-        return DB::table('users')
-            ->leftJoin('users_roles', 'users.id', '=', 'users_roles.user_id')
-            ->leftJoin('roles', 'roles.id', '=', 'users_roles.role_id')
-            ->leftJoin('user_work_rooms', 'user_work_rooms.user_id', '=', 'users.id')
-            ->leftJoin('work_rooms', 'user_work_rooms.work_room_id', '=', 'work_rooms.id')
-            ->select('users.id', 'users.firstname', 'users.lastname', 'users.email', 'roles.slug', 'work_rooms.name')
-            ->where('roles.slug', '!=', 'manager')
-            ->get();
+        return $this->service->getUser();
     }
 
     /**
@@ -42,6 +45,9 @@ class UserController extends Controller
         //
     }
 
+    /**
+     * @throws \Exception
+     */
     protected function roleForDeportment($deportment): string
     {
         switch ($deportment) {
@@ -59,17 +65,13 @@ class UserController extends Controller
      * создает пользователя
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         try {
-            $user = new User();
-            $user->firstname = $request->firstname;
-            $user->lastname = $request->lastname;
-            $user->email = $request->email;
-            $user->password = bcrypt($request->password);
-            $user->save();
+
+            $this->service->addNewUser($request);
 
             $role = Role::where('slug', $this->roleForDeportment($request->slug))->first();
 
@@ -98,15 +100,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        return DB::table('users')
-            ->leftJoin('users_roles', 'users.id', '=', 'users_roles.user_id')
-            ->leftJoin('roles', 'roles.id', '=', 'users_roles.role_id')
-            ->leftJoin('user_work_rooms', 'user_work_rooms.user_id', '=', 'users.id')
-            ->leftJoin('users_departments', 'users_departments.user_id', '=', 'users.id')
-            ->leftJoin('work_rooms', 'user_work_rooms.work_room_id', '=', 'work_rooms.id')
-            ->select('users_departments.department_id as deportment', 'users.id', 'users.firstname', 'users.lastname', 'users.email', 'work_rooms.id as office')
-            ->where('users.id', $id)
-            ->get();
+        $this->service->showUser($params);
     }
 
     /**
@@ -125,48 +119,11 @@ class UserController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request, $id)
     {
-        $user = User::find($id);
-
-        if ($request->firstname){
-            $user->update(["firstname" => $request->firstname]);
-        }
-
-        if ($request->lastname){
-            $user->update(["lastname" => $request->lastname]);
-        }
-
-        if ($request->email){
-            $user->update(["email" => $request->email]);
-        }
-
-        if ($request->password){
-            $user->update(["password" => bcrypt($request->password)]);
-        }
-
-        if ($request->deportment){
-            $role = Role::where('slug', $this->roleForDeportment($request->deportment))->get()[0]->id;
-            $userRole = UserRoles::where('user_id', $id);
-            $userRole->update([
-                "role_id" => $role
-            ]);
-
-            $userDepot = UserDeportment::where('user_id', $id);
-            $userDepot->update([
-                'department_id' => $request->deportment
-            ]);
-        }
-
-        if($request->office) {
-            $userOffice = UserWorkRoom::where('user_id', $id);
-            $userOffice->update([
-                'user_id' => $id,
-                'work_room_id' => $request->office
-            ]);
-        }
+        $this->service->editUser($request, $id);
 
         return response()->json([
             "status" => true,
@@ -181,8 +138,7 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        $user = User::find($id);
-        $user->delete();
+        $this->service->deleteUser($id);
     }
 
     protected function getUserName($user_id)
