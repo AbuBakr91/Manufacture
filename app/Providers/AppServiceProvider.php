@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Services\UserServiceInterface;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
+use App\Services\UserService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,7 +16,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind(UserServiceInterface::class, UserService::class);
     }
 
     /**
